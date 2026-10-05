@@ -273,6 +273,8 @@ body.focus main{padding-top:0}
   background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 38px);
   -webkit-mask:linear-gradient(180deg,transparent,#000 60%);mask:linear-gradient(180deg,transparent,#000 60%)}
 .stage svg.demo{position:absolute;inset:env(safe-area-inset-top) 0 0 0;width:100%;height:calc(100% - env(safe-area-inset-top));z-index:1}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;background:#0a0d0f}
+.stage .shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(10,13,15,.6) 0%,rgba(10,13,15,0) 28%,rgba(10,13,15,0) 62%,rgba(10,13,15,.8) 100%)}
 .stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
 .stage .tl{top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;justify-content:space-between}
 .stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
@@ -408,6 +410,15 @@ const HOWTO = {
   'Dumbbell lateral raise':['Stand holding light dumbbells at your sides, a slight bend in the elbows.','Raise them out to the sides until your arms are level with your shoulders.','Lower slowly. Don\'t let the dumbbells rest at the bottom.','Lead with your elbows and pour the dumbbells slightly forward, like emptying a jug.'],
   'Rear-delt fly':['Hinge forward until your chest is nearly parallel to the floor, dumbbells hanging.','With soft elbows, raise the dumbbells out to the sides, squeezing your rear shoulders.','Lower slowly back to the start.','Go light. Shrugging means the weight is too heavy.'],
   'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.']
+};
+// Stock demo clips in videos/ (Pexels free licence, re-encoded to 720×405; sources in videos/CREDITS.md)
+const VIDEOS = {
+  'Barbell bench press':'bench-press','Incline barbell press':'incline-press','Decline dumbbell press':'decline-db-press',
+  'Close-grip bench press':'close-grip-bench','EZ-bar skull crusher':'skull-crusher','Barbell back squat':'back-squat',
+  'Romanian deadlift':'romanian-deadlift','Bulgarian split squat':'bulgarian-split-squat','Barbell hip thrust':'hip-thrust',
+  'Conventional deadlift':'deadlift','Barbell bent-over row':'barbell-row','Single-arm dumbbell row':'db-row',
+  'EZ-bar curl':'ez-curl','Dumbbell hammer curl':'hammer-curl','Standing overhead press':'overhead-press',
+  'Seated dumbbell press':'seated-db-press','Dumbbell lateral raise':'lateral-raise','Rear-delt fly':'rear-delt-fly','Barbell shrug':'shrug'
 };
 const MNAME={chest:'chest',delts:'shoulders',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
 const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
@@ -708,11 +719,13 @@ function rDetail(m){
   const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' proper form');
   m.innerHTML=`<section>
     <div class="stage">
-      <svg class="demo" viewBox="38 -28 224 226" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated demonstration of ${esc(name)}"><g id="demoFig"></g></svg>
+      ${VIDEOS[name]?`<video id="exVid" src="videos/${VIDEOS[name]}.mp4" poster="videos/${VIDEOS[name]}.jpg" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>`:''}
+      <svg class="demo" viewBox="38 -28 224 226" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated demonstration of ${esc(name)}" ${VIDEOS[name]?'hidden':''}><g id="demoFig"></g></svg>
+      <div class="shade"></div>
       <div class="ov tl"><button class="iconbtn glass" id="back" aria-label="Back to workout">${ico('chevron-left')}</button><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
       <div class="ov bl">
-        <button class="pill glass" id="demoToggle" aria-label="Pause or play the demonstration"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Lift 1 s · lower 2 s</span></button>
-        <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Watch video</a>
+        <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">${VIDEOS[name]?'Pause':'Lift 1 s · lower 2 s'}</span></button>
+        <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
       </div>
     </div>
     <div class="eyebrow">${esc(PROGRAM[a.day].name)}</div>
@@ -748,7 +761,13 @@ function rDetail(m){
       <div class="tbl" style="grid-template-columns:36px repeat(${x.length},minmax(40px,1fr))"><span>kg</span>${x.map(q=>`<b class="${best&&q.w===best.w&&q.r===best.r?'pr':''}">${fmt(q.w)}</b>`).join('')}<span>reps</span>${x.map(q=>`<b>${q.r}</b>`).join('')}</div></div>`}).join(''):'<p class="empty">Your sessions for this exercise will show here.</p>'}
   </section>`;
   drawExChart();
-  startDemo(name);
+  const v=$('#exVid');
+  if(!v){startDemo(name);return}
+  // Video streams from the site; offline (or if it fails) fall back to the animated demo
+  const fallback=()=>{if(!v.isConnected||v.dataset.failed)return;v.dataset.failed='1';v.remove();$('.stage svg.demo').hidden=false;$('#demoLbl').textContent='Lift 1 s · lower 2 s';startDemo(name)};
+  v.addEventListener('error',fallback);
+  if(!navigator.onLine)fallback();
+  else{const p=v.play();if(p&&p.catch)p.catch(()=>{$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'})}
 }
 function drawExChart(){
   const hist=exHistory(curEx);
@@ -922,6 +941,8 @@ main.addEventListener('click',e=>{
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){curEx=t.dataset.open;render();window.scrollTo(0,0);return}
   if(t.id==='back'){curEx=null;render();window.scrollTo(0,0);return}
+  if(t.id==='demoToggle'&&$('#exVid')){const v=$('#exVid');if(v.paused)v.play().catch(()=>{});else v.pause();
+    $('#demoIco').innerHTML=ico(v.paused?'play':'pause');$('#demoLbl').textContent=v.paused?'Play':'Pause';return}
   if(t.id==='demoToggle'){const now=performance.now();if(demo.playing){demo.pausedAt=now;demo.playing=false}else{demo.t0+=now-(demo.pausedAt||now);demo.playing=true}
     $('#demoIco').innerHTML=ico(demo.playing?'pause':'play');$('#demoLbl').textContent=demo.playing?'Lift 1 s · lower 2 s':'Paused · tap to play';return}
   if(t.hasAttribute('data-tick'))return tickSet(t);

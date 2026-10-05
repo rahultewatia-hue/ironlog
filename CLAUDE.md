@@ -25,7 +25,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 1. **Never break saved data.** Data lives in localStorage under the key `ironlog-v1` with the shape
    `{sessions:[], weights:[], active:null|{...}, settings:{restC, restI, bar, ez}}`.
    If the data shape must change, add a migration in `load()` so old data keeps working.
-2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). The only exception is the user-tapped "Watch video" link.
+2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: exercise videos stream from the site (with an offline animation fallback) and the user-tapped "Full tutorial" link.
 3. **If you change `sw.js`, `manifest.json` or any icon, bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone don't need a bump.
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
@@ -64,7 +64,9 @@ Fonts are bundled in `fonts/` (SIL OFL, licences included): **Outfit** for headi
 Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<body>`; use `ico('name')`. To add an icon, copy its inner SVG from lucide-static into a new `<symbol id="i-name">`.
 3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained), tilt cards, 3D bars.
 `MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
-Exercise screen: top half is a sticky stage with an animated side-view demo (`DEMOS` poses A/B per exercise, two-bone IK in `demoSVG`,
-looped by `startDemo`), a pause/play pill and a "Watch video" link that opens a YouTube search (only network use, user-initiated).
+Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
+Pexels clips trimmed to 10 s, 720×405, sources in `videos/CREDITS.md`). Videos stream from the site and are NOT cached by the service worker;
+offline or on error the stage falls back to the animated side-view demo (`DEMOS` poses, two-bone IK in `demoSVG`, `startDemo`).
+Pause/play pill and a "Full tutorial" link that opens a YouTube search. New exercise → add a clip to `videos/` and an entry in `VIDEOS`, `MUSCLES`, `HOWTO`, `DEMOS`.
 Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).
 Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey. Sentence-case labels. Safe-area aware. Mobile-first (iPhone ~390 px wide).

@@ -26,7 +26,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
    `{sessions:[], weights:[], active:null|{...}, settings:{restC, restI, bar, ez}}`.
    If the data shape must change, add a migration in `load()` so old data keeps working.
 2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: exercise videos stream from the site (poster + Retry when offline) and the user-tapped "Full tutorial" link.
-3. **Bump `APP_BUILD` near the top of the `<script>` in `index.html` on every change to it** (open apps compare it with the live file and reload). **If you change `sw.js`, `manifest.json` or any icon, also bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone don't need a bump.
+3. **Bump `APP_BUILD` near the top of the `<script>` in `index.html` on every change to it** (open apps compare it with the live file and reload). **If you change `sw.js`, `manifest.json` or any icon, also bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone need only the `APP_BUILD` bump, not a `VERSION` bump.
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
 ## What the app does

@@ -6,11 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="IronLog">
+<meta name="apple-mobile-web-app-title" content="Aesthetic Body">
 <meta name="theme-color" content="#1c2129">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>IronLog</title>
+<title>Aesthetic Body</title>
 <style>
 :root{
   --bg:#1c2129; --surface:#252b35; --surface2:#2f3642; --line:#3a4250;
@@ -147,7 +147,7 @@ nav button.on{color:var(--yellow)}
 </style>
 </head>
 <body>
-<header><div class="brand"><i aria-hidden="true"></i>IronLog</div><div id="clock" class="num"></div></header>
+<header><div class="brand"><i aria-hidden="true"></i>Aesthetic Body</div><div id="clock" class="num"></div></header>
 <main id="main"></main>
 <div id="rest" role="status"><div class="bar"></div><b class="num">0:00</b><span>Rest</span><button data-rest="30">+30s</button><button data-rest="skip">Skip</button></div>
 <div id="toast" role="status"></div>
@@ -449,8 +449,8 @@ function rMore(m){
   </div>`;
 }
 async function exportData(){
-  const name=`ironlog-backup-${dstr()}.json`,blob=new Blob([JSON.stringify(db)],{type:'application/json'});
-  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'IronLog backup'});return}}catch(e){if(e.name==='AbortError')return}
+  const name=`aesthetic-body-backup-${dstr()}.json`,blob=new Blob([JSON.stringify(db)],{type:'application/json'});
+  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Aesthetic Body backup'});return}}catch(e){if(e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 
@@ -486,7 +486,7 @@ main.addEventListener('change',e=>{
   if(i.id==='fin'){db.active.finisher=i.checked;save()}
   if(i.id==='exSel'){progEx=i.value;render()}
   if(i.dataset.set){const v=parseNum(i.value);if(v!=null&&v>=0){db.settings[i.dataset.set]=v;save();toast('Saved')}else i.value=db.settings[i.dataset.set]}
-  if(i.id==='impFile'&&i.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions))throw 0;if(confirm(`Replace current data with this backup (${d.sessions.length} workouts)?`)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;save();render();toast('Backup restored')}}catch(err){toast('That file is not an IronLog backup')}};r.readAsText(i.files[0])}
+  if(i.id==='impFile'&&i.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions))throw 0;if(confirm(`Replace current data with this backup (${d.sessions.length} workouts)?`)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;save();render();toast('Backup restored')}}catch(err){toast('That file is not an Aesthetic Body backup')}};r.readAsText(i.files[0])}
 });
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='wIn')$('#wSave').click()});
 

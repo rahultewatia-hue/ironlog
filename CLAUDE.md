@@ -4,6 +4,9 @@ IronLog is Rahul's personal offline workout tracker. It's a PWA hosted on GitHub
 (repo: `rahultewatia-hue/ironlog`, live at https://rahultewatia-hue.github.io/ironlog/)
 and installed on his iPhone via Safari → Add to Home Screen.
 
+The app's display name is **Aesthetic Body** (title, header, home-screen label, manifest). "IronLog" remains the
+internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key and the `ironlog-vN` cache names unchanged.
+
 ## Files
 - `index.html` — the entire app (HTML + CSS + JS). No build step, no external libraries, no CDNs. It must keep working offline.
 - `sw.js` — service worker. `index.html` is fetched network-first, so the phone picks up updates automatically. Other assets are cache-first.

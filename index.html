@@ -272,9 +272,10 @@ body.focus main{padding-top:0}
 .stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;
   background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 38px);
   -webkit-mask:linear-gradient(180deg,transparent,#000 60%);mask:linear-gradient(180deg,transparent,#000 60%)}
-.stage svg.demo{position:absolute;inset:env(safe-area-inset-top) 0 0 0;width:100%;height:calc(100% - env(safe-area-inset-top));z-index:1}
 .stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;background:#0a0d0f}
 .stage .shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(10,13,15,.6) 0%,rgba(10,13,15,0) 28%,rgba(10,13,15,0) 62%,rgba(10,13,15,.8) 100%)}
+.stage .vmsg{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 18px;border-radius:20px;font-size:13.5px;font-weight:600;text-align:center;white-space:nowrap}
+.stage .vmsg[hidden]{display:none}
 .stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
 .stage .tl{top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;justify-content:space-between}
 .stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
@@ -351,6 +352,8 @@ body.focus main{padding-top:0}
 
 <script>
 "use strict";
+// Bump on every change to this file so open apps reload themselves (see checkForUpdate)
+const APP_BUILD='2026-10-05.2';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -496,93 +499,6 @@ function figure(side,prim,sec,w){
 const pair=(p,s,w)=>figure('f',p,s,w)+figure('b',p,s,w);
 const thumb=(p,s)=>`<div class="thumb">${figure(p.some(m=>BACK.includes(m))?'b':'f',p,s,33)}</div>`;
 
-/* ---------- Animated exercise demos (side view, drawn in code so they work offline) ---------- */
-// A pose: hip [x,y], torso angle t (deg, 0 = right, -90 = up), ankle(s), hand as absolute `hand`,
-// relative to the shoulder `hr` or to the hip `hh`; es/ks = elbow/knee bend direction; sy = shoulder raise.
-const SEG={torso:54,neck:15,head:10,ua:32,fa:30,th:44,sh:42};
-const STAND={hip:[150,108],t:-90,ank:[150,192]};
-const PROPS={
-  flat:'<rect x="66" y="139" width="108" height="9" rx="4.5" fill="url(#gProp)"/><rect x="80" y="148" width="6" height="44" rx="2" fill="#3a4248"/><rect x="154" y="148" width="6" height="44" rx="2" fill="#3a4248"/>',
-  incline:'<path d="M150 141 L104 82" stroke="url(#gProp)" stroke-width="10" stroke-linecap="round"/><rect x="138" y="139" width="40" height="9" rx="4.5" fill="url(#gProp)"/><rect x="150" y="148" width="6" height="44" rx="2" fill="#3a4248"/><path d="M120 108 L128 192" stroke="#3a4248" stroke-width="6"/>',
-  decline:'<path d="M92 152 L182 130" stroke="url(#gProp)" stroke-width="10" stroke-linecap="round"/><path d="M110 150 L110 192 M170 134 L170 192" stroke="#3a4248" stroke-width="6"/><circle cx="206" cy="146" r="6" fill="#4a535a"/>',
-  box:'<rect x="62" y="150" width="54" height="10" rx="5" fill="url(#gProp)"/><rect x="72" y="160" width="6" height="32" fill="#3a4248"/><rect x="100" y="160" width="6" height="32" fill="#3a4248"/>',
-  low:'<rect x="40" y="127" width="70" height="10" rx="5" fill="url(#gProp)"/><rect x="50" y="137" width="6" height="55" fill="#3a4248"/><rect x="94" y="137" width="6" height="55" fill="#3a4248"/>',
-  seat:'<rect x="112" y="137" width="62" height="9" rx="4.5" fill="url(#gProp)"/><rect x="108" y="64" width="10" height="80" rx="5" fill="url(#gProp)"/><rect x="140" y="146" width="6" height="46" fill="#3a4248"/>'
-};
-const DEMOS={
-  'Barbell bench press':{eq:'bb',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[106,114],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,74],es:1}},
-  'Incline barbell press':{eq:'bb',props:'incline',A:{hip:[150,134],t:-128,ank:[198,192],hand:[128,80],es:1},B:{hip:[150,134],t:-128,ank:[198,192],hand:[150,42],es:1}},
-  'Decline dumbbell press':{eq:'db',props:'decline',A:{hip:[168,126],t:163,ank:[204,150],hand:[120,124],es:1},B:{hip:[168,126],t:163,ank:[204,150],hand:[113,84],es:1}},
-  'Close-grip bench press':{eq:'bb',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[102,118],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,74],es:1}},
-  'EZ-bar skull crusher':{eq:'ez',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[72,116],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,72],es:1}},
-  'Barbell back squat':{eq:'bb',A:{hip:[150,108],t:-86,ank:[154,192],hr:[-3,3],es:-1},B:{hip:[116,150],t:-50,ank:[154,192],hr:[-3,3],es:-1}},
-  'Romanian deadlift':{eq:'bb',A:{hip:[150,108],t:-88,ank:[152,192],hr:[2,60],es:1},B:{hip:[136,104],t:-12,ank:[152,192],hr:[0,60],es:1}},
-  'Bulgarian split squat':{eq:'db',props:'box',A:{hip:[150,106],t:-86,ank:[184,192],ank2:[100,148],hr:[0,58],es:1},B:{hip:[146,140],t:-80,ank:[184,192],ank2:[100,148],hr:[0,58],es:1}},
-  'Barbell hip thrust':{eq:'bb',props:'low',A:{hip:[132,170],t:-136,ank:[188,192],hh:[2,-14],es:1},B:{hip:[138,130],t:178,ank:[188,192],hh:[2,-14],es:1}},
-  'Conventional deadlift':{eq:'bb',A:{hip:[124,142],t:-32,ank:[160,192],hr:[0,58],es:1},B:{hip:[150,108],t:-88,ank:[156,192],hr:[2,58],es:1}},
-  'Barbell bent-over row':{eq:'bb',A:{hip:[140,108],t:-20,ank:[156,192],hr:[0,58],es:1},B:{hip:[140,108],t:-20,ank:[156,192],hr:[-16,26],es:1}},
-  'Single-arm dumbbell row':{eq:'db',A:{hip:[136,110],t:-14,ank:[150,192],hr:[0,52],es:1},B:{hip:[136,110],t:-14,ank:[150,192],hr:[-18,20],es:1}},
-  'EZ-bar curl':{eq:'ez',A:{...STAND,hr:[4,60],es:1},B:{...STAND,hr:[16,6],es:1}},
-  'Dumbbell hammer curl':{eq:'db',A:{...STAND,hr:[4,60],es:1},B:{...STAND,hr:[16,6],es:1}},
-  'Standing overhead press':{eq:'bb',A:{...STAND,hr:[14,-2],es:1},B:{...STAND,hr:[2,-61],es:1}},
-  'Seated dumbbell press':{eq:'db',props:'seat',A:{hip:[140,134],t:-90,ank:[192,192],hr:[14,-2],es:1},B:{hip:[140,134],t:-90,ank:[192,192],hr:[2,-61],es:1}},
-  'Dumbbell lateral raise':{eq:'db',A:{...STAND,hr:[4,58],es:1},B:{...STAND,hr:[56,4],es:1}},
-  'Rear-delt fly':{eq:'db',A:{hip:[140,108],t:-18,ank:[154,192],hr:[2,52],es:1},B:{hip:[140,108],t:-18,ank:[154,192],hr:[-34,6],es:1}},
-  'Barbell shrug':{eq:'bb',A:{...STAND,hr:[3,60],es:1},B:{...STAND,sy:-8,hr:[3,60],es:1}}
-};
-const rad=d=>d*Math.PI/180;
-const along=(p,a,l)=>[p[0]+l*Math.cos(rad(a)),p[1]+l*Math.sin(rad(a))];
-function ik(A,C,l1,l2,s){ // two-bone IK: joint position between A and C
-  const dx=C[0]-A[0],dy=C[1]-A[1],d=Math.min(Math.max(Math.hypot(dx,dy),Math.abs(l1-l2)+.01),l1+l2-.01);
-  const a=Math.atan2(dy,dx),al=Math.acos((l1*l1+d*d-l2*l2)/(2*l1*d));
-  return [A[0]+l1*Math.cos(a+s*al),A[1]+l1*Math.sin(a+s*al)];
-}
-const lerp=(a,b,k)=>a+(b-a)*k;
-const lerpP=(a,b,k)=>a&&b?[lerp(a[0],b[0],k),lerp(a[1],b[1],k)]:(a||b);
-function blendPose(A,B,k){const o={...A};for(const key of ['hip','ank','ank2','hand','hr','hh'])if(A[key])o[key]=lerpP(A[key],B[key],k);o.t=lerp(A.t,B.t,k);o.sy=lerp(A.sy||0,B.sy||0,k);return o}
-function limb(a,b,w,base,hi){
-  const o=w*.16;
-  return `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${base}" stroke-width="${w}" stroke-linecap="round"/>`+
-    `<line x1="${(a[0]-o).toFixed(1)}" y1="${(a[1]-o).toFixed(1)}" x2="${(b[0]-o).toFixed(1)}" y2="${(b[1]-o).toFixed(1)}" stroke="${hi}" stroke-width="${(w*.34).toFixed(1)}" stroke-linecap="round" opacity=".75"/>`;
-}
-function gear(eq,h){
-  const x=h[0].toFixed(1),y=h[1].toFixed(1);
-  if(eq==='bb')return `<circle cx="${x}" cy="${y}" r="16" fill="url(#gDb)" stroke="rgba(198,244,50,.6)" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="9" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="3.2" fill="#c6f432"/>`;
-  if(eq==='ez')return `<circle cx="${x}" cy="${y}" r="12" fill="url(#gDb)" stroke="rgba(198,244,50,.5)" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="2.8" fill="#c6f432"/>`;
-  return `<circle cx="${x}" cy="${y}" r="8.5" fill="url(#gDb)" stroke="rgba(255,255,255,.7)" stroke-width="1"/><circle cx="${x}" cy="${y}" r="2.4" fill="#c9cfdb"/>`;
-}
-function demoSVG(name,k){
-  const d=DEMOS[name];if(!d)return '';
-  const p=blendPose(d.A,d.B,k),m=EX[name]?EX[name].p:[];
-  const arms=m.some(x=>['delts','triceps','biceps','fore','rdelts','chest','lats'].includes(x)),legs=m.some(x=>['quads','hams','glutes','calves'].includes(x));
-  const core=m.some(x=>['chest','lats','lowback','traps','abs','glutes'].includes(x));
-  const G=['#b9e82a','#efffb0'],Gf=['#6f8d1c','#a9c95a'],N=['#59636a','#8e989e'],Nf=['#363d42','#4f585e'];
-  const sh=along(p.hip,p.t,SEG.torso);sh[1]+=p.sy||0;
-  const head=along(sh,p.t,SEG.neck);
-  const hand=p.hand||(p.hr?[sh[0]+p.hr[0],sh[1]+p.hr[1]]:[p.hip[0]+p.hh[0],p.hip[1]+p.hh[1]]);
-  const knee=ik(p.hip,p.ank,SEG.th,SEG.sh,p.ks||-1),ank2=p.ank2||[p.ank[0]-6,p.ank[1]],knee2=ik(p.hip,ank2,SEG.th,SEG.sh,p.ks||-1);
-  const elbow=ik(sh,hand,SEG.ua,SEG.fa,p.es||1);
-  const off=([x,y])=>[x-4,y-3],L=legs?G:N,Lf=legs?Gf:Nf,Ar=arms?G:N,Af=arms?Gf:Nf,T=core?G:N;
-  const fh=off(hand),fe=off(elbow),fs=off(sh);
-  return `<ellipse cx="150" cy="195" rx="96" ry="7" fill="url(#gFloor)"/>${PROPS[d.props]||''}
-    ${limb(p.hip,knee2,13,Lf[0],Lf[1])}${limb(knee2,ank2,11,Lf[0],Lf[1])}
-    ${limb(fs,fe,10,Af[0],Af[1])}${limb(fe,fh,9,Af[0],Af[1])}${d.eq!=='db'?'':gear('db',fh)}
-    ${limb(p.hip,sh,21,T[0],T[1])}<circle cx="${head[0].toFixed(1)}" cy="${head[1].toFixed(1)}" r="${SEG.head}" fill="url(#gN)" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
-    ${limb(p.hip,knee,14,L[0],L[1])}${limb(knee,p.ank,12,L[0],L[1])}<ellipse cx="${(p.ank[0]+5).toFixed(1)}" cy="${(p.ank[1]+1).toFixed(1)}" rx="9" ry="4" fill="${L[0]}"/>
-    ${gear(d.eq,hand)}${limb(sh,elbow,11,Ar[0],Ar[1])}${limb(elbow,hand,10,Ar[0],Ar[1])}`;
-}
-// Loop: lift (A→B) 1.2 s, pause, lower (B→A) 1.6 s, pause
-let demo={name:null,playing:true,t0:0,raf:0};
-const easeIO=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
-function demoPhase(ms){const c=ms%3600;return c<1200?easeIO(c/1200):c<1600?1:c<3200?1-easeIO((c-1600)/1600):0}
-function startDemo(name){
-  cancelAnimationFrame(demo.raf);demo={name,playing:!matchMedia('(prefers-reduced-motion: reduce)').matches,t0:performance.now(),raf:0,off:0};
-  const loop=now=>{const g=document.getElementById('demoFig');if(!g||demo.name!==name)return;
-    if(demo.playing)g.innerHTML=demoSVG(name,demoPhase(now-demo.t0));demo.raf=requestAnimationFrame(loop)};
-  const g=document.getElementById('demoFig');if(g)g.innerHTML=demoSVG(name,demo.playing?0:1);
-  demo.raf=requestAnimationFrame(loop);
-}
-
 /* plate solver: fewest plates per side for each reachable load */
 const PLATE_MAP=(()=>{const map=new Map();
   function go(i,sum,list){
@@ -642,7 +558,7 @@ function render(){
   const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
   document.body.classList.toggle('focus',!!detail);
   if(detail)rDetail(m);
-  else{demo.name=null;({workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m)}
+  else({workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m);
   m.firstElementChild&&m.firstElementChild.classList.add('view');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)m.querySelectorAll('.tilt').forEach(tilt);
   tickClock();
@@ -705,6 +621,16 @@ function rWorkout(m){
   </section>`;
 }
 
+/* ---------- Exercise video ---------- */
+function setupVideo(){
+  const v=$('#exVid');if(!v)return;
+  const msg=t=>{$('#vMsgTxt').textContent=t;$('#vMsg').hidden=false;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'};
+  v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video needs an internet connection'));
+  v.addEventListener('playing',()=>{$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
+  if(!navigator.onLine)msg('Video needs an internet connection');
+  const p=v.play();if(p&&p.catch)p.catch(()=>{$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
+}
+
 /* ---------- Exercise detail (log sets) ---------- */
 function exHistory(name){return db.sessions.filter(s=>s.sets[name]&&s.sets[name].length)}
 function rDetail(m){
@@ -719,12 +645,12 @@ function rDetail(m){
   const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' proper form');
   m.innerHTML=`<section>
     <div class="stage">
-      ${VIDEOS[name]?`<video id="exVid" src="videos/${VIDEOS[name]}.mp4" poster="videos/${VIDEOS[name]}.jpg" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>`:''}
-      <svg class="demo" viewBox="38 -28 224 226" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated demonstration of ${esc(name)}" ${VIDEOS[name]?'hidden':''}><g id="demoFig"></g></svg>
+      <video id="exVid" src="videos/${VIDEOS[name]}.mp4" poster="videos/${VIDEOS[name]}.jpg" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
+      <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video needs an internet connection</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
       <div class="ov tl"><button class="iconbtn glass" id="back" aria-label="Back to workout">${ico('chevron-left')}</button><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
       <div class="ov bl">
-        <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">${VIDEOS[name]?'Pause':'Lift 1 s · lower 2 s'}</span></button>
+        <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Pause</span></button>
         <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
       </div>
     </div>
@@ -761,13 +687,7 @@ function rDetail(m){
       <div class="tbl" style="grid-template-columns:36px repeat(${x.length},minmax(40px,1fr))"><span>kg</span>${x.map(q=>`<b class="${best&&q.w===best.w&&q.r===best.r?'pr':''}">${fmt(q.w)}</b>`).join('')}<span>reps</span>${x.map(q=>`<b>${q.r}</b>`).join('')}</div></div>`}).join(''):'<p class="empty">Your sessions for this exercise will show here.</p>'}
   </section>`;
   drawExChart();
-  const v=$('#exVid');
-  if(!v){startDemo(name);return}
-  // Video streams from the site; offline (or if it fails) fall back to the animated demo
-  const fallback=()=>{if(!v.isConnected||v.dataset.failed)return;v.dataset.failed='1';v.remove();$('.stage svg.demo').hidden=false;$('#demoLbl').textContent='Lift 1 s · lower 2 s';startDemo(name)};
-  v.addEventListener('error',fallback);
-  if(!navigator.onLine)fallback();
-  else{const p=v.play();if(p&&p.catch)p.catch(()=>{$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'})}
+  setupVideo();
 }
 function drawExChart(){
   const hist=exHistory(curEx);
@@ -941,10 +861,9 @@ main.addEventListener('click',e=>{
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){curEx=t.dataset.open;render();window.scrollTo(0,0);return}
   if(t.id==='back'){curEx=null;render();window.scrollTo(0,0);return}
-  if(t.id==='demoToggle'&&$('#exVid')){const v=$('#exVid');if(v.paused)v.play().catch(()=>{});else v.pause();
+  if(t.id==='demoToggle'){const v=$('#exVid');if(!v)return;if(v.paused)v.play().catch(()=>{});else v.pause();
     $('#demoIco').innerHTML=ico(v.paused?'play':'pause');$('#demoLbl').textContent=v.paused?'Play':'Pause';return}
-  if(t.id==='demoToggle'){const now=performance.now();if(demo.playing){demo.pausedAt=now;demo.playing=false}else{demo.t0+=now-(demo.pausedAt||now);demo.playing=true}
-    $('#demoIco').innerHTML=ico(demo.playing?'pause':'play');$('#demoLbl').textContent=demo.playing?'Lift 1 s · lower 2 s':'Paused · tap to play';return}
+  if(t.id==='vRetry'){const v=$('#exVid');$('#vMsg').hidden=true;v.load();v.play().catch(()=>{});return}
   if(t.hasAttribute('data-tick'))return tickSet(t);
   if(t.hasAttribute('data-add')){db.active.sets[curEx].push({w:null,r:null,done:false});save();render();return}
   if(t.dataset.mode){exMode=t.dataset.mode;const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;drawExChart();return}
@@ -975,6 +894,17 @@ main.addEventListener('change',e=>{
   if(i.id==='impFile'&&i.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions))throw 0;if(confirm(`Replace current data with this backup (${d.sessions.length} workouts)?`)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;save();render();toast('Backup restored')}}catch(err){toast('That file is not an Aesthetic Body backup')}};r.readAsText(i.files[0])}
 });
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='wIn')$('#wSave').click()});
+
+/* ---------- Auto-update: reload when a newer build is live ---------- */
+let updChecked=0;
+async function checkForUpdate(){
+  if(!navigator.onLine||Date.now()-updChecked<60000)return;updChecked=Date.now();
+  try{const t=await (await fetch('index.html?b='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_BUILD='([^']+)'/);
+    if(m&&m[1]!==APP_BUILD){const busy=document.activeElement&&document.activeElement.tagName==='INPUT';if(!busy)location.reload();else updChecked=0}}catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkForUpdate()});
+window.addEventListener('online',checkForUpdate);
+setTimeout(checkForUpdate,3000);
 
 render();
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));

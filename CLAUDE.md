@@ -25,8 +25,8 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 1. **Never break saved data.** Data lives in localStorage under the key `ironlog-v1` with the shape
    `{sessions:[], weights:[], active:null|{...}, settings:{restC, restI, bar, ez}}`.
    If the data shape must change, add a migration in `load()` so old data keeps working.
-2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: exercise videos stream from the site (with an offline animation fallback) and the user-tapped "Full tutorial" link.
-3. **If you change `sw.js`, `manifest.json` or any icon, bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone don't need a bump.
+2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: exercise videos stream from the site (poster + Retry when offline) and the user-tapped "Full tutorial" link.
+3. **Bump `APP_BUILD` near the top of the `<script>` in `index.html` on every change to it** (open apps compare it with the live file and reload). **If you change `sw.js`, `manifest.json` or any icon, also bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone don't need a bump.
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
 ## What the app does
@@ -65,8 +65,8 @@ Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<
 3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained), tilt cards, 3D bars.
 `MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
 Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
-Pexels clips trimmed to 10 s, 720×405, sources in `videos/CREDITS.md`). Videos stream from the site and are NOT cached by the service worker;
-offline or on error the stage falls back to the animated side-view demo (`DEMOS` poses, two-bone IK in `demoSVG`, `startDemo`).
-Pause/play pill and a "Full tutorial" link that opens a YouTube search. New exercise → add a clip to `videos/` and an entry in `VIDEOS`, `MUSCLES`, `HOWTO`, `DEMOS`.
+Pexels clips trimmed to 10 s, 720×405, sources in `videos/CREDITS.md`). MP4s stream from the site and are not cached by the service worker; posters are cached.
+If a clip can't play (offline/error) the poster stays with a "Retry" message. The user does NOT want animated/motion-graphic demos, only real footage.
+Pause/play pill and a "Full tutorial" link that opens a YouTube search. New exercise → add a clip to `videos/` and entries in `VIDEOS`, `MUSCLES`, `HOWTO`.
 Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).
 Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey. Sentence-case labels. Safe-area aware. Mobile-first (iPhone ~390 px wide).

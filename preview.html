@@ -20,8 +20,8 @@ body{min-height:100vh;display:flex;justify-content:center;align-items:flex-start
 /* Phone frame on desktop, full screen on phones */
 .device{position:relative;width:100%;max-width:430px;min-height:100vh;overflow:hidden;background:var(--bg)}
 @media (min-width:600px){
-  body{padding:32px 0;background:#dfe3eb}
-  .device{min-height:880px;height:880px;border-radius:52px;border:10px solid #fff;box-shadow:0 40px 80px -20px rgba(40,50,80,.35),0 0 0 1px rgba(0,0,0,.06)}
+  body{padding:16px 0;background:#dfe3eb;align-items:center;min-height:100vh;height:100vh;overflow:hidden}
+  .device{min-height:0;height:min(880px,calc(100vh - 32px));border-radius:46px;border:10px solid #fff;box-shadow:0 40px 80px -20px rgba(40,50,80,.35),0 0 0 1px rgba(0,0,0,.06)}
   .screen{height:100%;overflow-y:auto}
 }
 

@@ -39,6 +39,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - **History tab:** past sessions, expandable, deletable.
 - **Settings tab:** barbell and EZ bar weights, rest times, calorie explanation, export/import JSON backup, erase all.
 - Charts are hand-drawn SVG (`smoothChart`) and CSS 3D bars; no libraries.
+- Never use native `confirm()`/`prompt()`/`alert()` (blocked in some web views, e.g. the Android wrapper); use the in-app sheet `ask(msg, {ok, danger, input})`, which returns a Promise.
 
 ## Training program (the `PROGRAM` object)
 Goal: fat loss. 6–8 reps, low volume, high intensity, sets taken 1–2 reps short of failure.

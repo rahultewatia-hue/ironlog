@@ -1,20 +1,37 @@
 name: Android APK
 
-# The app loads the live site, so a new APK is only needed when the Android wrapper changes.
+# Rebuild the APK on every app change so the release always matches the live app.
+# The APK loads the live site, so web changes reach phones instantly; the in-app update
+# prompt only appears when the native wrapper (android/) changes and versionCode rises.
 on:
   push:
     branches: [main]
-    paths: ['android/**', '.github/workflows/android.yml']
+    paths:
+      - 'index.html'
+      - 'sw.js'
+      - 'manifest.json'
+      - 'icon-*.png'
+      - 'android/**'
+      - '.github/workflows/android.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out the native version
+        run: echo "NATIVE_VERSION=$(( $(git rev-list --count HEAD -- android) + 1 ))" >> "$GITHUB_ENV"
 
       - uses: actions/setup-java@v4
         with:
@@ -44,8 +61,13 @@ jobs:
           cp android/app/build/outputs/apk/release/app-release.apk aesthetic-body.apk
           gh release delete android-latest --yes --cleanup-tag || true
           gh release create android-latest aesthetic-body.apk \
-            --title "Aesthetic Body for Android (build ${{ github.run_number }})" \
-            --notes "Download aesthetic-body.apk on your Android phone and open it to install. Built from ${{ github.sha }}."
+            --title "Aesthetic Body for Android v1.${NATIVE_VERSION} (build ${{ github.run_number }})" \
+            --notes "Download aesthetic-body.apk on your Android phone and open it to install.
+
+          The app loads the live site, so app changes appear without reinstalling. Installed apps check this release and offer an update when the Android wrapper changes.
+
+          versionCode=${NATIVE_VERSION}
+          Built from ${{ github.sha }}."
 
       - uses: actions/upload-artifact@v4
         with:

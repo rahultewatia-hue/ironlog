@@ -13,8 +13,10 @@ android {
         applicationId 'com.rahultewatia.ironlog'
         minSdk 24
         targetSdk 34
-        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger())
-        versionName '1.0.' + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+        // versionCode only rises when the native wrapper changes (count of commits touching android/),
+        // so web-only changes don't trigger an APK update prompt. The page itself updates live.
+        versionCode((System.getenv('NATIVE_VERSION') ?: '1').toInteger())
+        versionName '1.' + (System.getenv('NATIVE_VERSION') ?: '0') + '.' + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
     }
 
     signingConfigs {

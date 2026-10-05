@@ -91,6 +91,10 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 .ex:active{transform:scale(.98)}
 .thumb{width:56px;height:66px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(160deg,#252c31,#14181b);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 14px -6px rgba(0,0,0,.7)}
+.thumb.photo{position:relative;overflow:hidden;width:60px;height:72px;border:1px solid rgba(255,255,255,.08)}
+.thumb.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb.photo::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 -18px 18px -14px rgba(0,0,0,.55);pointer-events:none}
+.ex.up .thumb.photo{border-color:rgba(198,244,50,.55)}
 .ex .txt{flex:1;min-width:0}
 .ex .name{font-size:15.5px;font-weight:700}
 .ex .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
@@ -353,7 +357,7 @@ body.focus main{padding-top:0}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-05.2';
+const APP_BUILD='2026-10-05.3';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -498,6 +502,8 @@ function figure(side,prim,sec,w){
 }
 const pair=(p,s,w)=>figure('f',p,s,w)+figure('b',p,s,w);
 const thumb=(p,s)=>`<div class="thumb">${figure(p.some(m=>BACK.includes(m))?'b':'f',p,s,33)}</div>`;
+// Exercise photo (cut from its stock clip); the muscle figure underneath shows if the photo can't load
+const photo=n=>{const e=EX[n];return VIDEOS[n]?`<div class="thumb photo">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,33)}<img src="videos/thumbs/${VIDEOS[n]}.jpg" alt="" decoding="async" onerror="this.remove()"></div>`:thumb(e.p,e.s)};
 
 /* plate solver: fewest plates per side for each reachable load */
 const PLATE_MAP=(()=>{const map=new Map();
@@ -591,7 +597,7 @@ function rWorkout(m){
     ${hero}
     <div class="tiles">${tileH(ws.n,'workouts this week','','dumbbell')}${tileH(ws.kcal,'kcal burned this week','','flame')}${tileH(lw?fmt(lw.kg):'—',lw?'kg body weight':'log your weight','','scale')}</div>
     <div class="label">Your split</div>
-    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-start="${k}">${thumb(dm.p,dm.s)}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
+    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-start="${k}">${photo(p.ex[0][0])}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
     </section>`;
     return;
   }
@@ -611,7 +617,7 @@ function rWorkout(m){
     ${names.map(n=>{const info=EX[n],sets=a.sets[n],d=sets.filter(s=>s.done).length,last=lastSets(n);
       const hit=last&&last.length>=info.sets&&last.every(s=>s.r>=8),up=n===next;
       const meta=isDone(n)?sets.map(s=>`${fmt(s.w)} × ${s.r}`).join(', '):d?`${d} of ${sets.length} sets logged`:up&&hit?'Up next · add 2–4 kg today':last?`${sets.length} sets · last ${last.map(s=>`${fmt(s.w)} × ${s.r}`).join(', ')}`:`${sets.length} sets · first time`;
-      return `<button class="ex glass ${up?'up':''}" data-open="${esc(n)}">${thumb(info.p,info.s)}<div class="txt"><div class="name">${esc(n)}</div><div class="${up&&!d?'next':'meta'}">${meta}</div></div>${isDone(n)?`<span class="done">${ico('check')}</span>`:`<span class="chev">${ico('chevron-right')}</span>`}</button>`}).join('')}
+      return `<button class="ex glass ${up?'up':''}" data-open="${esc(n)}">${photo(n)}<div class="txt"><div class="name">${esc(n)}</div><div class="${up&&!d?'next':'meta'}">${meta}</div></div>${isDone(n)?`<span class="done">${ico('check')}</span>`:`<span class="chev">${ico('chevron-right')}</span>`}</button>`}).join('')}
     <div class="card glass"><label class="check"><input type="checkbox" id="fin" ${a.finisher?'checked':''}><span class="box">${ico('check')}</span><span><b>Finisher done</b><small>${esc(p.fin)}</small></span></label></div>
     <div class="card glass"><div class="label" style="margin:0 0 2px">How hard was today?</div>
       ${seg(EFFORT.map(e=>[e.k,e.label]),a.effort,'effort')}

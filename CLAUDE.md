@@ -67,6 +67,7 @@ Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<
 Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
 Pexels clips trimmed to 10 s, 720×405, sources in `videos/CREDITS.md`). MP4s stream from the site and are not cached by the service worker; posters are cached.
 If a clip can't play (offline/error) the poster stays with a "Retry" message. The user does NOT want animated/motion-graphic demos, only real footage.
-Pause/play pill and a "Full tutorial" link that opens a YouTube search. New exercise → add a clip to `videos/` and entries in `VIDEOS`, `MUSCLES`, `HOWTO`.
+Pause/play pill and a "Full tutorial" link that opens a YouTube search. List rows show a photo from `videos/thumbs/<slug>.jpg` (168×210 crop of the clip) via `photo()`, with the muscle figure as fallback.
+New exercise → add a clip to `videos/`, a thumb to `videos/thumbs/`, and entries in `VIDEOS`, `MUSCLES`, `HOWTO`.
 Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).
 Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey. Sentence-case labels. Safe-area aware. Mobile-first (iPhone ~390 px wide).

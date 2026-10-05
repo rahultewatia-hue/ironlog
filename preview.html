@@ -405,6 +405,7 @@ $('#rows').addEventListener('click',ev=>{const b=ev.target.closest('.tick');if(!
   if(s.r==null&&/^\d+$/.test(ri.placeholder)){s.r=+ri.placeholder;ri.value=s.r}
   if(s.w==null||s.r==null){toast('Enter the weight and reps first');(s.w==null?wi:ri).focus();return}
   s.done=true;row.classList.add('ok');
+  $('#plates').innerHTML=platesHTML(EXS[cur],s.w);
   startRest(EXS[cur].t==='c'?150:90);
   if(allDone(cur))toast('Exercise done. Nice work.');
 });

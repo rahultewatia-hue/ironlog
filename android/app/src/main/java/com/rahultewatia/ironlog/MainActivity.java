@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         web = new WebView(this);
-        web.setBackgroundColor(0xFFEEF0F5);
+        web.setBackgroundColor(0xFF0A0D0F);
         setContentView(web);
 
         WebSettings s = web.getSettings();
@@ -302,10 +302,10 @@ public class MainActivity extends Activity {
 
     private static final String OFFLINE_HTML =
         "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'></head>"
-        + "<body style='margin:0;background:#eef0f5;color:#1d2230;font-family:sans-serif;display:flex;"
+        + "<body style='margin:0;background:#0a0d0f;color:#f3f6f4;font-family:sans-serif;display:flex;"
         + "align-items:center;justify-content:center;height:100vh;text-align:center;padding:24px;box-sizing:border-box'>"
         + "<div><h2>Connect to the internet once</h2>"
-        + "<p style='color:#7a8296'>Aesthetic Body needs to download itself the first time. After that it works offline.</p>"
-        + "<button onclick=\"location.href='" + APP_URL + "'\" style='background:#e4b154;color:#3d2a06;border:0;"
+        + "<p style='color:#8a949b'>Aesthetic Body needs to download itself the first time. After that it works offline.</p>"
+        + "<button onclick=\"location.href='" + APP_URL + "'\" style='background:#c6f432;color:#0b0f05;border:0;"
         + "border-radius:14px;padding:13px 22px;font-weight:800;font-size:16px'>Try again</button></div></body></html>";
 }

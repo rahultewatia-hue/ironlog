@@ -25,7 +25,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 1. **Never break saved data.** Data lives in localStorage under the key `ironlog-v1` with the shape
    `{sessions:[], weights:[], active:null|{...}, settings:{restC, restI, bar, ez}}`.
    If the data shape must change, add a migration in `load()` so old data keeps working.
-2. **Stay offline-capable.** No network requests, no external fonts, scripts or images.
+2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). The only exception is the user-tapped "Watch video" link.
 3. **If you change `sw.js`, `manifest.json` or any icon, bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone don't need a bump.
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
@@ -56,13 +56,15 @@ This is `PLATES_PER_SIDE` = 15×1, 10×1, 5×2, 3×2, 2.5×1, 2×2, 1×1 per sid
 These are active calories (net of resting burn) and are presented as an estimate. Body weight is the latest logged entry. Sessions open more than 120 min prompt for the real duration.
 
 ## Design
-Light "liquid glass" theme (redesigned 2026-10-05). bg `#eef0f5` with soft blurred colour blobs (peach, lavender, mint) behind
-frosted `.glass` surfaces (`backdrop-filter: blur(22px) saturate(180%)`, white hairline border, inner highlight, sheen).
-Text `#1d2230`, muted `#7a8296`. Accent is soft gold `#d9a441` (text `#b07d1c`); green `#3f9a72` / sage gradient marks done/good.
-3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` primary, `gS` secondary, `gN` untrained), tilt-on-drag
-cards (`.tilt`), glossy 3D plates, 3D calorie bars, floating glass tab bar, sliding glass "lens" on segmented controls.
-`MUSCLES` maps every exercise to [primary, secondary] muscles; keep it in sync with `PROGRAM`.
-Workout flow: Start workout → exercise list → tap an exercise to open its detail screen (Today's sets logging, plate guide,
-muscle map, Weight/Reps/Est. 1RM chart, previous sessions) → finisher + effort → Finish and save.
-Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey.
-Font is `ui-rounded` (SF Pro Rounded on iPhone). Sentence-case labels, no all-caps. Safe-area aware. Mobile-first (iPhone ~390 px wide).
+Dark "neon lime" theme with dark liquid glass (redesigned 2026-10-05 from a reference the user shared).
+bg `#0a0d0f`, glass surfaces `rgba(24,29,33,.66)` with blur, 7% white hairline borders and a faint sheen; soft lime glow blobs behind.
+Text `#f3f6f4`, muted `#8a949b`. Accent is neon lime `#c6f432` (text on lime `#0b0f05`); red `#ff6b5b` for bad/danger.
+Primary buttons are lime pills (Start workout has a dark circle with a play icon); segmented controls use a sliding lime lens.
+Fonts are bundled in `fonts/` (SIL OFL, licences included): **Outfit** for headings and big numbers (`--display`), **Plus Jakarta Sans** for UI text (`--font`).
+Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<body>`; use `ico('name')`. To add an icon, copy its inner SVG from lucide-static into a new `<symbol id="i-name">`.
+3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained), tilt cards, 3D bars.
+`MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
+Exercise screen: top half is a sticky stage with an animated side-view demo (`DEMOS` poses A/B per exercise, two-bone IK in `demoSVG`,
+looped by `startDemo`), a pause/play pill and a "Watch video" link that opens a YouTube search (only network use, user-initiated).
+Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).
+Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey. Sentence-case labels. Safe-area aware. Mobile-first (iPhone ~390 px wide).

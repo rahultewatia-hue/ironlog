@@ -5,171 +5,191 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aesthetic Body">
-<meta name="theme-color" content="#eef0f5">
+<meta name="theme-color" content="#0a0d0f">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Aesthetic Body</title>
 <style>
+/* Fonts bundled locally (SIL OFL) so they work offline: Outfit for headings and big numbers, Plus Jakarta Sans for UI text */
+@font-face{font-family:'Plus Jakarta Sans';src:url(fonts/plus-jakarta-sans.woff2) format('woff2');font-weight:400 800;font-display:swap}
+@font-face{font-family:'Outfit';src:url(fonts/outfit.woff2) format('woff2');font-weight:500 800;font-display:swap}
 :root{
-  --bg:#eef0f5; --text:#1d2230; --muted:#7a8296; --line:rgba(29,34,48,.08);
-  --gold:#d9a441; --goldtxt:#b07d1c; --green:#3f9a72; --red:#c0563f; --ink:#2a2f3d;
-  --glass:rgba(255,255,255,.52); --glass-hi:rgba(255,255,255,.85);
-  --font: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light;
+  --bg:#0a0d0f; --surface:#161b1e; --surface2:#1f2529; --line:rgba(255,255,255,.07);
+  --text:#f3f6f4; --muted:#8a949b; --dim:#5c666d; --lime:#c6f432; --lime-d:#9fcc14; --onlime:#0b0f05; --red:#ff6b5b; --ink:#f3f6f4;
+  --glass:rgba(24,29,33,.66);
+  --font: "Plus Jakarta Sans", ui-rounded, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  --display: "Outfit", "Plus Jakarta Sans", ui-rounded, -apple-system, system-ui, sans-serif;
+  color-scheme: dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.4}
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-.005em}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+h1,.big,.tile b,.clock,.rest b,.stat b,.logw input,.date b,.dchip b,.finish,.gold,.srow input,.tbl b,.k,.howto .num{font-family:var(--display)}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* soft colour fields the glass refracts */
+/* soft lime glow behind the glass */
 .blobs{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.blobs span{position:absolute;border-radius:50%;filter:blur(50px);opacity:.75}
-.blobs .b1{width:320px;height:320px;background:#ffd9a8;top:-80px;right:-90px}
-.blobs .b2{width:280px;height:280px;background:#cfd8ff;top:34%;left:-120px}
-.blobs .b3{width:260px;height:260px;background:#c9f0dd;bottom:-60px;right:-80px}
+.blobs span{position:absolute;border-radius:50%;filter:blur(70px)}
+.blobs .b1{width:340px;height:340px;background:rgba(150,200,30,.22);top:-140px;right:-120px}
+.blobs .b2{width:300px;height:300px;background:rgba(40,90,70,.28);top:40%;left:-170px}
+.blobs .b3{width:280px;height:280px;background:rgba(120,170,20,.12);bottom:-120px;right:-100px}
 
 main{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 18px calc(130px + env(safe-area-inset-bottom))}
 .view{animation:in .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* liquid glass */
-.glass{position:relative;background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
-  border:1px solid rgba(255,255,255,.7);border-radius:24px;
-  box-shadow:inset 0 1px 0 var(--glass-hi),inset 0 -1px 0 rgba(255,255,255,.25),0 10px 30px -12px rgba(40,50,90,.22),0 2px 6px -2px rgba(40,50,90,.08)}
+/* dark liquid glass */
+.glass{position:relative;background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid rgba(255,255,255,.07);border-radius:22px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 14px 34px -16px rgba(0,0,0,.7)}
 .glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0) 70%,rgba(255,255,255,.25) 100%)}
+  background:linear-gradient(140deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 35%,rgba(255,255,255,0) 75%,rgba(198,244,50,.04) 100%)}
 .glass > *{position:relative}
 
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;min-height:42px}
-.iconbtn{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;color:var(--ink);font-size:22px;font-weight:700}
+.iconbtn{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;color:var(--text)}
 .eyebrow{font-size:14px;font-weight:600;color:var(--muted)}
 .muted{color:var(--muted)}
-h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 12px;font-weight:800}
+h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 12px;font-weight:700}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.chip{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:99px;color:#4a5165}
-.clock{font-weight:800;font-size:15px;padding:8px 14px;border-radius:99px;color:var(--goldtxt);font-variant-numeric:tabular-nums}
-.label{font-size:15px;font-weight:700;margin:6px 4px 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:99px;color:#c9d1d5}
+.chip .ic{width:15px;height:15px;color:var(--lime)}
+.clock{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:15px;padding:8px 14px;border-radius:99px;color:var(--lime);font-variant-numeric:tabular-nums}
+.clock .ic{width:16px;height:16px}
+.label{display:flex;align-items:center;justify-content:space-between;font-size:17px;font-weight:700;margin:8px 2px 12px;font-family:var(--display);letter-spacing:-.01em}
+.label small{font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--lime)}
 .perspective{perspective:900px}
 .tilt{transform-style:preserve-3d;transition:transform .2s ease-out;will-change:transform}
 
 /* hero */
-.hero{padding:18px;display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.hero{padding:18px;display:flex;gap:14px;align-items:center;margin-bottom:16px;
+  background:radial-gradient(120% 120% at 0% 0%,rgba(198,244,50,.10),rgba(24,29,33,.7) 55%)}
 .figs{display:flex;gap:3px;transform:translateZ(30px)}
 .hero .info{flex:1;min-width:0;transform:translateZ(18px)}
-.hero .big{font-size:17px;font-weight:700;margin:2px 0 10px;line-height:1.25}
-.bar{height:8px;border-radius:9px;background:rgba(29,34,48,.07);overflow:hidden}
-.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#f0c56d,#d9a441);box-shadow:0 0 12px rgba(217,164,65,.5);transition:width .4s}
+.hero .big{font-size:21px;font-weight:700;margin:6px 0 12px;line-height:1.15;letter-spacing:-.01em}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;color:var(--lime);background:rgba(198,244,50,.12);border:1px solid rgba(198,244,50,.25)}
+.badge .ic{width:14px;height:14px}
+.bar{height:8px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--lime-d),var(--lime));box-shadow:0 0 14px rgba(198,244,50,.55);transition:width .4s}
 .plates3d{display:flex;align-items:center;gap:3px;position:absolute;right:16px;top:-24px;transform:rotate(-8deg) translateZ(40px)}
-.plates3d span{border-radius:6px;box-shadow:inset -3px 0 4px rgba(0,0,0,.15),inset 2px 0 2px rgba(255,255,255,.6),0 6px 12px -4px rgba(0,0,0,.25)}
-.gold{border:0;border-radius:16px;padding:14px 18px;font-weight:800;color:#3d2a06;background:linear-gradient(180deg,#f6d27e,#dea94a);
-  box-shadow:0 8px 18px -8px rgba(217,164,65,.7),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(0,0,0,.08)}
+.plates3d span{border-radius:6px;box-shadow:inset -3px 0 4px rgba(0,0,0,.35),inset 2px 0 2px rgba(255,255,255,.35),0 8px 16px -4px rgba(0,0,0,.6)}
+.gold{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:99px;padding:12px 12px 12px 20px;font-weight:700;font-size:15.5px;color:var(--onlime);background:var(--lime);
+  box-shadow:0 10px 26px -10px rgba(198,244,50,.65),inset 0 1px 0 rgba(255,255,255,.5)}
+.gold .arr{width:28px;height:28px;border-radius:50%;background:var(--onlime);color:var(--lime);display:flex;align-items:center;justify-content:center}
+.gold .arr .ic{width:16px;height:16px}
 .gold:active,.finish:active{transform:scale(.98)}
-.gold.block{display:block;width:100%;margin-top:4px}
+.gold.block{display:flex;width:100%;margin-top:4px;justify-content:space-between}
 
 /* exercise / day rows */
-.ex{display:flex;gap:12px;align-items:center;padding:10px 12px 10px 10px;margin-bottom:10px;width:100%;text-align:left;transition:transform .15s}
-button.ex{border:1px solid rgba(255,255,255,.7)}
+.ex{display:flex;gap:12px;align-items:center;padding:10px 12px 10px 10px;margin-bottom:10px;width:100%;text-align:left;transition:transform .15s;color:var(--text)}
+button.ex{border:1px solid rgba(255,255,255,.07)}
 .ex:active{transform:scale(.98)}
-.thumb{width:56px;height:68px;border-radius:16px;flex:none;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(235,238,246,.7));box-shadow:inset 0 1px 0 #fff,0 4px 10px -4px rgba(40,50,90,.25)}
+.thumb{width:56px;height:66px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#252c31,#14181b);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 14px -6px rgba(0,0,0,.7)}
 .ex .txt{flex:1;min-width:0}
 .ex .name{font-size:15.5px;font-weight:700}
 .ex .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
-.ex .next{font-size:12.5px;color:var(--goldtxt);font-weight:600;margin-top:2px}
-.ex.up{box-shadow:inset 0 1px 0 var(--glass-hi),0 0 0 1.5px rgba(217,164,65,.55),0 12px 30px -12px rgba(217,164,65,.45)}
-.done{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex:none;
-  background:radial-gradient(circle at 35% 30%,#8fd4b3,#4f9f7c);box-shadow:0 4px 10px -3px rgba(79,159,124,.6),inset 0 1px 1px rgba(255,255,255,.6)}
-.chev{color:#a3aabb;font-size:22px;font-weight:700}
-.daytag{font-size:12px;font-weight:800;color:var(--goldtxt)}
+.ex .next{font-size:12.5px;color:var(--lime);font-weight:600;margin-top:2px}
+.ex.up{border-color:rgba(198,244,50,.45)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px rgba(198,244,50,.35),0 14px 30px -14px rgba(198,244,50,.35)}
+.done{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--onlime);flex:none;background:var(--lime);box-shadow:0 0 14px rgba(198,244,50,.45)}
+.done .ic{width:17px;height:17px;stroke-width:3}
+.chev{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;color:var(--muted);background:rgba(255,255,255,.05)}
+.chev .ic{width:17px;height:17px}
+.daytag{font-size:12px;font-weight:700;color:var(--lime)}
 
 /* tiles */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .tile{padding:12px;border-radius:20px}
-.tile b{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.tile .ic{width:18px;height:18px;color:var(--lime);margin-bottom:6px;display:block}
+.tile b{display:block;font-size:22px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .tile span{font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.25;display:block;margin-top:2px}
-.good{color:var(--green)!important}.bad{color:var(--red)!important}
+.good{color:var(--lime)!important}.bad{color:var(--red)!important}
 
 /* finisher, effort */
 .card{padding:14px 16px;margin-bottom:12px}
 .check{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
 .check input{position:absolute;opacity:0;width:1px;height:1px}
-.box{width:28px;height:28px;border-radius:9px;flex:none;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.6);box-shadow:inset 0 2px 4px rgba(40,50,90,.1);
-  display:flex;align-items:center;justify-content:center;color:transparent;font-weight:900}
-.check input:checked + .box{background:radial-gradient(circle at 35% 30%,#8fd4b3,#4f9f7c);color:#fff;border-color:transparent;box-shadow:0 4px 10px -3px rgba(79,159,124,.6)}
-.check input:focus-visible + .box{outline:2px solid var(--gold);outline-offset:2px}
+.box{width:28px;height:28px;border-radius:9px;flex:none;border:1.5px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:transparent}
+.box .ic{width:17px;height:17px;stroke-width:3}
+.check input:checked + .box{background:var(--lime);color:var(--onlime);border-color:transparent;box-shadow:0 0 14px rgba(198,244,50,.45)}
+.check input:focus-visible + .box{outline:2px solid var(--lime);outline-offset:2px}
 .check b{display:block;font-size:15.5px}
 .check small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:16px;margin-bottom:12px}
+.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:99px;margin-bottom:12px}
 .seg button{position:relative;z-index:1;border:0;background:none;font-size:13.5px;font-weight:700;color:var(--muted);padding:9px 0;transition:color .2s}
-.seg button.on{color:var(--text)}
-.seg .lens{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:12px;
-  background:rgba(255,255,255,.85);box-shadow:0 4px 14px -4px rgba(40,50,90,.3),inset 0 1px 0 #fff;transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
-.card .seg{margin:8px 0 0;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.6)}
+.seg button.on{color:var(--onlime)}
+.seg .lens{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:99px;background:var(--lime);
+  box-shadow:0 6px 16px -6px rgba(198,244,50,.6),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.card .seg{margin:8px 0 0;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06)}
 .note{color:var(--muted);font-size:12.5px;margin-top:8px}
-.finish{display:block;width:100%;margin-top:6px;border:0;border-radius:20px;padding:17px;font-size:17px;font-weight:800;color:#3d2a06;
-  background:linear-gradient(180deg,#f6d27e,#dea94a);box-shadow:0 12px 24px -10px rgba(217,164,65,.7),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(0,0,0,.08)}
+.finish{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:6px;border:0;border-radius:99px;padding:17px;font-size:17px;font-weight:700;color:var(--onlime);background:var(--lime);
+  box-shadow:0 14px 30px -12px rgba(198,244,50,.65),inset 0 1px 0 rgba(255,255,255,.5)}
+.finish .ic{stroke-width:2.6}
 .ghost{display:block;width:100%;background:none;border:0;color:var(--muted);padding:14px;margin-top:4px;font-weight:600}
 
 /* exercise detail */
 .log{padding:14px 14px 12px;margin:4px 0 14px}
 .loghead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .lasttime{font-size:12.5px;color:var(--muted);font-weight:600;margin:4px 0 2px}
-.tip{font-size:12.5px;font-weight:700;color:var(--goldtxt);margin:2px 0}
+.tip{font-size:12.5px;font-weight:700;color:var(--lime);margin:2px 0}
 .sgrid{display:grid;grid-template-columns:24px 1fr 1fr 52px;gap:8px;align-items:center}
 .sgrid.h{font-size:11.5px;font-weight:700;color:var(--muted);margin:10px 0 6px;text-align:center}
 .srow{margin-bottom:8px}
-.srow .n{text-align:center;font-weight:800;color:#a3aabb}
-.srow input{width:100%;min-width:0;font-size:19px;font-weight:800;text-align:center;padding:11px 4px;border-radius:14px;border:1px solid rgba(255,255,255,.85);
-  background:rgba(255,255,255,.62);box-shadow:inset 0 2px 5px rgba(40,50,90,.08);color:var(--text);outline:none;transition:background .2s,box-shadow .2s;font-variant-numeric:tabular-nums}
-.srow input:focus{border-color:rgba(217,164,65,.8);box-shadow:0 0 0 3px rgba(217,164,65,.22)}
-.srow input::placeholder{color:#b3b9c6;font-weight:700}
-.tick{height:47px;border-radius:14px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);font-size:19px;font-weight:900;color:#a3aabb;
-  box-shadow:0 3px 8px -3px rgba(40,50,90,.22),inset 0 1px 0 #fff;transition:transform .12s}
+.srow .n{text-align:center;font-weight:700;color:var(--dim)}
+.srow input{width:100%;min-width:0;font-size:19px;font-weight:700;text-align:center;padding:11px 4px;border-radius:14px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.28);box-shadow:inset 0 2px 6px rgba(0,0,0,.35);color:var(--text);outline:none;transition:background .2s,box-shadow .2s;font-variant-numeric:tabular-nums}
+.srow input:focus{border-color:rgba(198,244,50,.7);box-shadow:0 0 0 3px rgba(198,244,50,.18)}
+.srow input::placeholder{color:#4d575e;font-weight:600}
+.tick{height:47px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--dim);display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.tick .ic{width:20px;height:20px;stroke-width:3}
 .tick:active{transform:scale(.94)}
-.srow.ok .tick{background:radial-gradient(circle at 35% 30%,#8fd4b3,#4f9f7c);color:#fff;border-color:transparent;box-shadow:0 6px 14px -4px rgba(79,159,124,.6),inset 0 1px 1px rgba(255,255,255,.6)}
-.srow.ok input{background:rgba(214,240,227,.75);color:#2f6e53}
-.addset{border:0;background:none;font-weight:800;color:var(--goldtxt);padding:4px 0}
+.srow.ok .tick{background:var(--lime);color:var(--onlime);border-color:transparent;box-shadow:0 0 16px rgba(198,244,50,.45)}
+.srow.ok input{background:rgba(198,244,50,.1);border-color:rgba(198,244,50,.25);color:#e7ffa6}
+.addset{display:inline-flex;align-items:center;gap:6px;border:0;background:none;font-weight:700;color:var(--lime);padding:4px 0}
+.addset .ic{width:16px;height:16px}
 .plates{display:flex;gap:5px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;min-height:24px}
-.pl{min-width:28px;height:22px;padding:0 6px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#2a2f3d;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.75),inset 0 -2px 3px rgba(0,0,0,.12),0 2px 5px -2px rgba(0,0,0,.25)}
+.pl{min-width:28px;height:22px;padding:0 6px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#15191c;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.2),0 2px 6px -2px rgba(0,0,0,.6)}
 .mapcard{padding:16px;display:flex;gap:10px;align-items:center;margin-bottom:14px}
-.legend{font-size:12.5px;font-weight:600;flex:1;min-width:0;transform:translateZ(16px)}
+.legend{font-size:12.5px;font-weight:600;flex:1;min-width:0;transform:translateZ(16px);color:#c9d1d5}
 .legend div{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 .sw{width:12px;height:12px;border-radius:4px;flex:none}
-.sw.p{background:radial-gradient(circle at 35% 30%,#ffe2a3,#d9a441)}
-.sw.s{background:radial-gradient(circle at 35% 30%,#fff4dc,#e2c287)}
-.sw.n{background:radial-gradient(circle at 35% 30%,#fff,#c3c9d6)}
+.sw.p{background:radial-gradient(circle at 35% 30%,#efffb0,#c6f432 55%,#7fa313)}
+.sw.s{background:radial-gradient(circle at 35% 30%,#7d8a46,#4a5428)}
+.sw.n{background:radial-gradient(circle at 35% 30%,#4a535a,#262c31)}
 .stat{font-size:12px;color:var(--muted);margin-top:10px}
-.stat b{display:block;font-size:19px;color:var(--text);font-weight:800}
+.stat b{display:block;font-size:19px;color:var(--text);font-weight:700}
 .chart{padding:14px 12px 8px;margin-bottom:16px}
 .chart svg{width:100%;display:block}
 .ctitle{font-size:14px;font-weight:700;margin:0 4px 6px}
 .legend2{display:flex;gap:14px;font-size:11.5px;font-weight:600;color:var(--muted);margin:2px 4px}
 .legend2 i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .sess{display:flex;overflow:hidden;margin-bottom:10px}
-.date{width:70px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#8a6a2c;
-  background:linear-gradient(160deg,rgba(255,236,200,.9),rgba(246,214,155,.6));border-right:1px solid rgba(255,255,255,.7)}
-.date b{font-size:22px;color:#5a4212;line-height:1}
+.date{width:70px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--lime);
+  background:rgba(198,244,50,.08);border-right:1px solid rgba(255,255,255,.06)}
+.date b{font-size:22px;color:var(--text);line-height:1}
 .tbl{flex:1;display:grid;align-items:center;padding:10px 12px;row-gap:4px;column-gap:4px;overflow-x:auto}
 .tbl span{font-size:11.5px;color:var(--muted);font-weight:600}
-.tbl b{font-size:17px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
-.tbl b.pr{color:var(--goldtxt)}
+.tbl b{font-size:17px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.tbl b.pr{color:var(--lime)}
 
 /* weight */
-.logw{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;margin-bottom:14px;border-radius:22px}
-.logw input{flex:1;min-width:0;border:0;background:none;font-size:30px;font-weight:800;color:var(--text);outline:none;font-variant-numeric:tabular-nums}
-.logw input::placeholder{color:#b3b9c6}
+.logw{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 18px;margin-bottom:14px;border-radius:99px}
+.logw input{flex:1;min-width:0;border:0;background:none;font-size:30px;font-weight:700;color:var(--text);outline:none;font-variant-numeric:tabular-nums}
+.logw input::placeholder{color:#4d575e}
 .logw .kg{font-weight:700;color:var(--muted)}
 .listcard{padding:4px 14px;margin-bottom:16px}
 .li{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
 .li:last-child{border-bottom:0}
 .li span{flex:1;color:var(--muted);font-weight:600;font-size:14px}
-.li b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
-.li .x{border:0;background:none;color:#a3aabb;font-size:15px;padding:4px 6px}
+.li b{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.li .x{border:0;background:none;color:var(--dim);padding:4px 6px;display:flex}
+.li .x .ic{width:16px;height:16px}
 .chg{font-size:12px;font-weight:700;min-width:44px;text-align:right;flex:none!important}
 .empty{color:var(--muted);font-size:14px;padding:12px 2px;margin:0}
 
@@ -177,31 +197,30 @@ button.ex{border:1px solid rgba(255,255,255,.7)}
 .bars3d{display:flex;align-items:flex-end;gap:8px;height:170px;padding:22px 4px 0}
 .bars3d .bw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;min-width:0}
 .bars3d .bv{font-size:10.5px;font-weight:700;color:var(--muted)}
-.bars3d .b{width:100%;border-radius:10px 10px 6px 6px;background:linear-gradient(90deg,#d5dae4,#eef1f6 45%,#c9cfdb);box-shadow:inset 0 1px 0 #fff,0 6px 12px -6px rgba(40,50,90,.35);transform-origin:bottom;animation:grow .6s cubic-bezier(.2,.9,.3,1.2) both}
-.bars3d .b.now{background:linear-gradient(90deg,#e0a843,#f7d78d 45%,#c98f2c);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 16px -6px rgba(217,164,65,.7)}
+.bars3d .b{width:100%;border-radius:10px 10px 6px 6px;background:linear-gradient(90deg,#2a3135,#3a4247 45%,#22282c);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 16px -8px rgba(0,0,0,.8);transform-origin:bottom;animation:grow .6s cubic-bezier(.2,.9,.3,1.2) both}
+.bars3d .b.now{background:linear-gradient(90deg,#9fcc14,#dcff6e 45%,#86ad0e);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 22px -4px rgba(198,244,50,.6)}
 .bars3d .bl{font-size:10.5px;font-weight:600;color:var(--muted);height:13px;white-space:nowrap}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-.select{width:100%;margin:0 0 8px;padding:11px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.6);font-weight:700;color:var(--text);
-  box-shadow:inset 0 2px 4px rgba(40,50,90,.07);-webkit-appearance:none;appearance:none}
+.select{width:100%;margin:0 0 8px;padding:11px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.28);font-weight:700;color:var(--text);-webkit-appearance:none;appearance:none}
 .pr{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
 .pr:last-child{border-bottom:0}
-.medal{grid-row:span 2;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;
-  background:radial-gradient(circle at 35% 30%,#fff1c9,#e5b04f);box-shadow:0 4px 10px -3px rgba(217,164,65,.6),inset 0 1px 1px #fff}
-.pr b{font-size:14.5px}.pr .v{font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.medal{grid-row:span 2;width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;background:rgba(198,244,50,.1);color:var(--lime);border:1px solid rgba(198,244,50,.2)}
+.medal .ic{width:18px;height:18px}
+.pr b{font-size:14.5px}.pr .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-family:var(--display);font-size:16px}
 .pr small{font-size:12px;color:var(--muted);font-weight:600}
 
 /* history */
-details.hs{margin-bottom:10px;padding:0 14px;border-radius:22px}
+details.hs{margin-bottom:10px;padding:0 14px;border-radius:20px}
 details.hs summary{list-style:none;display:flex;align-items:center;gap:12px;padding:12px 0;cursor:pointer}
 details.hs summary::-webkit-details-marker{display:none}
-.dchip{width:46px;height:50px;border-radius:14px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#8a6a2c;
-  background:linear-gradient(160deg,rgba(255,236,200,.95),rgba(246,214,155,.65));box-shadow:inset 0 1px 0 #fff}
-.dchip b{font-size:18px;color:#5a4212;line-height:1}
+.dchip{width:46px;height:50px;border-radius:14px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--lime);background:rgba(198,244,50,.08);border:1px solid rgba(198,244,50,.15)}
+.dchip b{font-size:18px;color:var(--text);line-height:1}
 details.hs .t{flex:1;min-width:0}
 details.hs .t b{display:block;font-size:15.5px}
 details.hs .t small{font-size:12px;color:var(--muted);font-weight:600}
-details.hs .k{font-weight:800;text-align:right;font-size:16px}
-details.hs .k small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+details.hs .k{display:flex;flex-direction:column;align-items:flex-end;font-weight:700;font-size:16px}
+details.hs .k small{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--muted);font-weight:600;font-family:var(--font)}
+details.hs .k .ic{width:12px;height:12px;color:#ff9a3c}
 details.hs[open] summary{border-bottom:1px solid var(--line)}
 .sx{padding:6px 0 12px}
 .sx p{margin:8px 0;font-size:14px;font-weight:700}
@@ -210,58 +229,122 @@ details.hs[open] summary{border-bottom:1px solid var(--line)}
 /* settings */
 .field{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-weight:600;font-size:15px}
 .fin{display:flex;align-items:center;gap:6px}
-.fin input{width:78px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.6);border-radius:12px;padding:9px 10px;font-weight:800;text-align:right;color:var(--text);box-shadow:inset 0 2px 4px rgba(40,50,90,.07);outline:none}
-.fin input:focus{border-color:rgba(217,164,65,.8)}
+.fin input{width:78px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.28);border-radius:12px;padding:9px 10px;font-weight:700;text-align:right;color:var(--text);outline:none}
+.fin input:focus{border-color:rgba(198,244,50,.7)}
 .fin small{color:var(--muted);font-weight:600;width:26px}
 .fhelp{font-size:12.5px;color:var(--muted);font-weight:600;padding:10px 0;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.prose p{font-size:14px;color:#4a5165;line-height:1.5;margin:10px 0}
+.prose p{font-size:14px;color:#b6bec3;line-height:1.55;margin:10px 0}
 .btn2{display:flex;gap:8px}
-.soft{flex:1;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.65);border-radius:14px;padding:13px;font-weight:700;color:var(--text);box-shadow:0 3px 8px -4px rgba(40,50,90,.25)}
-.danger{display:inline-block;margin:10px 0;border:1px solid rgba(192,86,63,.3);background:rgba(255,255,255,.5);color:var(--red);border-radius:14px;padding:10px 14px;font-weight:700}
+.soft{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);border-radius:99px;padding:13px;font-weight:700;color:var(--text)}
+.soft .ic{width:17px;height:17px;color:var(--lime)}
+.danger{display:inline-flex;align-items:center;gap:6px;margin:10px 0;border:1px solid rgba(255,107,91,.3);background:rgba(255,107,91,.06);color:var(--red);border-radius:99px;padding:10px 14px;font-weight:700}
+.danger .ic{width:16px;height:16px}
 
 /* rest timer, toast, tab bar */
-.rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:11;width:min(524px,calc(100% - 28px));
-  display:none;align-items:center;gap:10px;padding:10px 12px 12px 18px;border-radius:24px;overflow:hidden}
+.rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:11;width:min(524px,calc(100% - 28px));
+  display:none;align-items:center;gap:10px;padding:10px 12px 12px 16px;border-radius:24px;overflow:hidden}
 .rest.on{display:flex}
-.rest b{font-size:24px;font-weight:800;min-width:66px;font-variant-numeric:tabular-nums}
+.rest .ic{color:var(--lime)}
+.rest b{font-size:24px;font-weight:700;min-width:62px;font-variant-numeric:tabular-nums}
 .rest span{flex:1;font-size:14px;font-weight:700;color:var(--muted)}
-.rest button{border:0;font-weight:800;font-size:13.5px;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.8);color:var(--text);box-shadow:0 2px 6px -2px rgba(40,50,90,.25)}
-.rest .rbar{position:absolute!important;left:0;bottom:0;height:4px;background:linear-gradient(90deg,#f0c56d,#d9a441);transition:width .25s linear}
-.rest.go{background:rgba(198,238,218,.78)}
-.rest.go b{color:#2f7a58}
-.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-160px);z-index:20;padding:12px 18px;border-radius:18px;font-size:14px;font-weight:700;
+.rest button{border:0;font-weight:700;font-size:13.5px;padding:9px 13px;border-radius:99px;background:rgba(255,255,255,.08);color:var(--text)}
+.rest .rbar{position:absolute!important;left:0;bottom:0;height:3px;background:var(--lime);box-shadow:0 0 10px var(--lime);transition:width .25s linear}
+.rest.go{background:rgba(198,244,50,.16);border-color:rgba(198,244,50,.4)}
+.rest.go b{color:var(--lime)}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-160px);z-index:20;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;
   max-width:90%;text-align:center;transition:transform .3s cubic-bezier(.3,1.3,.5,1)}
 .toast.on{transform:translate(-50%,0)}
-nav.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:10;width:min(524px,calc(100% - 28px));
-  display:flex;justify-content:space-around;padding:8px;border-radius:30px}
-nav.tabbar button{flex:1;border:0;background:none;font-size:10.5px;font-weight:700;color:#7a8296;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:22px}
-nav.tabbar button.on{color:var(--text);background:rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,0 4px 12px -4px rgba(40,50,90,.25)}
-nav.tabbar svg{width:23px;height:23px}
+nav.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(524px,calc(100% - 24px));
+  display:flex;justify-content:space-around;padding:8px 6px;border-radius:28px;background:rgba(14,18,20,.82)}
+nav.tabbar button{flex:1;border:0;background:none;font-size:10.5px;font-weight:600;color:#6f797f;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0}
+nav.tabbar button .ic{width:22px;height:22px;stroke-width:1.9}
+nav.tabbar button.on{color:var(--lime)}
+nav.tabbar button.on .ic{filter:drop-shadow(0 0 6px rgba(198,244,50,.6))}
+
+/* exercise screen: demo on top half, info below */
+body.focus nav.tabbar{display:none}
+body.focus .rest{bottom:calc(14px + env(safe-area-inset-bottom))}
+body.focus main{padding-top:0}
+.stage{position:sticky;top:0;z-index:5;margin:0 -18px 14px;height:min(46vh,420px);min-height:270px;padding-top:env(safe-area-inset-top);
+  background:radial-gradient(90% 70% at 50% 30%,#1f272b 0%,#12171a 60%,#0a0d0f 100%);border-radius:0 0 32px 32px;overflow:hidden;
+  box-shadow:0 20px 40px -24px rgba(0,0,0,.9),inset 0 -1px 0 rgba(255,255,255,.05)}
+.stage::before{content:"";position:absolute;left:50%;top:40%;width:70%;height:55%;transform:translate(-50%,-50%);border-radius:50%;background:rgba(198,244,50,.10);filter:blur(40px);pointer-events:none}
+.stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 38px);
+  -webkit-mask:linear-gradient(180deg,transparent,#000 60%);mask:linear-gradient(180deg,transparent,#000 60%)}
+.stage svg.demo{position:absolute;inset:env(safe-area-inset-top) 0 0 0;width:100%;height:calc(100% - env(safe-area-inset-top));z-index:1}
+.stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
+.stage .tl{top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;justify-content:space-between}
+.stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;font-size:12.5px;font-weight:700;color:var(--text);text-decoration:none;border:0}
+.pill .ic{width:15px;height:15px;color:var(--lime)}
+.pill.lime{background:var(--lime);color:var(--onlime)}
+.pill.lime .ic{color:var(--onlime)}
+.mchips{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 14px}
+.mchip{font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#c9d1d5}
+.mchip.p{background:rgba(198,244,50,.12);color:var(--lime);border-color:rgba(198,244,50,.3)}
+.howto{padding:14px 16px;margin-bottom:14px}
+.howto ol{list-style:none;margin:6px 0 0;padding:0}
+.howto li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;font-size:14.5px;line-height:1.5;color:#c3cbcf}
+.howto .num{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--onlime);background:var(--lime)}
+.howto .tipbox{display:flex;gap:8px;margin-top:8px;padding:10px 12px;border-radius:14px;background:rgba(198,244,50,.08);border:1px solid rgba(198,244,50,.18);font-size:13.5px;color:#dff7a0;font-weight:600}
+.howto .tipbox .ic{width:16px;height:16px;color:var(--lime);margin-top:1px}
 @media (prefers-reduced-motion:reduce){.view,.bars3d .b{animation:none}.toast,.seg .lens,.tilt{transition:none}}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Lucide icons (lucide.dev), ISC licence -->
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0" /> <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></symbol>
+  <symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v3" /> <path d="M16 2v3" /> <rect x="3" y="3" width="18" height="18" rx="2" /> <path d="M3 9h18" /> <path d="M8 13h.01" /> <path d="M12 13h.01" /> <path d="M16 13h.01" /> <path d="M8 17h.01" /> <path d="M12 17h.01" /> <path d="M16 17h.01" /></symbol>
+  <symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M18 17V9" /> <path d="M13 17V5" /> <path d="M8 17v-3" /></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+  <symbol id="i-circle-play" viewBox="0 0 24 24"><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z" /> <circle cx="12" cy="12" r="10" /></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <path d="M12 6v6l4 2" /></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" /> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <path d="m7 10 5 5 5-5" /></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z" /> <path d="m2.5 21.5 1.4-1.4" /> <path d="m20.1 3.9 1.4-1.4" /> <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z" /> <path d="m9.6 14.4 4.8-4.8" /></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" /></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> <path d="M12 7v5l4 2" /></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1" /> <rect x="5" y="3" width="5" height="18" rx="1" /></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="M12 5v14" /></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4" /> <path d="M3 11v-1a4 4 0 0 1 4-4h14" /> <path d="m7 22-4-4 4-4" /> <path d="M21 13v1a4 4 0 0 1-4 4H3" /></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18" /> <path d="m19 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1" /> <path d="m5 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M7 21h10" /></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /> <circle cx="12" cy="12" r="3" /></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2" /> <line x1="12" x2="15" y1="14" y2="11" /> <circle cx="12" cy="14" r="8" /></symbol>
+  <symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M10 11v6" /> <path d="M14 11v6" /> <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /> <path d="M3 6h18" /> <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2" /> <path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2" /> <path d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3" /> <path d="M4 22h16" /> <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" /> <path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3" /></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 3v12" /> <path d="m17 8-5-5-5 5" /> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /></symbol>
+  <symbol id="i-weight" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3" /> <path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z" /></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></symbol>
   <defs>
-    <radialGradient id="gP" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#ffe2a3"/><stop offset=".5" stop-color="#e3a43a"/><stop offset="1" stop-color="#a8721c"/></radialGradient>
-    <radialGradient id="gS" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff4dc"/><stop offset=".6" stop-color="#f1d6a0"/><stop offset="1" stop-color="#d7b475"/></radialGradient>
-    <radialGradient id="gN" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#f7f8fb"/><stop offset=".6" stop-color="#cdd3de"/><stop offset="1" stop-color="#a9b1c1"/></radialGradient>
-    <linearGradient id="gBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3e7ef"/><stop offset="1" stop-color="#aab2c2"/></linearGradient>
-    <radialGradient id="gFloor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(40,50,90,.28)"/><stop offset="1" stop-color="rgba(40,50,90,0)"/></radialGradient>
-    <linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e5ad48" stop-opacity=".35"/><stop offset="1" stop-color="#e5ad48" stop-opacity="0"/></linearGradient>
-    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#28325a" flood-opacity=".22"/></filter>
+    <radialGradient id="gP" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#efffb0"/><stop offset=".5" stop-color="#c6f432"/><stop offset="1" stop-color="#6f9010"/></radialGradient>
+    <radialGradient id="gS" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#8e9c50"/><stop offset=".6" stop-color="#5a6630"/><stop offset="1" stop-color="#3a4220"/></radialGradient>
+    <radialGradient id="gN" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#4b545b"/><stop offset=".6" stop-color="#2f363b"/><stop offset="1" stop-color="#1e2327"/></radialGradient>
+    <linearGradient id="gBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2e353a"/><stop offset="1" stop-color="#161a1d"/></linearGradient>
+    <radialGradient id="gFloor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(0,0,0,.65)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></radialGradient>
+    <linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6f432" stop-opacity=".28"/><stop offset="1" stop-color="#c6f432" stop-opacity="0"/></linearGradient>
+    <radialGradient id="gDb" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#8d96a8"/><stop offset=".6" stop-color="#4f5768"/><stop offset="1" stop-color="#2f3542"/></radialGradient>
+    <linearGradient id="gProp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#465057"/><stop offset="1" stop-color="#2a3035"/></linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#000" flood-opacity=".5"/></filter>
   </defs>
 </svg>
 <div class="blobs" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
 <main id="main"></main>
-<div class="rest glass" id="rest" role="status"><b class="rt">0:00</b><span class="rl">Rest</span><button data-rest="30">+30s</button><button data-rest="skip">Skip</button><i class="rbar"></i></div>
+<div class="rest glass" id="rest" role="status"><svg class="ic" aria-hidden="true"><use href="#i-timer"/></svg><b class="rt">0:00</b><span class="rl">Rest</span><button data-rest="30">+30s</button><button data-rest="skip">Skip</button><i class="rbar"></i></div>
 <div class="toast glass" id="toast" role="status"></div>
 <nav class="tabbar glass">
-  <button data-tab="workout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>Workout</button>
-  <button data-tab="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9.5a4 4 0 0 1 6 0M12 12l1.5-2.5"/></svg>Weight</button>
-  <button data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M5 15l4-4 3 3 6-7"/></svg>Progress</button>
-  <button data-tab="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>History</button>
-  <button data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg>Settings</button>
+  <button data-tab="workout"><svg class="ic"><use href="#i-dumbbell"/></svg>Workout</button>
+  <button data-tab="weight"><svg class="ic"><use href="#i-scale"/></svg>Weight</button>
+  <button data-tab="progress"><svg class="ic"><use href="#i-chart-column"/></svg>Progress</button>
+  <button data-tab="history"><svg class="ic"><use href="#i-history"/></svg>History</button>
+  <button data-tab="more"><svg class="ic"><use href="#i-settings"/></svg>Settings</button>
 </nav>
 
 <script>
@@ -304,6 +387,28 @@ const MUSCLES = {
   'Rear-delt fly':[['rdelts'],['traps']],
   'Barbell shrug':[['traps'],['fore']]
 };
+// How to do each exercise: three steps and a tip
+const HOWTO = {
+  'Barbell bench press':['Lie with eyes under the bar, feet flat, shoulder blades squeezed together.','Grip a little wider than shoulders and lower the bar to mid-chest with elbows about 45° from your body.','Press back up until your arms are straight, keeping your bum on the bench.','Keep wrists stacked over elbows and use a spotter or safeties near failure.'],
+  'Incline barbell press':['Set the bench to about 30°, sit back and plant your feet.','Lower the bar to your upper chest, just under the collarbones.','Press up and slightly back so the bar finishes over your shoulders.','A lower incline keeps more of the work on your upper chest and less on the shoulders.'],
+  'Decline dumbbell press':['Hook your legs under the pad and lie back holding the dumbbells on your thighs.','Lower the dumbbells to the sides of your lower chest.','Press them up and slightly together until your arms are straight.','Hand the dumbbells back to your thighs before sitting up.'],
+  'Close-grip bench press':['Grip the bar about shoulder width, no narrower.','Lower it to your lower chest, keeping elbows tucked close to your sides.','Press up by straightening your arms; feel your triceps do the work.','Too narrow a grip strains the wrists. Shoulder width is enough.'],
+  'EZ-bar skull crusher':['Lie on the bench holding the EZ bar over your chest with arms straight.','Keep your upper arms still and bend at the elbows to lower the bar behind your forehead.','Straighten your arms to bring the bar back over your chest.','Let your upper arms tilt slightly back toward your head for a bigger triceps stretch.'],
+  'Barbell back squat':['Rest the bar on your upper back, feet shoulder width, toes slightly out.','Brace your core, then sit down and back until your thighs are at least parallel.','Drive up through your whole foot, keeping your chest up and knees out.','Use the rack safeties set just below your bottom position.'],
+  'Romanian deadlift':['Stand tall holding the bar in front of your thighs, knees soft.','Push your hips back and slide the bar down your legs, keeping your back flat.','Stop when you feel a strong hamstring stretch, then squeeze your glutes to stand up.','The bar stays touching your legs the whole time.'],
+  'Bulgarian split squat':['Stand a long stride in front of a bench and rest your back foot on it.','Lower straight down until your front thigh is about parallel.','Push through your front heel to stand back up. Finish all reps, then switch legs.','Lean your torso slightly forward to work the glutes more.'],
+  'Barbell hip thrust':['Sit with your upper back against the bench and the bar over your hips. Use a pad.','Plant your feet so your shins are vertical at the top.','Drive your hips up until your body is flat from shoulders to knees, squeeze, then lower.','Keep your chin tucked and ribs down. Don\'t arch your lower back at the top.'],
+  'Conventional deadlift':['Stand with the bar over your mid-foot, hip width apart.','Grip just outside your legs, flatten your back and pull the slack out of the bar.','Push the floor away and stand up tall, then lower the bar the same way.','Keep the bar close to your body. If your back rounds, the weight is too heavy.'],
+  'Barbell bent-over row':['Hinge forward until your torso is about 45° or lower, back flat, knees soft.','Pull the bar to your lower ribs, driving your elbows back.','Lower it under control until your arms are straight.','Don\'t jerk the weight with your back. Your torso stays still.'],
+  'Single-arm dumbbell row':['Put one hand and knee on the bench, back flat, dumbbell in the other hand.','Pull the dumbbell to your hip, keeping your elbow close to your side.','Lower it until your arm is straight and feel the stretch in your lat.','Think "elbow to back pocket" rather than lifting with your hand.'],
+  'EZ-bar curl':['Stand tall holding the EZ bar on the angled grips, arms straight.','Keep your elbows pinned to your sides and curl the bar up to your shoulders.','Lower it slowly until your arms are fully straight again.','No swinging. If you have to lean back, drop the weight.'],
+  'Dumbbell hammer curl':['Stand with a dumbbell in each hand, palms facing your body.','Curl the dumbbells up keeping your palms facing in, elbows at your sides.','Lower slowly to full arm extension.','This hits the forearms and the outer biceps for thicker-looking arms.'],
+  'Standing overhead press':['Hold the bar on your upper chest, hands just outside shoulders, glutes tight.','Press the bar straight up, moving your head back slightly to let it pass.','Lock out overhead with the bar over your mid-foot, then lower to your chest.','Squeeze your glutes and abs so your lower back doesn\'t arch.'],
+  'Seated dumbbell press':['Sit on an upright bench with the dumbbells at shoulder height, palms forward.','Press them up until your arms are straight and the dumbbells nearly touch.','Lower back to shoulder height under control.','Keep your back against the pad and don\'t let your elbows drift behind you.'],
+  'Dumbbell lateral raise':['Stand holding light dumbbells at your sides, a slight bend in the elbows.','Raise them out to the sides until your arms are level with your shoulders.','Lower slowly. Don\'t let the dumbbells rest at the bottom.','Lead with your elbows and pour the dumbbells slightly forward, like emptying a jug.'],
+  'Rear-delt fly':['Hinge forward until your chest is nearly parallel to the floor, dumbbells hanging.','With soft elbows, raise the dumbbells out to the sides, squeezing your rear shoulders.','Lower slowly back to the start.','Go light. Shrugging means the weight is too heavy.'],
+  'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.']
+};
 const MNAME={chest:'chest',delts:'shoulders',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
 const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
 const EX = {}; for(const p of Object.values(PROGRAM)) for(const e of p.ex){const m=MUSCLES[e[0]]||[[],[]];EX[e[0]]={sets:e[1],type:e[2],eq:e[3],p:m[0],s:m[1]}}
@@ -325,6 +430,7 @@ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().cat
 
 /* ---------- Helpers ---------- */
 const $=s=>document.querySelector(s);
+const ico=(n,c='ic')=>`<svg class="${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const z=n=>String(n).padStart(2,'0');
 const dstr=(d=new Date())=>`${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
 const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return dstr(d)};
@@ -348,7 +454,7 @@ function dayMuscles(k){const p=new Set(),s=new Set();for(const e of PROGRAM[k].e
 /* ---------- 3D muscle map ---------- */
 function figure(side,prim,sec,w){
   const f=k=>prim.includes(k)?'url(#gP)':sec.includes(k)?'url(#gS)':'url(#gN)';
-  const st='stroke="rgba(255,255,255,.9)" stroke-width=".8"';
+  const st='stroke="rgba(255,255,255,.14)" stroke-width=".8"';
   let s=`<svg viewBox="0 0 100 196" width="${w}" height="${Math.round(w*1.96)}" aria-hidden="true">
   <ellipse cx="50" cy="188" rx="26" ry="5" fill="url(#gFloor)"/><g filter="url(#soft)">
   <circle cx="50" cy="15" r="10.5" fill="url(#gBody)"/><rect x="44.5" y="24" width="11" height="8" rx="3" fill="url(#gBody)"/>
@@ -378,6 +484,93 @@ function figure(side,prim,sec,w){
 }
 const pair=(p,s,w)=>figure('f',p,s,w)+figure('b',p,s,w);
 const thumb=(p,s)=>`<div class="thumb">${figure(p.some(m=>BACK.includes(m))?'b':'f',p,s,33)}</div>`;
+
+/* ---------- Animated exercise demos (side view, drawn in code so they work offline) ---------- */
+// A pose: hip [x,y], torso angle t (deg, 0 = right, -90 = up), ankle(s), hand as absolute `hand`,
+// relative to the shoulder `hr` or to the hip `hh`; es/ks = elbow/knee bend direction; sy = shoulder raise.
+const SEG={torso:54,neck:15,head:10,ua:32,fa:30,th:44,sh:42};
+const STAND={hip:[150,108],t:-90,ank:[150,192]};
+const PROPS={
+  flat:'<rect x="66" y="139" width="108" height="9" rx="4.5" fill="url(#gProp)"/><rect x="80" y="148" width="6" height="44" rx="2" fill="#3a4248"/><rect x="154" y="148" width="6" height="44" rx="2" fill="#3a4248"/>',
+  incline:'<path d="M150 141 L104 82" stroke="url(#gProp)" stroke-width="10" stroke-linecap="round"/><rect x="138" y="139" width="40" height="9" rx="4.5" fill="url(#gProp)"/><rect x="150" y="148" width="6" height="44" rx="2" fill="#3a4248"/><path d="M120 108 L128 192" stroke="#3a4248" stroke-width="6"/>',
+  decline:'<path d="M92 152 L182 130" stroke="url(#gProp)" stroke-width="10" stroke-linecap="round"/><path d="M110 150 L110 192 M170 134 L170 192" stroke="#3a4248" stroke-width="6"/><circle cx="206" cy="146" r="6" fill="#4a535a"/>',
+  box:'<rect x="62" y="150" width="54" height="10" rx="5" fill="url(#gProp)"/><rect x="72" y="160" width="6" height="32" fill="#3a4248"/><rect x="100" y="160" width="6" height="32" fill="#3a4248"/>',
+  low:'<rect x="40" y="127" width="70" height="10" rx="5" fill="url(#gProp)"/><rect x="50" y="137" width="6" height="55" fill="#3a4248"/><rect x="94" y="137" width="6" height="55" fill="#3a4248"/>',
+  seat:'<rect x="112" y="137" width="62" height="9" rx="4.5" fill="url(#gProp)"/><rect x="108" y="64" width="10" height="80" rx="5" fill="url(#gProp)"/><rect x="140" y="146" width="6" height="46" fill="#3a4248"/>'
+};
+const DEMOS={
+  'Barbell bench press':{eq:'bb',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[106,114],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,74],es:1}},
+  'Incline barbell press':{eq:'bb',props:'incline',A:{hip:[150,134],t:-128,ank:[198,192],hand:[128,80],es:1},B:{hip:[150,134],t:-128,ank:[198,192],hand:[150,42],es:1}},
+  'Decline dumbbell press':{eq:'db',props:'decline',A:{hip:[168,126],t:163,ank:[204,150],hand:[120,124],es:1},B:{hip:[168,126],t:163,ank:[204,150],hand:[113,84],es:1}},
+  'Close-grip bench press':{eq:'bb',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[102,118],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,74],es:1}},
+  'EZ-bar skull crusher':{eq:'ez',props:'flat',A:{hip:[150,134],t:180,ank:[192,192],hand:[72,116],es:1},B:{hip:[150,134],t:180,ank:[192,192],hand:[98,72],es:1}},
+  'Barbell back squat':{eq:'bb',A:{hip:[150,108],t:-86,ank:[154,192],hr:[-3,3],es:-1},B:{hip:[116,150],t:-50,ank:[154,192],hr:[-3,3],es:-1}},
+  'Romanian deadlift':{eq:'bb',A:{hip:[150,108],t:-88,ank:[152,192],hr:[2,60],es:1},B:{hip:[136,104],t:-12,ank:[152,192],hr:[0,60],es:1}},
+  'Bulgarian split squat':{eq:'db',props:'box',A:{hip:[150,106],t:-86,ank:[184,192],ank2:[100,148],hr:[0,58],es:1},B:{hip:[146,140],t:-80,ank:[184,192],ank2:[100,148],hr:[0,58],es:1}},
+  'Barbell hip thrust':{eq:'bb',props:'low',A:{hip:[132,170],t:-136,ank:[188,192],hh:[2,-14],es:1},B:{hip:[138,130],t:178,ank:[188,192],hh:[2,-14],es:1}},
+  'Conventional deadlift':{eq:'bb',A:{hip:[124,142],t:-32,ank:[160,192],hr:[0,58],es:1},B:{hip:[150,108],t:-88,ank:[156,192],hr:[2,58],es:1}},
+  'Barbell bent-over row':{eq:'bb',A:{hip:[140,108],t:-20,ank:[156,192],hr:[0,58],es:1},B:{hip:[140,108],t:-20,ank:[156,192],hr:[-16,26],es:1}},
+  'Single-arm dumbbell row':{eq:'db',A:{hip:[136,110],t:-14,ank:[150,192],hr:[0,52],es:1},B:{hip:[136,110],t:-14,ank:[150,192],hr:[-18,20],es:1}},
+  'EZ-bar curl':{eq:'ez',A:{...STAND,hr:[4,60],es:1},B:{...STAND,hr:[16,6],es:1}},
+  'Dumbbell hammer curl':{eq:'db',A:{...STAND,hr:[4,60],es:1},B:{...STAND,hr:[16,6],es:1}},
+  'Standing overhead press':{eq:'bb',A:{...STAND,hr:[14,-2],es:1},B:{...STAND,hr:[2,-61],es:1}},
+  'Seated dumbbell press':{eq:'db',props:'seat',A:{hip:[140,134],t:-90,ank:[192,192],hr:[14,-2],es:1},B:{hip:[140,134],t:-90,ank:[192,192],hr:[2,-61],es:1}},
+  'Dumbbell lateral raise':{eq:'db',A:{...STAND,hr:[4,58],es:1},B:{...STAND,hr:[56,4],es:1}},
+  'Rear-delt fly':{eq:'db',A:{hip:[140,108],t:-18,ank:[154,192],hr:[2,52],es:1},B:{hip:[140,108],t:-18,ank:[154,192],hr:[-34,6],es:1}},
+  'Barbell shrug':{eq:'bb',A:{...STAND,hr:[3,60],es:1},B:{...STAND,sy:-8,hr:[3,60],es:1}}
+};
+const rad=d=>d*Math.PI/180;
+const along=(p,a,l)=>[p[0]+l*Math.cos(rad(a)),p[1]+l*Math.sin(rad(a))];
+function ik(A,C,l1,l2,s){ // two-bone IK: joint position between A and C
+  const dx=C[0]-A[0],dy=C[1]-A[1],d=Math.min(Math.max(Math.hypot(dx,dy),Math.abs(l1-l2)+.01),l1+l2-.01);
+  const a=Math.atan2(dy,dx),al=Math.acos((l1*l1+d*d-l2*l2)/(2*l1*d));
+  return [A[0]+l1*Math.cos(a+s*al),A[1]+l1*Math.sin(a+s*al)];
+}
+const lerp=(a,b,k)=>a+(b-a)*k;
+const lerpP=(a,b,k)=>a&&b?[lerp(a[0],b[0],k),lerp(a[1],b[1],k)]:(a||b);
+function blendPose(A,B,k){const o={...A};for(const key of ['hip','ank','ank2','hand','hr','hh'])if(A[key])o[key]=lerpP(A[key],B[key],k);o.t=lerp(A.t,B.t,k);o.sy=lerp(A.sy||0,B.sy||0,k);return o}
+function limb(a,b,w,base,hi){
+  const o=w*.16;
+  return `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${base}" stroke-width="${w}" stroke-linecap="round"/>`+
+    `<line x1="${(a[0]-o).toFixed(1)}" y1="${(a[1]-o).toFixed(1)}" x2="${(b[0]-o).toFixed(1)}" y2="${(b[1]-o).toFixed(1)}" stroke="${hi}" stroke-width="${(w*.34).toFixed(1)}" stroke-linecap="round" opacity=".75"/>`;
+}
+function gear(eq,h){
+  const x=h[0].toFixed(1),y=h[1].toFixed(1);
+  if(eq==='bb')return `<circle cx="${x}" cy="${y}" r="16" fill="url(#gDb)" stroke="rgba(198,244,50,.6)" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="9" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="3.2" fill="#c6f432"/>`;
+  if(eq==='ez')return `<circle cx="${x}" cy="${y}" r="12" fill="url(#gDb)" stroke="rgba(198,244,50,.5)" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="2.8" fill="#c6f432"/>`;
+  return `<circle cx="${x}" cy="${y}" r="8.5" fill="url(#gDb)" stroke="rgba(255,255,255,.7)" stroke-width="1"/><circle cx="${x}" cy="${y}" r="2.4" fill="#c9cfdb"/>`;
+}
+function demoSVG(name,k){
+  const d=DEMOS[name];if(!d)return '';
+  const p=blendPose(d.A,d.B,k),m=EX[name]?EX[name].p:[];
+  const arms=m.some(x=>['delts','triceps','biceps','fore','rdelts','chest','lats'].includes(x)),legs=m.some(x=>['quads','hams','glutes','calves'].includes(x));
+  const core=m.some(x=>['chest','lats','lowback','traps','abs','glutes'].includes(x));
+  const G=['#b9e82a','#efffb0'],Gf=['#6f8d1c','#a9c95a'],N=['#59636a','#8e989e'],Nf=['#363d42','#4f585e'];
+  const sh=along(p.hip,p.t,SEG.torso);sh[1]+=p.sy||0;
+  const head=along(sh,p.t,SEG.neck);
+  const hand=p.hand||(p.hr?[sh[0]+p.hr[0],sh[1]+p.hr[1]]:[p.hip[0]+p.hh[0],p.hip[1]+p.hh[1]]);
+  const knee=ik(p.hip,p.ank,SEG.th,SEG.sh,p.ks||-1),ank2=p.ank2||[p.ank[0]-6,p.ank[1]],knee2=ik(p.hip,ank2,SEG.th,SEG.sh,p.ks||-1);
+  const elbow=ik(sh,hand,SEG.ua,SEG.fa,p.es||1);
+  const off=([x,y])=>[x-4,y-3],L=legs?G:N,Lf=legs?Gf:Nf,Ar=arms?G:N,Af=arms?Gf:Nf,T=core?G:N;
+  const fh=off(hand),fe=off(elbow),fs=off(sh);
+  return `<ellipse cx="150" cy="195" rx="96" ry="7" fill="url(#gFloor)"/>${PROPS[d.props]||''}
+    ${limb(p.hip,knee2,13,Lf[0],Lf[1])}${limb(knee2,ank2,11,Lf[0],Lf[1])}
+    ${limb(fs,fe,10,Af[0],Af[1])}${limb(fe,fh,9,Af[0],Af[1])}${d.eq!=='db'?'':gear('db',fh)}
+    ${limb(p.hip,sh,21,T[0],T[1])}<circle cx="${head[0].toFixed(1)}" cy="${head[1].toFixed(1)}" r="${SEG.head}" fill="url(#gN)" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+    ${limb(p.hip,knee,14,L[0],L[1])}${limb(knee,p.ank,12,L[0],L[1])}<ellipse cx="${(p.ank[0]+5).toFixed(1)}" cy="${(p.ank[1]+1).toFixed(1)}" rx="9" ry="4" fill="${L[0]}"/>
+    ${gear(d.eq,hand)}${limb(sh,elbow,11,Ar[0],Ar[1])}${limb(elbow,hand,10,Ar[0],Ar[1])}`;
+}
+// Loop: lift (A→B) 1.2 s, pause, lower (B→A) 1.6 s, pause
+let demo={name:null,playing:true,t0:0,raf:0};
+const easeIO=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+function demoPhase(ms){const c=ms%3600;return c<1200?easeIO(c/1200):c<1600?1:c<3200?1-easeIO((c-1600)/1600):0}
+function startDemo(name){
+  cancelAnimationFrame(demo.raf);demo={name,playing:!matchMedia('(prefers-reduced-motion: reduce)').matches,t0:performance.now(),raf:0,off:0};
+  const loop=now=>{const g=document.getElementById('demoFig');if(!g||demo.name!==name)return;
+    if(demo.playing)g.innerHTML=demoSVG(name,demoPhase(now-demo.t0));demo.raf=requestAnimationFrame(loop)};
+  const g=document.getElementById('demoFig');if(g)g.innerHTML=demoSVG(name,demo.playing?0:1);
+  demo.raf=requestAnimationFrame(loop);
+}
 
 /* plate solver: fewest plates per side for each reachable load */
 const PLATE_MAP=(()=>{const map=new Map();
@@ -435,9 +628,10 @@ let tab='workout',curEx=null,progEx=null,exMode='w';
 document.querySelector('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.tab;curEx=null;render();window.scrollTo(0,0)});
 function render(){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  const m=$('#main');
-  if(tab==='workout'&&curEx&&db.active&&db.active.sets[curEx])rDetail(m);
-  else ({workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m);
+  const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
+  document.body.classList.toggle('focus',!!detail);
+  if(detail)rDetail(m);
+  else{demo.name=null;({workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m)}
   m.firstElementChild&&m.firstElementChild.classList.add('view');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)m.querySelectorAll('.tilt').forEach(tilt);
   tickClock();
@@ -446,12 +640,12 @@ function tilt(el){
   el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();const dx=(e.clientX-r.left)/r.width-.5,dy=(e.clientY-r.top)/r.height-.5;el.style.transform=`rotateY(${dx*12}deg) rotateX(${-dy*12}deg)`});
   const reset=()=>el.style.transform='';el.addEventListener('pointerleave',reset);el.addEventListener('pointerup',reset);el.addEventListener('pointercancel',reset);
 }
-const tileH=(v,l,c='')=>`<div class="tile glass"><b class="${c}">${v}</b><span>${l}</span></div>`;
+const tileH=(v,l,c='',i='')=>`<div class="tile glass">${i?ico(i):''}<b class="${c}">${v}</b><span>${l}</span></div>`;
 const seg=(items,on,attr)=>{const i=Math.max(0,items.findIndex(x=>x[0]===on));return `<div class="seg glass"><div class="lens" style="transform:translateX(${i*100}%)"></div>${items.map(([k,l])=>`<button data-${attr}="${k}" class="${k===on?'on':''}">${l}</button>`).join('')}</div>`};
 
 /* ---------- Workout ---------- */
 function weekStats(){const ws=weekStart().getTime();const s=db.sessions.filter(x=>x.start>=ws);return {n:s.length,kcal:s.reduce((a,b)=>a+b.kcal,0)}}
-const plates3d=`<div class="plates3d" aria-hidden="true"><span style="width:14px;height:56px;background:linear-gradient(90deg,#f6cf6e,#d9a441)"></span><span style="width:12px;height:46px;background:linear-gradient(90deg,#8fd4b3,#4f9f7c)"></span><span style="width:10px;height:36px;background:linear-gradient(90deg,#ffffff,#d9dde6)"></span></div>`;
+const plates3d=`<div class="plates3d" aria-hidden="true"><span style="width:14px;height:56px;background:linear-gradient(90deg,#dcff6e,#9fcc14)"></span><span style="width:12px;height:46px;background:linear-gradient(90deg,#4a535a,#262c31)"></span><span style="width:10px;height:36px;background:linear-gradient(90deg,#3a4247,#1e2327)"></span></div>`;
 function rWorkout(m){
   if(!db.active){
     const wd=new Date().getDay();
@@ -460,17 +654,17 @@ function rWorkout(m){
     let hero;
     if(sug){const dm=dayMuscles(sug[0]);
       hero=`<div class="perspective"><div class="hero glass tilt">${plates3d}<div class="figs">${pair(dm.p,dm.s,46)}</div>
-        <div class="info"><div class="eyebrow" style="font-size:12.5px">Today you train</div><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
-        <button class="gold block" data-start="${sug[0]}">Start workout</button></div></div></div>`;
+        <div class="info"><span class="badge">${ico('target')}Today you train</span><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
+        <button class="gold block" data-start="${sug[0]}">Start workout<span class="arr">${ico('play')}</span></button></div></div></div>`;
     }else hero=`<div class="hero glass"><div class="info"><div class="big">Rest day</div><div class="muted" style="font-size:14px">Go for a 30–45 minute walk. You can still start any workout below.</div></div></div>`;
     m.innerHTML=`<section>
     <div class="top"><div class="eyebrow">${DAYS[wd]}</div></div>
     <h1>${sug?esc(sug[1].name):'Rest day'}</h1>
-    ${sug?`<div class="chips"><span class="chip glass">${sug[1].ex.length} exercises</span><span class="chip glass">6–8 reps</span><span class="chip glass">6-min finisher</span></div>`:''}
+    ${sug?`<div class="chips"><span class="chip glass">${ico('dumbbell')}${sug[1].ex.length} exercises</span><span class="chip glass">${ico('repeat')}6–8 reps</span><span class="chip glass">${ico('flame')}6-min finisher</span></div>`:''}
     ${hero}
-    <div class="tiles">${tileH(ws.n,'workouts this week')}${tileH(ws.kcal,'kcal burned this week')}${tileH(lw?fmt(lw.kg):'—',lw?'kg body weight':'log your weight')}</div>
+    <div class="tiles">${tileH(ws.n,'workouts this week','','dumbbell')}${tileH(ws.kcal,'kcal burned this week','','flame')}${tileH(lw?fmt(lw.kg):'—',lw?'kg body weight':'log your weight','','scale')}</div>
     <div class="label">Your split</div>
-    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-start="${k}">${thumb(dm.p,dm.s)}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">›</span></button>`}).join('')}
+    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-start="${k}">${thumb(dm.p,dm.s)}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
     </section>`;
     return;
   }
@@ -480,22 +674,22 @@ function rWorkout(m){
   const doneN=names.filter(isDone).length,setsN=names.reduce((t,n)=>t+a.sets[n].filter(s=>s.done).length,0);
   const next=names.find(n=>!isDone(n));
   m.innerHTML=`<section>
-    <div class="top"><div class="eyebrow">Started ${new Date(a.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div><div class="clock glass" id="clock">0:00</div></div>
+    <div class="top"><div class="eyebrow">Started ${new Date(a.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
     <h1>${esc(p.name)}</h1>
     <div class="perspective"><div class="hero glass tilt">${plates3d}<div class="figs">${pair(dm.p,dm.s,46)}</div>
-      <div class="info"><div class="eyebrow" style="font-size:12.5px">Today you train</div><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
+      <div class="info"><span class="badge">${ico('target')}Today you train</span><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
       <div class="bar"><i style="width:${doneN/names.length*100}%"></i></div>
       <div class="muted" style="font-size:12px;margin-top:6px;font-weight:600">${doneN} of ${names.length} done · ${setsN} sets logged</div></div></div></div>
-    <div class="label">Exercises · tap to log your sets</div>
+    <div class="label">Exercises<small>Tap to log sets</small></div>
     ${names.map(n=>{const info=EX[n],sets=a.sets[n],d=sets.filter(s=>s.done).length,last=lastSets(n);
       const hit=last&&last.length>=info.sets&&last.every(s=>s.r>=8),up=n===next;
       const meta=isDone(n)?sets.map(s=>`${fmt(s.w)} × ${s.r}`).join(', '):d?`${d} of ${sets.length} sets logged`:up&&hit?'Up next · add 2–4 kg today':last?`${sets.length} sets · last ${last.map(s=>`${fmt(s.w)} × ${s.r}`).join(', ')}`:`${sets.length} sets · first time`;
-      return `<button class="ex glass ${up?'up':''}" data-open="${esc(n)}">${thumb(info.p,info.s)}<div class="txt"><div class="name">${esc(n)}</div><div class="${up&&!d?'next':'meta'}">${meta}</div></div>${isDone(n)?'<span class="done">✓</span>':'<span class="chev">›</span>'}</button>`}).join('')}
-    <div class="card glass"><label class="check"><input type="checkbox" id="fin" ${a.finisher?'checked':''}><span class="box">✓</span><span><b>Finisher done</b><small>${esc(p.fin)}</small></span></label></div>
+      return `<button class="ex glass ${up?'up':''}" data-open="${esc(n)}">${thumb(info.p,info.s)}<div class="txt"><div class="name">${esc(n)}</div><div class="${up&&!d?'next':'meta'}">${meta}</div></div>${isDone(n)?`<span class="done">${ico('check')}</span>`:`<span class="chev">${ico('chevron-right')}</span>`}</button>`}).join('')}
+    <div class="card glass"><label class="check"><input type="checkbox" id="fin" ${a.finisher?'checked':''}><span class="box">${ico('check')}</span><span><b>Finisher done</b><small>${esc(p.fin)}</small></span></label></div>
     <div class="card glass"><div class="label" style="margin:0 0 2px">How hard was today?</div>
       ${seg(EFFORT.map(e=>[e.k,e.label]),a.effort,'effort')}
       <div class="note">Used for the calorie estimate. "Hard" fits most heavy 6–8 rep sessions.</div></div>
-    <button class="finish" id="finish">Finish and save</button>
+    <button class="finish" id="finish">${ico('check')}Finish and save</button>
     <button class="ghost" id="discard">Discard workout</button>
   </section>`;
 }
@@ -510,9 +704,21 @@ function rDetail(m){
   let best=null;hist.forEach(s=>s.sets[name].forEach(x=>{const v=e1rm(x.w,x.r);if(!best||v>best.v)best={...x,v}}));
   const sv=s=>Math.max(...s.sets[name].map(x=>e1rm(x.w,x.r)));
   const rising=hist.length>1&&sv(hist[hist.length-1])>sv(hist[hist.length-2]);
+  const how=HOWTO[name]||[];
+  const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' proper form');
   m.innerHTML=`<section>
-    <div class="top"><button class="iconbtn glass" id="back" aria-label="Back to workout">‹</button><div class="eyebrow">${esc(PROGRAM[a.day].name)}</div><div class="clock glass" id="clock">0:00</div></div>
+    <div class="stage">
+      <svg class="demo" viewBox="38 -28 224 226" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated demonstration of ${esc(name)}"><g id="demoFig"></g></svg>
+      <div class="ov tl"><button class="iconbtn glass" id="back" aria-label="Back to workout">${ico('chevron-left')}</button><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
+      <div class="ov bl">
+        <button class="pill glass" id="demoToggle" aria-label="Pause or play the demonstration"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Lift 1 s · lower 2 s</span></button>
+        <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Watch video</a>
+      </div>
+    </div>
+    <div class="eyebrow">${esc(PROGRAM[a.day].name)}</div>
     <h1>${esc(name)}</h1>
+    <div class="mchips">${info.p.map(x=>`<span class="mchip p">${esc(cap(MNAME[x]))}</span>`).join('')}${info.s.map(x=>`<span class="mchip">${esc(cap(MNAME[x]))}</span>`).join('')}<span class="mchip">${info.sets} sets · 6–8 reps</span></div>
+    ${how.length?`<div class="howto glass"><div class="label" style="margin:0">How to do it</div><ol>${how.slice(0,3).map((h,i)=>`<li><span class="num">${i+1}</span><span>${esc(h)}</span></li>`).join('')}</ol>${how[3]?`<div class="tipbox">${ico('sparkles')}<span>${esc(how[3])}</span></div>`:''}</div>`:''}
     <div class="log glass" data-ex="${esc(name)}">
       <div class="loghead"><div class="label" style="margin:0">Today's sets</div><span class="muted" style="font-size:12px;font-weight:600">${unit}</span></div>
       <div class="lasttime">${last?'Last time: '+last.map(s=>`${fmt(s.w)} × ${s.r}`).join(', '):'First time. Pick a weight you can lift 6–8 times.'}</div>
@@ -522,8 +728,8 @@ function rDetail(m){
         <span class="n">${j+1}</span>
         <input inputmode="decimal" data-f="w" aria-label="Set ${j+1} weight" value="${fmt(s.w)}" placeholder="${last&&last[j]?fmt(last[j].w):'kg'}">
         <input inputmode="numeric" data-f="r" aria-label="Set ${j+1} reps" value="${s.r??''}" placeholder="${last&&last[j]?last[j].r:'6–8'}">
-        <button class="tick" data-tick aria-label="Mark set ${j+1} done">✓</button></div>`).join('')}
-      <button class="addset" data-add>+ Add set</button>
+        <button class="tick" data-tick aria-label="Mark set ${j+1} done">${ico('check')}</button></div>`).join('')}
+      <button class="addset" data-add>${ico('plus')}Add set</button>
       <div class="plates">${platesHTML(name,curW?curW.w:(last&&last[0]?last[0].w:null))}</div>
     </div>
     <div class="perspective"><div class="mapcard glass tilt">
@@ -542,6 +748,7 @@ function rDetail(m){
       <div class="tbl" style="grid-template-columns:36px repeat(${x.length},minmax(40px,1fr))"><span>kg</span>${x.map(q=>`<b class="${best&&q.w===best.w&&q.r===best.r?'pr':''}">${fmt(q.w)}</b>`).join('')}<span>reps</span>${x.map(q=>`<b>${q.r}</b>`).join('')}</div></div>`}).join(''):'<p class="empty">Your sessions for this exercise will show here.</p>'}
   </section>`;
   drawExChart();
+  startDemo(name);
 }
 function drawExChart(){
   const hist=exHistory(curEx);
@@ -591,13 +798,13 @@ function rWeight(m){
   <div class="eyebrow">Weigh in each morning, after the bathroom and before eating</div>
   <h1>Body weight</h1>
   <div class="logw glass"><input id="wIn" inputmode="decimal" aria-label="Today's weight in kg" placeholder="${cur?fmt(cur.kg):'kg'}" value="${today?fmt(today.kg):''}"><span class="kg">kg</span><button class="gold" id="wSave">${today?'Update today':'Log today'}</button></div>
-  <div class="tiles">${tileH(cur?fmt(cur.kg):'—','latest kg')}${tileH(a7!=null?a7.toFixed(1):'—','7-day average')}${tileH(diff!=null?signed(diff):'—','vs the week before',diff==null?'':diff<0?'good':diff>0?'bad':'')}</div>
+  <div class="tiles">${tileH(cur?fmt(cur.kg):'—','latest kg','','scale')}${tileH(a7!=null?a7.toFixed(1):'—','7-day average','','activity')}${tileH(diff!=null?signed(diff):'—','vs the week before',diff==null?'':diff<0?'good':diff>0?'bad':'','calendar-days')}</div>
   <div class="chart glass"><div class="ctitle">${ws.length>1?`${signed(cur.kg-ws[0].kg)} kg since ${shortDate(ws[0].date)}`:'Trend'}</div>
     <svg id="wChart" viewBox="0 0 320 170" role="img" aria-label="Body weight trend"></svg>
-    <div class="legend2"><span><i style="background:#c3c9d6"></i>Daily</span><span><i style="background:#d9a441"></i>7-day average, the real trend</span></div></div>
+    <div class="legend2"><span><i style="background:#4a535a"></i>Daily</span><span><i style="background:#c6f432"></i>7-day average, the real trend</span></div></div>
   <div class="label">Entries</div>
   <div class="glass listcard">${rev.length?rev.map((w,i)=>{const nx=rev[i+1],c=nx?w.kg-nx.kg:0;
-    return `<div class="li"><span>${toDate(w.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</span><span class="chg ${c<0?'good':c>0?'bad':''}">${nx?signed(c):''}</span><b>${fmt(w.kg)} kg</b><button class="x" data-delw="${w.date}" aria-label="Delete entry">✕</button></div>`}).join(''):'<p class="empty">Log your first weight above.</p>'}</div>
+    return `<div class="li"><span>${toDate(w.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</span><span class="chg ${c<0?'good':c>0?'bad':''}">${nx?signed(c):''}</span><b>${fmt(w.kg)} kg</b><button class="x" data-delw="${w.date}" aria-label="Delete entry">${ico('x')}</button></div>`}).join(''):'<p class="empty">Log your first weight above.</p>'}</div>
   </section>`;
   const pts=ws.slice(-90);
   const ma=pts.map(p=>{const from=toDate(p.date);from.setDate(from.getDate()-6);const f=dstr(from);return avg(pts.filter(x=>x.date>=f&&x.date<=p.date))});
@@ -621,7 +828,7 @@ function rProgress(m){
   m.innerHTML=`<section>
   <div class="eyebrow">Your training at a glance</div>
   <h1>Progress</h1>
-  <div class="tiles">${tileH(db.sessions.length,'workouts logged')}${tileH(total.toLocaleString(),'kcal burned in total')}${tileH(prs.length,'exercises tracked')}</div>
+  <div class="tiles">${tileH(db.sessions.length,'workouts logged','','dumbbell')}${tileH(total.toLocaleString(),'kcal burned in total','','flame')}${tileH(prs.length,'exercises tracked','','trophy')}</div>
   <div class="perspective"><div class="mapcard glass tilt">
     <div class="figs">${pair([...hard],[...light],60)}</div>
     <div class="legend"><div class="ctitle" style="margin:0 0 8px">Muscles this week</div>
@@ -634,7 +841,7 @@ function rProgress(m){
     <svg id="sChart" viewBox="0 0 320 170" role="img" aria-label="Estimated one-rep max over time"></svg>
     <div class="note" style="margin:4px 4px 4px">Estimated one-rep max from your best set each workout. A rising line means you're getting stronger.</div></div>
   <div class="label">Personal bests</div>
-  <div class="glass listcard">${prs.length?prs.map(p=>`<div class="pr"><span class="medal">${figure(EX[p.n].p.some(x=>BACK.includes(x))?'b':'f',EX[p.n].p,[],14)}</span><b>${esc(p.n)}</b><span class="v">${fmt(p.best.w)} × ${p.best.r}</span><small>Heaviest ${fmt(p.heavy)} kg · est. 1RM ${Math.round(p.best.v)} kg</small><small style="text-align:right">${shortDate(p.best.date)}</small></div>`).join(''):'<p class="empty">Finish your first workout to see personal bests.</p>'}</div>
+  <div class="glass listcard">${prs.length?prs.map(p=>`<div class="pr"><span class="medal">${ico('trophy')}</span><b>${esc(p.n)}</b><span class="v">${fmt(p.best.w)} × ${p.best.r}</span><small>Heaviest ${fmt(p.heavy)} kg · est. 1RM ${Math.round(p.best.v)} kg</small><small style="text-align:right">${shortDate(p.best.date)}</small></div>`).join(''):'<p class="empty">Finish your first workout to see personal bests.</p>'}</div>
   </section>`;
   const ses=progEx?db.sessions.filter(s=>s.sets[progEx]&&s.sets[progEx].length):[];
   smoothChart($('#sChart'),ses.map(s=>Math.round(Math.max(...s.sets[progEx].map(x=>e1rm(x.w,x.r)))*10)/10),ses.map(s=>shortDate(s.date)),{empty:'Log an exercise twice to see the line.'});
@@ -645,10 +852,10 @@ function rHistory(m){
   const s=db.sessions.slice().reverse();
   m.innerHTML=`<section><div class="eyebrow">${s.length} workout${s.length===1?'':'s'} logged</div><h1>History</h1>`+(s.length?s.map(x=>{const p=PROGRAM[x.day]||{name:x.day};const nsets=Object.values(x.sets).reduce((a,b)=>a+b.length,0);const d=new Date(x.start);
     return `<details class="hs glass"><summary><div class="dchip"><b>${d.getDate()}</b>${d.toLocaleDateString(undefined,{weekday:'short'})}</div>
-    <div class="t"><b>${esc(p.name)}</b><small>${d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})} · ${x.min} min · ${nsets} sets</small></div><div class="k">${x.kcal}<small>kcal</small></div></summary>
+    <div class="t"><b>${esc(p.name)}</b><small>${d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})} · ${x.min} min · ${nsets} sets</small></div><div class="k">${x.kcal}<small>${ico('flame')}kcal</small></div></summary>
     <div class="sx">${Object.entries(x.sets).map(([n,ss])=>`<p>${esc(n)}<span>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span></p>`).join('')}
     <p><span>Effort: ${(EFFORT.find(e=>e.k===x.effort)||{}).label||'—'} · Finisher ${x.finisher?'done':'skipped'} · Body weight used: ${fmt(x.bw)} kg</span></p>
-    <button class="danger" data-dels="${x.id}">Delete workout</button></div></details>`}).join(''):'<p class="empty">No workouts yet. Start one from the Workout tab.</p>')+'</section>';
+    <button class="danger" data-dels="${x.id}">${ico('trash-2')}Delete workout</button></div></details>`}).join(''):'<p class="empty">No workouts yet. Start one from the Workout tab.</p>')+'</section>';
 }
 
 /* ---------- Settings ---------- */
@@ -677,9 +884,9 @@ function rMore(m){
   <div class="label">Your data</div>
   <div class="glass listcard">
     <p class="fhelp" style="margin:4px 0 2px">Everything stays on this phone. Export a backup every week or two so nothing is lost if you delete the app.</p>
-    <div class="btn2"><button class="soft" id="exp">Export backup</button><button class="soft" id="imp">Import backup</button></div>
+    <div class="btn2"><button class="soft" id="exp">${ico('download')}Export backup</button><button class="soft" id="imp">${ico('upload')}Import backup</button></div>
     <input type="file" id="impFile" accept="application/json,.json" hidden>
-    <button class="danger" id="reset">Erase all data</button>
+    <button class="danger" id="reset">${ico('trash-2')}Erase all data</button>
   </div>
   </section>`;
 }
@@ -693,18 +900,18 @@ async function exportData(){
 /* ---------- Charts (SVG, no libraries, works offline) ---------- */
 function smoothChart(svg,vals,labels,o={}){
   if(!svg)return;
-  if(vals.length<2){svg.innerHTML=`<text x="160" y="88" text-anchor="middle" font-size="13" fill="#8a91a3" font-weight="600">${esc(o.empty||'Not enough data yet')}</text>`;return}
+  if(vals.length<2){svg.innerHTML=`<text x="160" y="88" text-anchor="middle" font-size="13" fill="#6f797f" font-weight="600">${esc(o.empty||'Not enough data yet')}</text>`;return}
   const ov=o.overlay,all=vals.concat((ov||[]).filter(v=>v!=null));let lo=Math.min(...all),hi=Math.max(...all);
   const pad=Math.max((hi-lo)*.15,.5);lo-=pad;hi+=pad;
   const L=36,R=312,T=10,B=144,x=i=>L+(R-L)*i/(vals.length-1),y=v=>B-(B-T)*(v-lo)/(hi-lo);
-  let g='';for(let k=0;k<=3;k++){const v=lo+(hi-lo)*k/3,yy=y(v);g+=`<line x1="${L}" x2="${R}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="rgba(29,34,48,.07)"/><text x="0" y="${(yy+4).toFixed(1)}" font-size="10.5" fill="#8a91a3" font-weight="600">${v.toFixed(hi-lo<10?1:0)}</text>`}
+  let g='';for(let k=0;k<=3;k++){const v=lo+(hi-lo)*k/3,yy=y(v);g+=`<line x1="${L}" x2="${R}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="rgba(255,255,255,.06)"/><text x="0" y="${(yy+4).toFixed(1)}" font-size="10.5" fill="#6f797f" font-weight="600">${v.toFixed(hi-lo<10?1:0)}</text>`}
   const path=a=>{let d='',st=false,pi=-1;a.forEach((v,i)=>{if(v==null)return;if(!st){d+=`M${x(i).toFixed(1)},${y(v).toFixed(1)}`;st=true}else{const xm=((x(pi)+x(i))/2).toFixed(1);d+=` C${xm},${y(a[pi]).toFixed(1)} ${xm},${y(v).toFixed(1)} ${x(i).toFixed(1)},${y(v).toFixed(1)}`}pi=i});return d};
   const main=ov||vals,d=path(main),li=main.length-1,lx=x(li),ly=y(main[li]);
-  const dots=ov?vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.6" fill="#c3c9d6"/>`).join(''):vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.8" fill="#e5ad48"/>`).join('');
+  const dots=ov?vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.6" fill="#4a535a"/>`).join(''):vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.8" fill="#c6f432"/>`).join('');
   svg.innerHTML=`${g}<path d="${d} L${R},${B} L${L},${B}Z" fill="url(#gArea)"/>${dots}
-    <path d="${d}" fill="none" stroke="#d9a441" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="9" fill="rgba(217,164,65,.18)"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="5" fill="url(#gP)" stroke="#fff" stroke-width="2"/>
-    <text x="${L}" y="164" font-size="10.5" fill="#8a91a3" font-weight="600">${esc(labels[0])}</text><text x="${R}" y="164" font-size="10.5" fill="#8a91a3" font-weight="600" text-anchor="end">${esc(labels[labels.length-1])}</text>`;
+    <path d="${d}" fill="none" stroke="#c6f432" stroke-width="3" stroke-linecap="round" style="filter:drop-shadow(0 0 6px rgba(198,244,50,.5))"/>
+    <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="9" fill="rgba(198,244,50,.2)"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="5" fill="#c6f432" stroke="#0a0d0f" stroke-width="2"/>
+    <text x="${L}" y="164" font-size="10.5" fill="#6f797f" font-weight="600">${esc(labels[0])}</text><text x="${R}" y="164" font-size="10.5" fill="#6f797f" font-weight="600" text-anchor="end">${esc(labels[labels.length-1])}</text>`;
 }
 
 /* ---------- Events ---------- */
@@ -715,6 +922,8 @@ main.addEventListener('click',e=>{
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){curEx=t.dataset.open;render();window.scrollTo(0,0);return}
   if(t.id==='back'){curEx=null;render();window.scrollTo(0,0);return}
+  if(t.id==='demoToggle'){const now=performance.now();if(demo.playing){demo.pausedAt=now;demo.playing=false}else{demo.t0+=now-(demo.pausedAt||now);demo.playing=true}
+    $('#demoIco').innerHTML=ico(demo.playing?'pause':'play');$('#demoLbl').textContent=demo.playing?'Lift 1 s · lower 2 s':'Paused · tap to play';return}
   if(t.hasAttribute('data-tick'))return tickSet(t);
   if(t.hasAttribute('data-add')){db.active.sets[curEx].push({w:null,r:null,done:false});save();render();return}
   if(t.dataset.mode){exMode=t.dataset.mode;const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;drawExChart();return}

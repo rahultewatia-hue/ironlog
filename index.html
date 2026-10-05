@@ -39,7 +39,7 @@ h1,.big,.tile b,.clock,.rest b,.stat b,.logw input,.date b,.dchip b,.finish,.gol
 .blobs .b2{width:300px;height:300px;background:rgba(40,90,70,.28);top:40%;left:-170px}
 .blobs .b3{width:280px;height:280px;background:rgba(120,170,20,.12);bottom:-120px;right:-100px}
 
-main{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 18px calc(130px + env(safe-area-inset-bottom))}
+main{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:calc(70px + env(safe-area-inset-top)) 18px calc(130px + env(safe-area-inset-bottom))}
 .view{animation:in .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
@@ -255,7 +255,7 @@ details.hs[open] summary{border-bottom:1px solid var(--line)}
 .rest .rbar{position:absolute!important;left:0;bottom:0;height:3px;background:var(--lime);box-shadow:0 0 10px var(--lime);transition:width .25s linear}
 .rest.go{background:rgba(198,244,50,.16);border-color:rgba(198,244,50,.4)}
 .rest.go b{color:var(--lime)}
-.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-160px);z-index:20;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;
+.toast{position:fixed;left:50%;top:calc(66px + env(safe-area-inset-top));transform:translate(-50%,-160px);z-index:20;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;
   max-width:90%;text-align:center;transition:transform .3s cubic-bezier(.3,1.3,.5,1)}
 .toast.on{transform:translate(-50%,0)}
 nav.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(524px,calc(100% - 24px));
@@ -268,8 +268,65 @@ nav.tabbar button.on .ic{filter:drop-shadow(0 0 6px rgba(198,244,50,.6))}
 /* exercise screen: demo on top half, info below */
 body.focus nav.tabbar{display:none}
 body.focus .rest{bottom:calc(14px + env(safe-area-inset-bottom))}
-body.focus main{padding-top:0}
-.stage{position:sticky;top:0;z-index:5;margin:0 -18px 14px;height:min(46vh,420px);min-height:270px;padding-top:env(safe-area-inset-top);
+body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
+/* top bar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:12;padding-top:env(safe-area-inset-top);background:rgba(10,13,15,.72);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.06)}
+.tb-in{max-width:560px;margin:0 auto;height:56px;display:flex;align-items:center;gap:8px;padding:0 12px}
+.tb-side{display:flex;gap:6px;min-width:84px}.tb-side.r{justify-content:flex-end}
+.tb-title{flex:1;text-align:center;font-family:var(--display);font-weight:700;font-size:16.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:var(--text);display:flex;align-items:center;justify-content:center;transition:opacity .2s,background .2s}
+.tbtn .ic{width:19px;height:19px}
+.tbtn:active{background:rgba(198,244,50,.15)}
+.tbtn:disabled{opacity:.3;cursor:default}
+.tbtn.on{color:var(--lime);border-color:rgba(198,244,50,.35);background:rgba(198,244,50,.1)}
+/* home */
+.hello{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
+.avatar{width:46px;height:46px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:19px;color:var(--onlime);
+  background:radial-gradient(circle at 35% 30%,#efffb0,#c6f432 55%,#7fa313);box-shadow:0 0 0 3px rgba(198,244,50,.15),0 0 18px rgba(198,244,50,.35)}
+.hello small{display:block;color:var(--muted);font-size:13.5px;font-weight:600}
+.hello b{display:block;font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.01em}
+.plan{position:relative;overflow:hidden;border-radius:26px;min-height:230px;padding:18px;margin-bottom:16px;display:flex;flex-direction:column;justify-content:flex-end;
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 40px -20px rgba(0,0,0,.9)}
+.plan .bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04)}
+.plan .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,13,15,.95) 0%,rgba(10,13,15,.75) 45%,rgba(10,13,15,.15) 100%),linear-gradient(0deg,rgba(10,13,15,.7),transparent 50%)}
+.plan > *:not(.bg){position:relative}
+.plan h2{font-family:var(--display);font-size:27px;line-height:1.05;margin:10px 0 6px;font-weight:700;letter-spacing:-.02em;max-width:75%}
+.plan p{margin:0 0 14px;color:#c3cbcf;font-size:13.5px;max-width:70%}
+.plan .gold{align-self:flex-start}
+.act{display:flex;gap:16px;align-items:center;padding:16px;margin-bottom:16px}
+.ring{position:relative;width:118px;height:118px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .rv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .rv b{font-family:var(--display);font-size:28px;font-weight:700;line-height:1}
+.ring .rv span{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+.alist{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.arow{display:flex;gap:10px;align-items:center;background:none;border:0;padding:0;text-align:left;color:var(--text)}
+.arow .ic{width:20px;height:20px;color:var(--lime)}
+.arow small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.arow b{font-family:var(--display);font-size:17px;font-weight:700}
+.arow b span{font-family:var(--font);font-size:12px;color:var(--muted);font-weight:600}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:12px;margin-bottom:16px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted)}
+.wd i{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-style:normal;color:var(--dim)}
+.wd i .ic{width:15px;height:15px;stroke-width:3}
+.wd.sched i{border-color:rgba(198,244,50,.35)}
+.wd.done i{background:var(--lime);color:var(--onlime);border-color:transparent;box-shadow:0 0 12px rgba(198,244,50,.45)}
+.wd.today{color:var(--text)}
+.wd.today i{outline:2px solid rgba(255,255,255,.5);outline-offset:2px}
+.qw{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px 16px;padding:2px 18px 6px;scrollbar-width:none}
+.qw::-webkit-scrollbar{display:none}
+.qcard{position:relative;flex:none;width:150px;height:190px;border-radius:20px;overflow:hidden;scroll-snap-align:start;border:1px solid rgba(255,255,255,.08);padding:0;text-align:left;color:var(--text);background:#14181b}
+.qcard .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.qcard .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,13,15,0) 35%,rgba(10,13,15,.92))}
+.qcard .qt{position:absolute;left:12px;right:46px;bottom:12px}
+.qcard .qt b{display:block;font-size:14.5px;font-weight:700;line-height:1.2}
+.qcard .qt small{display:block;font-size:11.5px;color:#c3cbcf;font-weight:600;margin-top:2px}
+.qcard .go{position:absolute;right:10px;bottom:12px;width:30px;height:30px;border-radius:50%;background:var(--lime);color:var(--onlime);display:flex;align-items:center;justify-content:center}
+.qcard .go .ic{width:16px;height:16px}
+.qcard .tag{position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;background:rgba(10,13,15,.6);color:var(--lime);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.last{display:flex;gap:12px;align-items:center;padding:12px;width:100%;text-align:left;color:var(--text);border:1px solid rgba(255,255,255,.07)}
+.stage{position:sticky;top:calc(56px + env(safe-area-inset-top));z-index:5;margin:0 -18px 14px;height:min(42vh,400px);min-height:250px;
   background:radial-gradient(90% 70% at 50% 30%,#1f272b 0%,#12171a 60%,#0a0d0f 100%);border-radius:0 0 32px 32px;overflow:hidden;
   box-shadow:0 20px 40px -24px rgba(0,0,0,.9),inset 0 -1px 0 rgba(255,255,255,.05)}
 .stage::before{content:"";position:absolute;left:50%;top:40%;width:70%;height:55%;transform:translate(-50%,-50%);border-radius:50%;background:rgba(198,244,50,.10);filter:blur(40px);pointer-events:none}
@@ -281,7 +338,7 @@ body.focus main{padding-top:0}
 .stage .vmsg{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 18px;border-radius:20px;font-size:13.5px;font-weight:600;text-align:center;white-space:nowrap}
 .stage .vmsg[hidden]{display:none}
 .stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
-.stage .tl{top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;justify-content:space-between}
+.stage .tl{top:12px;left:14px;right:14px;justify-content:flex-end}
 .stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
 .pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;font-size:12.5px;font-weight:700;color:var(--text);text-decoration:none;border:0}
 .pill .ic{width:15px;height:15px;color:var(--lime)}
@@ -302,6 +359,12 @@ body.focus main{padding-top:0}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <!-- Lucide icons (lucide.dev), ISC licence -->
+  <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /> <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol>
+  <symbol id="i-trending-down" viewBox="0 0 24 24"><path d="M16 17h6v-6" /> <path d="m22 17-8.5-8.5-5 5L2 7" /></symbol>
+  <symbol id="i-trending-up" viewBox="0 0 24 24"><path d="M16 7h6v6" /> <path d="m22 7-8.5 8.5-5-5L2 17" /></symbol>
+  <symbol id="i-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z" /> <path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z" /> <path d="M16 17h4" /> <path d="M4 13h4" /></symbol>
   <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0" /> <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></symbol>
   <symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v3" /> <path d="M16 2v3" /> <rect x="3" y="3" width="18" height="18" rx="2" /> <path d="M3 9h18" /> <path d="M8 13h.01" /> <path d="M12 13h.01" /> <path d="M16 13h.01" /> <path d="M8 17h.01" /> <path d="M12 17h.01" /> <path d="M16 17h.01" /></symbol>
@@ -343,21 +406,28 @@ body.focus main{padding-top:0}
   </defs>
 </svg>
 <div class="blobs" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+<header class="topbar" id="topbar">
+  <div class="tb-in">
+    <div class="tb-side"><button class="tbtn" id="navBack" aria-label="Back"><svg class="ic"><use href="#i-chevron-left"/></svg></button><button class="tbtn" id="navFwd" aria-label="Forward"><svg class="ic"><use href="#i-chevron-right"/></svg></button></div>
+    <div class="tb-title" id="tbTitle">Aesthetic Body</div>
+    <div class="tb-side r"><button class="tbtn" id="navHome" aria-label="Home"><svg class="ic"><use href="#i-house"/></svg></button><button class="tbtn" id="navSet" aria-label="Settings"><svg class="ic"><use href="#i-settings"/></svg></button></div>
+  </div>
+</header>
 <main id="main"></main>
 <div class="rest glass" id="rest" role="status"><svg class="ic" aria-hidden="true"><use href="#i-timer"/></svg><b class="rt">0:00</b><span class="rl">Rest</span><button data-rest="30">+30s</button><button data-rest="skip">Skip</button><i class="rbar"></i></div>
 <div class="toast glass" id="toast" role="status"></div>
 <nav class="tabbar glass">
+  <button data-tab="home"><svg class="ic"><use href="#i-house"/></svg>Home</button>
   <button data-tab="workout"><svg class="ic"><use href="#i-dumbbell"/></svg>Workout</button>
   <button data-tab="weight"><svg class="ic"><use href="#i-scale"/></svg>Weight</button>
   <button data-tab="progress"><svg class="ic"><use href="#i-chart-column"/></svg>Progress</button>
   <button data-tab="history"><svg class="ic"><use href="#i-history"/></svg>History</button>
-  <button data-tab="more"><svg class="ic"><use href="#i-settings"/></svg>Settings</button>
 </nav>
 
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-05.3';
+const APP_BUILD='2026-10-05.4';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -557,14 +627,33 @@ function tickClock(){
 setInterval(tickClock,500);
 
 /* ---------- Navigation ---------- */
-let tab='workout',curEx=null,progEx=null,exMode='w';
-document.querySelector('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.tab;curEx=null;render();window.scrollTo(0,0)});
+let tab='home',curEx=null,progEx=null,exMode='w';
+/* Navigation uses the browser history, so Back/Forward (and Android's back button) move between screens */
+const TABS=['home','workout','weight','progress','history','more'];
+let navIdx=0,navMax=0;
+const navHash=(t,ex)=>'#'+t+(ex?'/'+encodeURIComponent(ex):'');
+function go(t,ex=null,replace=false){
+  if(t===tab&&ex===curEx&&!replace){window.scrollTo(0,0);return}
+  tab=t;curEx=ex;if(!replace){navIdx++;navMax=navIdx}
+  try{history[replace?'replaceState':'pushState']({tab:t,ex,i:navIdx,max:navMax},'',navHash(t,ex))}catch(e){}
+  render();window.scrollTo(0,0);
+}
+window.addEventListener('popstate',e=>{const st=e.state||{tab:'home',ex:null,i:0};tab=TABS.includes(st.tab)?st.tab:'home';curEx=st.ex||null;navIdx=st.i||0;navMax=Math.max(navMax,st.max||0);render();window.scrollTo(0,0)});
+document.querySelector('nav.tabbar').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.tab)});
+$('#navBack').addEventListener('click',()=>{if(navIdx>0)history.back()});
+$('#navFwd').addEventListener('click',()=>{if(navIdx<navMax)history.forward()});
+$('#navHome').addEventListener('click',()=>go('home'));
+$('#navSet').addEventListener('click',()=>go('more'));
+const TITLES={home:'Aesthetic Body',workout:'Workout',weight:'Body weight',progress:'Progress',history:'History',more:'Settings'};
 function render(){
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
   document.body.classList.toggle('focus',!!detail);
+  $('#tbTitle').textContent=detail?curEx:TITLES[tab];
+  $('#navBack').disabled=navIdx<=0;$('#navFwd').disabled=navIdx>=navMax;
+  $('#navHome').classList.toggle('on',tab==='home');$('#navSet').classList.toggle('on',tab==='more');
   if(detail)rDetail(m);
-  else({workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m);
+  else({home:rHome,workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m);
   m.firstElementChild&&m.firstElementChild.classList.add('view');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)m.querySelectorAll('.tilt').forEach(tilt);
   tickClock();
@@ -575,6 +664,67 @@ function tilt(el){
 }
 const tileH=(v,l,c='',i='')=>`<div class="tile glass">${i?ico(i):''}<b class="${c}">${v}</b><span>${l}</span></div>`;
 const seg=(items,on,attr)=>{const i=Math.max(0,items.findIndex(x=>x[0]===on));return `<div class="seg glass"><div class="lens" style="transform:translateX(${i*100}%)"></div>${items.map(([k,l])=>`<button data-${attr}="${k}" class="${k===on?'on':''}">${l}</button>`).join('')}</div>`};
+
+/* ---------- Home ---------- */
+const poster=k=>{const n=PROGRAM[k].ex[0][0];return VIDEOS[n]?`videos/${VIDEOS[n]}.jpg`:''};
+function rHome(m){
+  const now=new Date(),h=now.getHours(),wd=now.getDay();
+  const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const sugE=Object.entries(PROGRAM).find(([,p])=>p.wd===wd);
+  const ws=weekStart(),wsT=ws.getTime(),weekS=db.sessions.filter(x=>x.start>=wsT),target=Object.keys(PROGRAM).length;
+  const kcal=weekS.reduce((a,b)=>a+b.kcal,0),mins=weekS.reduce((a,b)=>a+b.min,0);
+  const pct=Math.min(100,Math.round(weekS.length/target*100)),C=2*Math.PI*48;
+  const wts=sortedWeights(),lw=wts[wts.length-1],wk=wts.filter(w=>w.date<=daysAgo(7)).slice(-1)[0];
+  const wdiff=lw&&wk?lw.kg-wk.kg:null;
+  // next planned day if today is a rest day
+  let nextE=null;for(let i=1;i<=7&&!sugE;i++){const d=(wd+i)%7;nextE=Object.entries(PROGRAM).find(([,p])=>p.wd===d);if(nextE)break}
+  let plan;
+  if(db.active){const p=PROGRAM[db.active.day],done=Object.values(db.active.sets).filter(s=>s.length&&s.every(x=>x.done)).length;
+    plan=`<div class="plan"><div class="bg" style="background-image:url('${poster(db.active.day)}')"></div><span class="badge">${ico('timer')}In progress · <span id="clock">0:00</span></span>
+      <h2>${esc(p.name)}</h2><p>${done} of ${p.ex.length} exercises done. Pick up where you left off.</p>
+      <button class="gold" data-go="workout">Continue workout<span class="arr">${ico('arrow-right')}</span></button></div>`;
+  }else if(sugE&&db.sessions.some(x=>x.date===dstr()&&x.day===sugE[0])){const [k,p]=sugE,t=db.sessions.filter(x=>x.date===dstr()).slice(-1)[0];
+    plan=`<div class="plan"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="badge">${ico('check')}Done today</span>
+      <h2>${esc(p.name)}</h2><p>${t.min} min, about ${t.kcal} kcal. Nice work. Rest up and refuel.</p>
+      <button class="gold" data-go="history">See workout<span class="arr">${ico('arrow-right')}</span></button></div>`;
+  }else if(sugE){const [k,p]=sugE,dm=dayMuscles(k);
+    plan=`<div class="plan"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="badge">${ico('sparkles')}Today's plan</span>
+      <h2>${esc(p.name)}</h2><p>${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}. ${p.ex.length} exercises, 6–8 reps, then a 6-minute finisher.</p>
+      <button class="gold" data-start="${k}">Start workout<span class="arr">${ico('play')}</span></button></div>`;
+  }else{const [k,p]=nextE||[];
+    plan=`<div class="plan"><div class="bg" style="background-image:url('${k?poster(k):''}')"></div><span class="badge">${ico('moon')}Rest day</span>
+      <h2>Recover and walk</h2><p>Go for a 30–45 minute walk.${p?` Next up: ${esc(p.name)} on ${DAYS[p.wd]}.`:''}</p>
+      ${k?`<button class="gold" data-start="${k}">Train anyway<span class="arr">${ico('play')}</span></button>`:''}</div>`;
+  }
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const week=days.map((d,i)=>{const date=new Date(ws);date.setDate(date.getDate()+i);const ds=dstr(date),jsd=date.getDay();
+    const done=db.sessions.some(x=>x.date===ds),planned=Object.values(PROGRAM).some(p=>p.wd===jsd),today=ds===dstr();
+    return `<div class="wd ${done?'done':''} ${planned?'sched':''} ${today?'today':''}"><i>${done?ico('check'):date.getDate()}</i>${d}</div>`}).join('');
+  const last=db.sessions[db.sessions.length-1];
+  let lastH='';
+  if(last){const lp=PROGRAM[last.day]||{name:last.day},ago=Math.round((toDate(dstr())-toDate(last.date))/864e5),n=Object.values(last.sets).reduce((a,b)=>a+b.length,0);
+    lastH=`<div class="label">Last workout</div><button class="last glass" data-go="history">${lp.ex?photo(lp.ex[0][0]):''}<div class="txt" style="flex:1;min-width:0"><div class="name" style="font-weight:700">${esc(lp.name)}</div><div class="meta" style="font-size:12.5px;color:var(--muted)">${ago===0?'Today':ago===1?'Yesterday':ago+' days ago'} · ${last.min} min · ${n} sets · ${last.kcal} kcal</div></div><span class="chev">${ico('chevron-right')}</span></button>`;
+  }
+  m.innerHTML=`<section>
+    <div class="hello"><div class="avatar">R</div><div><small>${greet}</small><b>Rahul</b></div></div>
+    ${plan}
+    <div class="label">This week<small>${weekS.length} of ${target} workouts</small></div>
+    <div class="act glass">
+      <div class="ring"><svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+        <circle cx="55" cy="55" r="48" fill="none" stroke="#c6f432" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-pct/100)).toFixed(1)}" style="filter:drop-shadow(0 0 6px rgba(198,244,50,.6))"/></svg>
+        <div class="rv"><b>${pct}%</b><span>weekly goal</span></div></div>
+      <div class="alist">
+        <button class="arow" data-go="history">${ico('dumbbell')}<div><small>Workouts</small><b>${weekS.length} <span>/ ${target}</span></b></div></button>
+        <button class="arow" data-go="progress">${ico('flame')}<div><small>Calories</small><b>${kcal} <span>kcal</span></b></div></button>
+        <button class="arow" data-go="weight">${ico(wdiff!=null&&wdiff<=0?'trending-down':'scale')}<div><small>Body weight</small><b>${lw?fmt(lw.kg):'—'} <span>${lw?(wdiff!=null?`kg · ${signed(wdiff)} this week`:'kg'):'log it'}</span></b></div></button>
+      </div>
+    </div>
+    <div class="week glass">${week}</div>
+    <div class="label">Quick workouts<small>${mins} min this week</small></div>
+    <div class="qw">${Object.entries(PROGRAM).map(([k,p])=>`<button class="qcard" data-start="${k}"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="tag">${DAYS[p.wd].slice(0,3)}</span><div class="qt"><b>${esc(p.name)}</b><small>${p.ex.length} exercises · ~50 min</small></div><span class="go">${ico('arrow-right')}</span></button>`).join('')}</div>
+    ${lastH}
+  </section>`;
+}
 
 /* ---------- Workout ---------- */
 function weekStats(){const ws=weekStart().getTime();const s=db.sessions.filter(x=>x.start>=ws);return {n:s.length,kcal:s.reduce((a,b)=>a+b.kcal,0)}}
@@ -630,9 +780,9 @@ function rWorkout(m){
 /* ---------- Exercise video ---------- */
 function setupVideo(){
   const v=$('#exVid');if(!v)return;
-  const msg=t=>{$('#vMsgTxt').textContent=t;$('#vMsg').hidden=false;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'};
+  const msg=t=>{if(!v.isConnected||!$('#vMsg'))return;$('#vMsgTxt').textContent=t;$('#vMsg').hidden=false;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'};
   v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video needs an internet connection'));
-  v.addEventListener('playing',()=>{$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
+  v.addEventListener('playing',()=>{if(!v.isConnected)return;$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
   if(!navigator.onLine)msg('Video needs an internet connection');
   const p=v.play();if(p&&p.catch)p.catch(()=>{$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
 }
@@ -654,7 +804,7 @@ function rDetail(m){
       <video id="exVid" src="videos/${VIDEOS[name]}.mp4" poster="videos/${VIDEOS[name]}.jpg" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
       <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video needs an internet connection</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
-      <div class="ov tl"><button class="iconbtn glass" id="back" aria-label="Back to workout">${ico('chevron-left')}</button><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
+      <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
       <div class="ov bl">
         <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Pause</span></button>
         <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
@@ -703,7 +853,7 @@ function drawExChart(){
 function startSession(k){
   const p=PROGRAM[k];
   db.active={day:k,start:Date.now(),finisher:false,effort:'hard',sets:Object.fromEntries(p.ex.map(e=>[e[0],Array.from({length:e[1]},()=>({w:null,r:null,done:false}))]))};
-  save();curEx=null;render();window.scrollTo(0,0);
+  save();curEx=null;if(tab!=='workout')go('workout');else{render();window.scrollTo(0,0)}
 }
 function tickSet(btn){
   const row=btn.closest('.srow'),card=btn.closest('[data-ex]'),name=card.dataset.ex,j=+row.dataset.set;
@@ -728,7 +878,7 @@ function finish(){
   if(min>120){const v=parseNum(prompt(`This workout has been open for ${min} minutes. How many minutes did you actually train?`,'60')||'');if(!v)return;min=Math.round(v)}
   const kcal=calcKcal(min,bw,a.effort,a.finisher);
   db.sessions.push({id:end,date:dstr(new Date(a.start)),day:a.day,start:a.start,end,min,effort:a.effort,finisher:a.finisher,bw,kcal,sets:done});
-  db.active=null;rest=null;curEx=null;save();render();window.scrollTo(0,0);
+  db.active=null;rest=null;save();go('workout',null,true);
   toast(`Saved: ${min} min, about ${kcal} kcal`);
 }
 
@@ -865,8 +1015,8 @@ main.addEventListener('click',e=>{
   unlockAudio();
   const t=e.target.closest('button');if(!t)return;
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
-  if(t.dataset.open){curEx=t.dataset.open;render();window.scrollTo(0,0);return}
-  if(t.id==='back'){curEx=null;render();window.scrollTo(0,0);return}
+  if(t.dataset.open){go('workout',t.dataset.open);return}
+  if(t.dataset.go){go(t.dataset.go);return}
   if(t.id==='demoToggle'){const v=$('#exVid');if(!v)return;if(v.paused)v.play().catch(()=>{});else v.pause();
     $('#demoIco').innerHTML=ico(v.paused?'play':'pause');$('#demoLbl').textContent=v.paused?'Play':'Pause';return}
   if(t.id==='vRetry'){const v=$('#exVid');$('#vMsg').hidden=true;v.load();v.play().catch(()=>{});return}
@@ -875,7 +1025,7 @@ main.addEventListener('click',e=>{
   if(t.dataset.mode){exMode=t.dataset.mode;const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;drawExChart();return}
   if(t.dataset.effort){db.active.effort=t.dataset.effort;save();const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;return}
   if(t.id==='finish')return finish();
-  if(t.id==='discard'){if(confirm('Discard this workout? Logged sets will be lost.')){db.active=null;rest=null;curEx=null;save();render()}return}
+  if(t.id==='discard'){if(confirm('Discard this workout? Logged sets will be lost.')){db.active=null;rest=null;save();go('workout',null,true)}return}
   if(t.id==='wSave'){const v=parseNum($('#wIn').value);if(!v||v<20||v>350){toast('Enter your weight in kg, like 78.4');return}upsertWeight(dstr(),v);render();toast(`Logged ${fmt(v)} kg`);return}
   if(t.dataset.delw){if(confirm('Delete this weight entry?')){db.weights=db.weights.filter(w=>w.date!==t.dataset.delw);save();render()}return}
   if(t.dataset.dels){if(confirm('Delete this workout?')){db.sessions=db.sessions.filter(s=>String(s.id)!==t.dataset.dels);save();render()}return}
@@ -912,6 +1062,8 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('online',checkForUpdate);
 setTimeout(checkForUpdate,3000);
 
+(()=>{const [t,ex]=location.hash.slice(1).split('/');if(TABS.includes(t)){tab=t;curEx=ex?decodeURIComponent(ex):null}
+  try{history.replaceState({tab,ex:curEx,i:0,max:0},'',navHash(tab,curEx))}catch(e){}})();
 render();
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>

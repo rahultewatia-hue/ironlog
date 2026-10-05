@@ -30,6 +30,9 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
 ## What the app does
+- **Navigation:** fixed glass top bar (Back, Forward, title, Home, Settings) and a bottom tab bar (Home, Workout, Weight, Progress, History).
+  Screens are routed through the browser History API (`go(tab, ex)`, `popstate`, URL hash like `#workout/EZ-bar%20curl`), so Back/Forward and Android's back button work. Settings opens from the gear.
+- **Home tab (default):** greeting, today's plan card over the first exercise's photo (Start / Continue / Done today / Rest day), weekly goal ring (workouts of 4, kcal, body weight change), Mon–Sun strip, quick-workout photo cards, last workout.
 - **Workout tab:** opens on today's workout. Each exercise has set rows (kg + reps + ✓). Ticking a set starts the rest timer (compound `restC` = 150 s, isolation `restI` = 90 s) with a beep. Shows last session's sets as placeholders and "add 2–4 kg" when every set hit 8 reps. Includes a plate guide, a finisher checkbox, and an effort selector. The session is saved on Finish.
 - **Weight tab:** daily body weight log, 7-day average, and a trend chart.
 - **Progress tab:** weekly calories bar chart, strength chart (estimated 1RM per session, Epley formula), and personal bests.

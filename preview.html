@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef0f5">
+<title>Aesthetic Body — design preview</title>
+<style>
+:root{
+  --bg:#eef0f5; --text:#1d2230; --muted:#7a8296; --line:rgba(29,34,48,.08);
+  --gold:#d9a441; --gold2:#f1d9a6; --sage:#5fae8b; --ink:#2a2f3d;
+  --glass:rgba(255,255,255,.52); --glass-hi:rgba(255,255,255,.85);
+  --font: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
+
+/* Phone frame on desktop, full screen on phones */
+.device{position:relative;width:100%;max-width:430px;min-height:100vh;overflow:hidden;background:var(--bg)}
+@media (min-width:600px){
+  body{padding:32px 0;background:#dfe3eb}
+  .device{min-height:880px;height:880px;border-radius:52px;border:10px solid #fff;box-shadow:0 40px 80px -20px rgba(40,50,80,.35),0 0 0 1px rgba(0,0,0,.06)}
+  .screen{height:100%;overflow-y:auto}
+}
+
+/* Soft colour fields behind the glass (what the glass refracts) */
+.blobs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.blobs span{position:absolute;border-radius:50%;filter:blur(50px);opacity:.75}
+.blobs .b1{width:320px;height:320px;background:#ffd9a8;top:-80px;right:-90px}
+.blobs .b2{width:280px;height:280px;background:#cfd8ff;top:260px;left:-120px}
+.blobs .b3{width:260px;height:260px;background:#c9f0dd;top:620px;right:-80px}
+.blobs .b4{width:220px;height:220px;background:#f6d0e4;top:980px;left:-40px}
+
+.screen{position:relative;z-index:1;padding:calc(14px + env(safe-area-inset-top)) 18px calc(120px + env(safe-area-inset-bottom))}
+.view{display:none;animation:in .35s cubic-bezier(.2,.8,.2,1)}
+.view.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view{animation:none}}
+
+/* Liquid glass */
+.glass{
+  position:relative;background:var(--glass);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid rgba(255,255,255,.7);border-radius:24px;
+  box-shadow:inset 0 1px 0 var(--glass-hi),inset 0 -1px 0 rgba(255,255,255,.25),0 10px 30px -12px rgba(40,50,90,.22),0 2px 6px -2px rgba(40,50,90,.08);
+}
+.glass::before{ /* specular sheen */
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0) 70%,rgba(255,255,255,.25) 100%);
+}
+.glass > *{position:relative}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.iconbtn{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;color:var(--ink);font-size:18px;cursor:pointer}
+.muted{color:var(--muted)}
+.eyebrow{font-size:14px;font-weight:600;color:var(--muted)}
+h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 10px;font-weight:800}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.chip{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:99px;color:#4a5165}
+
+/* Hero card with tilt */
+.hero{padding:18px;display:flex;gap:14px;align-items:center;margin-bottom:18px;transform-style:preserve-3d;transition:transform .2s ease-out;will-change:transform}
+.hero .figs{display:flex;gap:2px;transform:translateZ(30px)}
+.hero .info{flex:1;transform:translateZ(18px)}
+.hero .big{font-size:17px;font-weight:700;margin:2px 0 10px;line-height:1.25}
+.bar{height:8px;border-radius:9px;background:rgba(29,34,48,.07);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#f0c56d,#d9a441);box-shadow:0 0 12px rgba(217,164,65,.5)}
+.perspective{perspective:900px}
+
+.label{font-size:15px;font-weight:700;margin:4px 4px 10px}
+.ex{display:flex;gap:12px;align-items:center;padding:10px 12px 10px 10px;margin-bottom:10px;cursor:pointer;transition:transform .15s}
+.ex:active{transform:scale(.98)}
+.thumb{width:56px;height:68px;border-radius:16px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(235,238,246,.7));box-shadow:inset 0 1px 0 #fff,0 4px 10px -4px rgba(40,50,90,.25)}
+.ex .name{font-size:15.5px;font-weight:700}
+.ex .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.ex .next{font-size:12.5px;color:#b07d1c;font-weight:600;margin-top:2px}
+.ex.up{box-shadow:inset 0 1px 0 var(--glass-hi),0 0 0 1.5px rgba(217,164,65,.55),0 12px 30px -12px rgba(217,164,65,.45)}
+.done{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex:none;
+  background:radial-gradient(circle at 35% 30%,#8fd4b3,#4f9f7c);box-shadow:0 4px 10px -3px rgba(79,159,124,.6),inset 0 1px 1px rgba(255,255,255,.6)}
+.chev{color:#a3aabb;font-size:20px;font-weight:700}
+
+/* 3D plates decoration */
+.plates3d{display:flex;align-items:center;gap:3px;position:absolute;right:16px;top:-26px;transform:rotate(-8deg) translateZ(40px)}
+.plates3d span{border-radius:6px;box-shadow:inset -3px 0 4px rgba(0,0,0,.15),inset 2px 0 2px rgba(255,255,255,.6),0 6px 12px -4px rgba(0,0,0,.25)}
+
+/* Detail */
+.mapcard{padding:16px;display:flex;gap:10px;align-items:center;margin:8px 0 14px;transform-style:preserve-3d;transition:transform .2s ease-out}
+.mapcard .figs{display:flex;gap:6px;transform:translateZ(34px)}
+.legend{font-size:12.5px;font-weight:600;flex:1;transform:translateZ(16px)}
+.legend div{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.sw{width:12px;height:12px;border-radius:4px;flex:none}
+.stat{font-size:12px;color:var(--muted);margin-top:10px}
+.stat b{display:block;font-size:19px;color:var(--text);font-weight:800}
+.up-txt{color:#3f9a72;font-weight:700}
+
+.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:16px;margin-bottom:12px}
+.seg button{position:relative;z-index:1;border:0;background:none;font:inherit;font-size:13.5px;font-weight:700;color:var(--muted);padding:9px 0;cursor:pointer;transition:color .2s}
+.seg button.on{color:var(--text)}
+.seg .lens{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:12px;
+  background:rgba(255,255,255,.85);box-shadow:0 4px 14px -4px rgba(40,50,90,.3),inset 0 1px 0 #fff;transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.chart{padding:14px 12px 8px;margin-bottom:16px}
+.chart svg{width:100%;display:block}
+.sess{display:flex;padding:0;overflow:hidden;margin-bottom:10px}
+.date{width:70px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#8a6a2c;
+  background:linear-gradient(160deg,rgba(255,236,200,.9),rgba(246,214,155,.6));border-right:1px solid rgba(255,255,255,.7)}
+.date b{font-size:22px;color:#5a4212;line-height:1}
+.tbl{flex:1;display:grid;grid-template-columns:40px repeat(3,1fr);align-items:center;padding:10px 12px;row-gap:4px}
+.tbl span{font-size:11.5px;color:var(--muted);font-weight:600}
+.tbl b{font-size:18px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+.tbl b.pr{color:#b07d1c}
+
+/* Floating liquid-glass tab bar */
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:10;width:min(394px,calc(100% - 28px));
+  display:flex;justify-content:space-around;padding:8px;border-radius:30px}
+@media (min-width:600px){.tabbar{position:absolute;bottom:22px}}
+.tabbar button{flex:1;border:0;background:none;font:inherit;font-size:10.5px;font-weight:700;color:#7a8296;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:22px;cursor:pointer}
+.tabbar button.on{color:var(--text);background:rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,0 4px 12px -4px rgba(40,50,90,.25)}
+.tabbar svg{width:23px;height:23px}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:18px 8px 0}
+</style>
+</head>
+<body>
+
+<!-- Shared 3D shading for the muscle maps -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="gP" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#ffe2a3"/><stop offset=".55" stop-color="#e5ad48"/><stop offset="1" stop-color="#b9822a"/></radialGradient>
+    <radialGradient id="gS" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff4dc"/><stop offset=".6" stop-color="#f1d6a0"/><stop offset="1" stop-color="#d7b475"/></radialGradient>
+    <radialGradient id="gN" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#dfe3ec"/><stop offset="1" stop-color="#c3c9d6"/></radialGradient>
+    <linearGradient id="gBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fa"/><stop offset="1" stop-color="#d3d8e3"/></linearGradient>
+    <radialGradient id="gFloor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(40,50,90,.28)"/><stop offset="1" stop-color="rgba(40,50,90,0)"/></radialGradient>
+    <linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e5ad48" stop-opacity=".35"/><stop offset="1" stop-color="#e5ad48" stop-opacity="0"/></linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#28325a" flood-opacity=".22"/></filter>
+  </defs>
+</svg>
+
+<div class="device">
+  <div class="blobs"><span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span></div>
+  <div class="screen">
+
+    <!-- Workout -->
+    <section class="view on" id="home">
+      <div class="top"><div class="eyebrow">Monday · Week 6</div><button class="iconbtn glass" aria-label="Profile">R</button></div>
+      <h1>Chest + Triceps</h1>
+      <div class="chips"><span class="chip glass">5 exercises</span><span class="chip glass">6–8 reps</span><span class="chip glass">~52 min</span></div>
+      <div class="perspective">
+        <div class="hero glass" id="hero">
+          <div class="plates3d" aria-hidden="true">
+            <span style="width:14px;height:56px;background:linear-gradient(90deg,#f6cf6e,#d9a441)"></span>
+            <span style="width:12px;height:46px;background:linear-gradient(90deg,#8fd4b3,#4f9f7c)"></span>
+            <span style="width:10px;height:36px;background:linear-gradient(90deg,#ffffff,#d9dde6)"></span>
+          </div>
+          <div class="figs" id="heroFigs"></div>
+          <div class="info">
+            <div class="eyebrow" style="font-size:12.5px">Today you train</div>
+            <div class="big">Chest, triceps and front delts</div>
+            <div class="bar"><i style="width:40%"></i></div>
+            <div class="muted" style="font-size:12px;margin-top:6px;font-weight:600">2 of 5 done · 214 kcal so far</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">Exercises</div>
+      <div id="list"></div>
+      <p class="note">Design preview with sample data. Tap an exercise to open it.</p>
+    </section>
+
+    <!-- Exercise detail -->
+    <section class="view" id="detail">
+      <div class="top"><button class="iconbtn glass" id="back" aria-label="Back">‹</button><div class="eyebrow">Chest + Triceps</div><button class="iconbtn glass" aria-label="More">···</button></div>
+      <h1 id="dName">Barbell bench press</h1>
+      <div class="perspective">
+        <div class="mapcard glass" id="mapcard">
+          <div class="figs" id="dFigs"></div>
+          <div class="legend">
+            <div><span class="sw" style="background:radial-gradient(circle at 35% 30%,#ffe2a3,#d9a441)"></span><span id="dPrim">Primary: chest</span></div>
+            <div><span class="sw" style="background:radial-gradient(circle at 35% 30%,#fff4dc,#e2c287)"></span><span id="dSec">Also: triceps, front delts</span></div>
+            <div class="stat">Best set<b id="dBest">62.5 kg × 8</b></div>
+            <div class="stat" style="margin-top:4px">Est. 1RM <span class="up-txt" id="d1rm">79 kg ↑</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="seg glass" id="seg"><div class="lens"></div><button class="on" data-m="w">Weight</button><button data-m="r">Reps</button><button data-m="e">Est. 1RM</button></div>
+      <div class="chart glass"><svg id="chart" viewBox="0 0 320 150" role="img" aria-label="Progress chart"></svg></div>
+      <div class="label">Sessions</div>
+      <div id="sessions"></div>
+    </section>
+
+  </div>
+
+  <nav class="tabbar glass">
+    <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>Workout</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9.5a4 4 0 0 1 6 0M12 12l1.5-2.5"/></svg>Weight</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M5 15l4-4 3 3 6-7"/></svg>Progress</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>History</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg>Settings</button>
+  </nav>
+</div>
+
+<script>
+"use strict";
+/* ---------- 3D muscle map ---------- */
+function figure(side,prim,sec,w){
+  const f=k=>prim.includes(k)?'url(#gP)':sec.includes(k)?'url(#gS)':'url(#gN)';
+  const st='stroke="rgba(255,255,255,.9)" stroke-width=".8"';
+  let s=`<svg viewBox="0 0 100 196" width="${w}" height="${Math.round(w*1.96)}" aria-hidden="true">
+  <ellipse cx="50" cy="188" rx="26" ry="5" fill="url(#gFloor)"/>
+  <g filter="url(#soft)">
+  <circle cx="50" cy="15" r="10.5" fill="url(#gBody)"/><rect x="44.5" y="24" width="11" height="8" rx="3" fill="url(#gBody)"/>
+  <path d="M32 33 Q50 28 68 33 L73 47 L66 94 L34 94 L27 47Z" fill="url(#gBody)"/>
+  <path d="M25 36 Q17 62 16 96 L25 97 Q28 68 35 45Z" fill="url(#gBody)"/><path d="M75 36 Q83 62 84 96 L75 97 Q72 68 65 45Z" fill="url(#gBody)"/>
+  <path d="M36 92 L49.5 94 L48.5 182 L40 182 Q32 132 36 92Z" fill="url(#gBody)"/><path d="M64 92 L50.5 94 L51.5 182 L60 182 Q68 132 64 92Z" fill="url(#gBody)"/>`;
+  if(side==='f'){
+    s+=`<ellipse cx="30.5" cy="40" rx="8" ry="7.5" fill="${f('delts')}" ${st}/><ellipse cx="69.5" cy="40" rx="8" ry="7.5" fill="${f('delts')}" ${st}/>
+    <path d="M49.3 34 L37 34.5 Q30.5 44 36 55 L49.3 56Z" fill="${f('chest')}" ${st}/><path d="M50.7 34 L63 34.5 Q69.5 44 64 55 L50.7 56Z" fill="${f('chest')}" ${st}/>
+    <rect x="40.5" y="58" width="19" height="33" rx="6" fill="${f('abs')}" ${st}/>
+    <ellipse cx="24.5" cy="59" rx="5" ry="11" fill="${f('biceps')}" ${st}/><ellipse cx="75.5" cy="59" rx="5" ry="11" fill="${f('biceps')}" ${st}/>
+    <ellipse cx="20.5" cy="83" rx="4" ry="11" fill="${f('fore')}" ${st}/><ellipse cx="79.5" cy="83" rx="4" ry="11" fill="${f('fore')}" ${st}/>
+    <path d="M39 96 L49 97 L48 142 L40.5 142 Q35 118 39 96Z" fill="${f('quads')}" ${st}/><path d="M61 96 L51 97 L52 142 L59.5 142 Q65 118 61 96Z" fill="${f('quads')}" ${st}/>
+    <ellipse cx="43" cy="163" rx="4.2" ry="15" fill="${f('calves')}" ${st}/><ellipse cx="57" cy="163" rx="4.2" ry="15" fill="${f('calves')}" ${st}/>`;
+  }else{
+    s+=`<path d="M40 30 L60 30 L67 38 L50 47 L33 38Z" fill="${f('traps')}" ${st}/>
+    <ellipse cx="30.5" cy="40" rx="8" ry="7.5" fill="${f('rdelts')}" ${st}/><ellipse cx="69.5" cy="40" rx="8" ry="7.5" fill="${f('rdelts')}" ${st}/>
+    <path d="M36.5 48 L49.3 50 L49.3 80 L41 77 Q33.5 61 36.5 48Z" fill="${f('lats')}" ${st}/><path d="M63.5 48 L50.7 50 L50.7 80 L59 77 Q66.5 61 63.5 48Z" fill="${f('lats')}" ${st}/>
+    <ellipse cx="24.5" cy="59" rx="5" ry="11" fill="${f('triceps')}" ${st}/><ellipse cx="75.5" cy="59" rx="5" ry="11" fill="${f('triceps')}" ${st}/>
+    <ellipse cx="20.5" cy="83" rx="4" ry="11" fill="${f('fore')}" ${st}/><ellipse cx="79.5" cy="83" rx="4" ry="11" fill="${f('fore')}" ${st}/>
+    <rect x="42" y="80.5" width="16" height="10" rx="3.5" fill="${f('lowback')}" ${st}/>
+    <ellipse cx="43.5" cy="101" rx="7" ry="9" fill="${f('glutes')}" ${st}/><ellipse cx="56.5" cy="101" rx="7" ry="9" fill="${f('glutes')}" ${st}/>
+    <path d="M38 112 L49 112 L48 144 L40 144Z" fill="${f('hams')}" ${st}/><path d="M62 112 L51 112 L52 144 L60 144Z" fill="${f('hams')}" ${st}/>
+    <ellipse cx="43" cy="163" rx="4.5" ry="15" fill="${f('calves')}" ${st}/><ellipse cx="57" cy="163" rx="4.5" ry="15" fill="${f('calves')}" ${st}/>`;
+  }
+  return s+'</g></svg>';
+}
+const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
+const pair=(prim,sec,w)=>figure('f',prim,sec,w)+figure('b',prim,sec,w);
+const NAMES={chest:'chest',delts:'front delts',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
+
+/* ---------- Sample data ---------- */
+const EXS=[
+  {n:'Barbell bench press',p:['chest'],s:['delts','triceps'],sets:'3 sets',last:'60 × 8, 60 × 8, 60 × 7',done:true,base:50},
+  {n:'Incline barbell press',p:['chest','delts'],s:['triceps'],sets:'3 sets',last:'45 × 8, 45 × 7, 45 × 6',done:true,base:37.5},
+  {n:'Decline dumbbell press',p:['chest'],s:['triceps'],sets:'2 sets',last:'Add 2 kg today',next:true,base:16},
+  {n:'Close-grip bench press',p:['triceps'],s:['chest','delts'],sets:'3 sets',last:'40 × 8, 40 × 7, 40 × 7',base:32.5},
+  {n:'EZ-bar skull crusher',p:['triceps'],s:[],sets:'2 sets',last:'25 × 8, 25 × 7',base:20}
+];
+function history(base){ // 10 sessions, gentle progression
+  const out=[];const d=new Date(2026,8,3);
+  for(let i=0;i<10;i++){const w=base+Math.floor(i*1.4)*2.5;const reps=[8,8-(i%3===1?1:0),7+(i%2)];
+    out.push({date:new Date(d.getFullYear(),d.getMonth(),d.getDate()+i*3.4|0),w:[w,w,w-(i%4===3?2.5:0)],r:reps})}
+  return out;
+}
+const e1=(w,r)=>w*(1+r/30);
+const fmt=n=>(Math.round(n*10)/10).toString();
+
+/* ---------- Render ---------- */
+const $=s=>document.querySelector(s);
+$('#heroFigs').innerHTML=pair(['chest','triceps'],['delts'],44);
+$('#list').innerHTML=EXS.map((e,i)=>`
+  <div class="ex glass ${e.next?'up':''}" data-i="${i}">
+    <div class="thumb">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,30)}</div>
+    <div style="flex:1"><div class="name">${e.n}</div><div class="${e.next?'next':'meta'}">${e.sets} · ${e.last}</div></div>
+    ${e.done?'<span class="done">✓</span>':'<span class="chev">›</span>'}
+  </div>`).join('');
+
+let cur=0,mode='w';
+function open(i){
+  cur=i;const e=EXS[i],h=history(e.base),last=h[h.length-1];
+  $('#dName').textContent=e.n;
+  $('#dFigs').innerHTML=pair(e.p,e.s,58);
+  $('#dPrim').textContent='Primary: '+e.p.map(m=>NAMES[m]).join(', ');
+  $('#dSec').textContent=e.s.length?'Also: '+e.s.map(m=>NAMES[m]).join(', '):'Isolation exercise';
+  let best=null;h.forEach(s=>s.w.forEach((w,j)=>{const v=e1(w,s.r[j]);if(!best||v>best.v)best={w,r:s.r[j],v}}));
+  $('#dBest').textContent=`${fmt(best.w)} kg × ${best.r}`;$('#d1rm').textContent=`${Math.round(best.v)} kg ↑`;
+  $('#sessions').innerHTML=h.slice().reverse().slice(0,4).map((s,k)=>`
+    <div class="sess glass"><div class="date"><b>${s.date.getDate()}</b>${s.date.toLocaleDateString(undefined,{month:'short'})}</div>
+    <div class="tbl"><span>kg</span>${s.w.map(w=>`<b class="${k===0&&w===best.w?'pr':''}">${fmt(w)}</b>`).join('')}<span>reps</span>${s.r.map(r=>`<b>${r}</b>`).join('')}</div></div>`).join('');
+  drawChart();
+  show('detail');
+}
+function drawChart(){
+  const h=history(EXS[cur].base);
+  const vals=h.map(s=>mode==='w'?Math.max(...s.w):mode==='r'?s.r.reduce((a,b)=>a+b,0):Math.max(...s.w.map((w,j)=>e1(w,s.r[j]))));
+  const lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo)*.2||1,L=30,R=310,T=14,B=124;
+  const x=i=>L+(R-L)*i/(vals.length-1),y=v=>B-(B-T)*(v-(lo-pad))/((hi+pad)-(lo-pad));
+  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  // smooth curve
+  let d=`M${pts[0]}`;for(let i=1;i<vals.length;i++){const xm=(x(i-1)+x(i))/2;d+=` C${xm},${y(vals[i-1])} ${xm},${y(vals[i])} ${x(i)},${y(vals[i])}`}
+  let g='';for(let k=0;k<=3;k++){const v=(lo-pad)+((hi+pad)-(lo-pad))*k/3,yy=y(v);g+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="rgba(29,34,48,.07)"/><text x="0" y="${yy+4}" font-size="10.5" fill="#8a91a3" font-weight="600">${Math.round(v)}</text>`}
+  const lab=d0=>d0.toLocaleDateString(undefined,{day:'numeric',month:'short'});
+  const lx=x(vals.length-1),ly=y(vals[vals.length-1]);
+  $('#chart').innerHTML=`${g}
+    <path d="${d} L${R},${B} L${L},${B}Z" fill="url(#gArea)"/>
+    <path d="${d}" fill="none" stroke="#d9a441" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${lx}" cy="${ly}" r="9" fill="rgba(217,164,65,.18)"/><circle cx="${lx}" cy="${ly}" r="5" fill="url(#gP)" stroke="#fff" stroke-width="2"/>
+    <text x="${L}" y="146" font-size="10.5" fill="#8a91a3" font-weight="600">${lab(h[0].date)}</text>
+    <text x="${R}" y="146" font-size="10.5" fill="#8a91a3" font-weight="600" text-anchor="end">${lab(h[h.length-1].date)}</text>`;
+}
+function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));(document.querySelector('.screen')).scrollTop=0;window.scrollTo(0,0)}
+$('#list').addEventListener('click',e=>{const c=e.target.closest('.ex');if(c)open(+c.dataset.i)});
+$('#back').addEventListener('click',()=>show('home'));
+$('#seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;
+  const idx=[...b.parentNode.querySelectorAll('button')].indexOf(b);
+  b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#seg .lens').style.transform=`translateX(${idx*100}%)`;drawChart()});
+
+/* 3D tilt on hero cards (touch or mouse) */
+function tilt(el){
+  const move=(cx,cy)=>{const r=el.getBoundingClientRect();const dx=(cx-r.left)/r.width-.5,dy=(cy-r.top)/r.height-.5;el.style.transform=`rotateY(${dx*14}deg) rotateX(${-dy*14}deg)`};
+  el.addEventListener('pointermove',e=>move(e.clientX,e.clientY));
+  el.addEventListener('pointerleave',()=>el.style.transform='');
+  el.addEventListener('touchend',()=>el.style.transform='');
+}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){tilt($('#hero'));tilt($('#mapcard'))}
+</script>
+</body>
+</html>

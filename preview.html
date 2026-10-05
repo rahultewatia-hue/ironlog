@@ -297,10 +297,10 @@ const EXS=[
   {n:'Close-grip bench press',p:['triceps'],s:['chest','delts'],k:3,t:'c',eq:'bb',base:32.5},
   {n:'EZ-bar skull crusher',p:['triceps'],s:[],k:2,t:'i',eq:'ez',base:20}
 ];
-function history(base){ // 10 sessions, gentle progression
+function history(base,k=3){ // 10 sessions, gentle progression
   const out=[];const d=new Date(2026,8,3);
   for(let i=0;i<10;i++){const w=base+Math.floor(i/3)*2.5;const reps=[8,8-(i%3===1?1:0),7+(i%2)];
-    out.push({date:new Date(d.getFullYear(),d.getMonth(),d.getDate()+i*3.4|0),w:[w,w,w-(i%4===3?2.5:0)],r:reps})}
+    out.push({date:new Date(d.getFullYear(),d.getMonth(),d.getDate()+i*3.4|0),w:[w,w,w-(i%4===3?2.5:0)].slice(0,k),r:reps.slice(0,k)})}
   return out;
 }
 const e1=(w,r)=>w*(1+r/30);
@@ -310,7 +310,7 @@ const fmt=n=>(Math.round(n*10)/10).toString();
 const $=s=>document.querySelector(s);
 $('#heroFigs').innerHTML=pair(['chest','triceps'],['delts'],50);
 /* Today's log: first exercise already done so the preview shows both states */
-const lastOf=e=>{const h=history(e.base);return h[h.length-1]};
+const lastOf=e=>{const h=history(e.base,e.k);return h[h.length-1]};
 const log=EXS.map((e,i)=>Array.from({length:e.k},(_,j)=>i===0?{w:lastOf(e).w[j]+2.5,r:[8,8,7][j],done:true}:{w:null,r:null,done:false}));
 const doneSets=i=>log[i].filter(s=>s.done).length;
 const allDone=i=>log[i].length>0&&doneSets(i)===log[i].length;
@@ -357,7 +357,7 @@ function renderLog(){
 
 let cur=0,mode='w';
 function open(i){
-  cur=i;const e=EXS[i],h=history(e.base),last=h[h.length-1];
+  cur=i;const e=EXS[i],h=history(e.base,e.k),last=h[h.length-1];
   $('#dName').textContent=e.n;
   renderLog();
   $('#dFigs').innerHTML=pair(e.p,e.s,58);
@@ -372,7 +372,7 @@ function open(i){
   show('detail');
 }
 function drawChart(){
-  const h=history(EXS[cur].base);
+  const h=history(EXS[cur].base,EXS[cur].k);
   const vals=h.map(s=>mode==='w'?Math.max(...s.w):mode==='r'?s.r.reduce((a,b)=>a+b,0):Math.max(...s.w.map((w,j)=>e1(w,s.r[j]))));
   const lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo)*.2||1,L=30,R=310,T=14,B=124;
   const x=i=>L+(R-L)*i/(vals.length-1),y=v=>B-(B-T)*(v-(lo-pad))/((hi+pad)-(lo-pad));

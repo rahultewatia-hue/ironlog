@@ -13,6 +13,13 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - `manifest.json` — PWA manifest.
 - `icon-180.png`, `icon-192.png`, `icon-512.png` — app icons (dumbbell with yellow/green/white plates on #1c2129).
 
+## Android app
+- `android/` is a minimal native WebView wrapper (Java, no AndroidX) that loads the live Pages URL, so web changes reach it automatically; the service worker handles offline.
+- `index.html` `exportData()` calls `window.AndroidApp.saveBackup(name, json)` when running inside the wrapper (Web Share and downloads don't work in a WebView). Keep that branch.
+- `.github/workflows/android.yml` builds a signed APK on GitHub Actions when `android/**` or the workflow changes (or on manual dispatch) and publishes it to the `android-latest` release:
+  https://github.com/rahultewatia-hue/ironlog/releases/latest/download/aesthetic-body.apk
+- The signing key is in GitHub secrets (`ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`) and backed up locally outside the repo. Never regenerate it or change `applicationId`, or updates won't install over the existing app.
+
 ## Hard rules
 1. **Never break saved data.** Data lives in localStorage under the key `ironlog-v1` with the shape
    `{sessions:[], weights:[], active:null|{...}, settings:{restC, restI, bar, ez}}`.

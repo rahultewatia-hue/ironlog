@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Signing key comes from environment variables (GitHub Actions secrets), never from the repo.
+def ks = System.getenv('KEYSTORE_PATH')
+
+android {
+    namespace 'com.rahultewatia.ironlog'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.rahultewatia.ironlog'
+        minSdk 24
+        targetSdk 34
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger())
+        versionName '1.0.' + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+
+    signingConfigs {
+        release {
+            if (ks) {
+                storeFile file(ks)
+                storeType 'pkcs12'
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (ks) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

@@ -1,0 +1,53 @@
+name: Android APK
+
+# The app loads the live site, so a new APK is only needed when the Android wrapper changes.
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Restore signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+
+      - name: Build release APK
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/release.p12
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: gradle -p android assembleRelease --no-daemon
+
+      - name: Publish to the "android-latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk aesthetic-body.apk
+          gh release delete android-latest --yes --cleanup-tag || true
+          gh release create android-latest aesthetic-body.apk \
+            --title "Aesthetic Body for Android (build ${{ github.run_number }})" \
+            --notes "Download aesthetic-body.apk on your Android phone and open it to install. Built from ${{ github.sha }}."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aesthetic-body-apk
+          path: aesthetic-body.apk

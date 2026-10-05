@@ -281,6 +281,31 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 .mbtns{display:flex;gap:10px}
 .mbtns button{flex:1;justify-content:center;padding:14px}
 .mbtns .gold.red{background:var(--red);color:#fff;box-shadow:0 10px 24px -10px rgba(255,107,91,.6)}
+/* reports */
+.rgo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.rcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;text-align:left;color:var(--text);border:1px solid rgba(255,255,255,.07)}
+.rcard .ic{color:var(--lime);width:22px;height:22px;margin-bottom:6px}
+.rcard b{font-size:15px}.rcard small{color:var(--muted);font-size:12px;font-weight:600}
+.rnav{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:99px;margin-bottom:14px}
+.rnav b{font-family:var(--display);font-size:17px}
+.rtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.rtiles .tile b .of{font-size:14px;color:var(--muted);font-family:var(--font)}
+.dl{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--muted);margin-top:4px}
+.dl .ic{width:13px;height:13px;margin:0!important}
+.dl.good{color:var(--lime)}.dl.bad{color:var(--red)}
+.summary{display:flex;gap:10px;align-items:flex-start;background:radial-gradient(120% 120% at 0% 0%,rgba(198,244,50,.12),rgba(24,29,33,.7) 60%)}
+.summary .ic{color:var(--lime);margin-top:2px}.summary p{margin:0;font-size:14.5px;line-height:1.5;font-weight:600}
+.bigrow{display:flex;align-items:baseline;gap:10px}.bigrow b{font-family:var(--display);font-size:26px}
+.mbar{display:grid;grid-template-columns:92px 1fr 56px;gap:10px;align-items:center;padding:6px 0;font-size:13px;font-weight:600}
+.mbar span{color:#c9d1d5}.mbar em{font-style:normal;color:var(--muted);text-align:right;font-size:12px}
+.mbar i{height:8px;border-radius:9px;background:rgba(255,255,255,.06);overflow:hidden}
+.mbar i b{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--lime-d),var(--lime));box-shadow:0 0 10px rgba(198,244,50,.4)}
+.prb{flex:none!important;display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:var(--lime)!important;background:rgba(198,244,50,.12);border:1px solid rgba(198,244,50,.3);padding:4px 8px;border-radius:99px}
+.prb .ic{width:13px;height:13px}
+.install{padding:14px 16px;margin-bottom:16px;border-color:rgba(198,244,50,.35)!important}
+.install > b{display:flex;gap:8px;align-items:center;font-size:15.5px}.install > b .ic{color:var(--lime)}
+.install p{margin:6px 0 8px;font-size:13.5px;color:#c3cbcf;line-height:1.45}
+.install ol{margin:0;padding-left:20px;font-size:13.5px;color:#c3cbcf;line-height:1.6}
 /* top bar */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:12;padding-top:env(safe-area-inset-top);background:rgba(10,13,15,.72);
   -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.06)}
@@ -443,7 +468,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-05.5';
+const APP_BUILD='2026-10-05.6';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -528,8 +553,31 @@ const PLATE_COLOR={15:'#f2c45f',10:'#7cc9a2',5:'#ffffff',3:'#8db1ff',2.5:'#f08f8
 const KEY='ironlog-v1';
 function blank(){return {sessions:[],weights:[],active:null,settings:{restC:150,restI:90,bar:20,ez:10}}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sessions)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];return d}}catch(e){}return blank()}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Could not save — storage is full or blocked')}}
+function save(){
+  const json=JSON.stringify(db);
+  try{localStorage.setItem(KEY,json)}catch(e){toast('Could not save — storage is full or blocked')}
+  backupSave(json);
+}
 let db=load();
+/* Second and third copies of the data so it survives storage being cleared:
+   IndexedDB in every browser, plus a private file inside the Android app. Restored automatically if the main copy is empty. */
+const isBlank=d=>!d||(!(d.sessions||[]).length&&!(d.weights||[]).length&&!d.active);
+function idb(){return new Promise((res,rej)=>{try{const r=indexedDB.open('aesthetic-body',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+let backupT;
+function backupSave(json){
+  try{if(window.AndroidApp&&AndroidApp.saveData)AndroidApp.saveData(json)}catch(e){}
+  clearTimeout(backupT);backupT=setTimeout(()=>idb().then(d=>{const tx=d.transaction('kv','readwrite');tx.objectStore('kv').put(json,KEY);tx.oncomplete=()=>d.close()}).catch(()=>{}),300);
+}
+async function backupLoad(){
+  try{if(window.AndroidApp&&AndroidApp.loadData){const t=AndroidApp.loadData();if(t)return t}}catch(e){}
+  try{const d=await idb();return await new Promise(res=>{const r=d.transaction('kv').objectStore('kv').get(KEY);r.onsuccess=()=>{d.close();res(r.result||null)};r.onerror=()=>{d.close();res(null)}})}catch(e){return null}
+}
+async function restoreIfNeeded(){
+  if(!isBlank(db)){backupSave(JSON.stringify(db));return}
+  const t=await backupLoad();if(!t)return;
+  try{const d=JSON.parse(t);if(Array.isArray(d.sessions)&&!isBlank(d)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;
+    try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}render();toast('Your data was restored from the backup copy')}}catch(e){}
+}
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 
 /* ---------- Helpers ---------- */
@@ -661,7 +709,7 @@ setInterval(tickClock,500);
 /* ---------- Navigation ---------- */
 let tab='home',curEx=null,progEx=null,exMode='w';
 /* Navigation uses the browser history, so Back/Forward (and Android's back button) move between screens */
-const TABS=['home','workout','weight','progress','history','more'];
+const TABS=['home','workout','weight','progress','history','more','report'];
 let navIdx=0,navMax=0;
 const navHash=(t,ex)=>'#'+t+(ex?'/'+encodeURIComponent(ex):'');
 function go(t,ex=null,replace=false){
@@ -676,7 +724,7 @@ $('#navBack').addEventListener('click',()=>{if(navIdx>0)history.back()});
 $('#navFwd').addEventListener('click',()=>{if(navIdx<navMax)history.forward()});
 $('#navHome').addEventListener('click',()=>go('home'));
 $('#navSet').addEventListener('click',()=>go('more'));
-const TITLES={home:'Aesthetic Body',workout:'Workout',weight:'Body weight',progress:'Progress',history:'History',more:'Settings'};
+const TITLES={home:'Aesthetic Body',workout:'Workout',weight:'Body weight',progress:'Progress',history:'History',more:'Settings',report:'Reports'};
 function render(){
   document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
@@ -685,7 +733,7 @@ function render(){
   $('#navBack').disabled=navIdx<=0;$('#navFwd').disabled=navIdx>=navMax;
   $('#navHome').classList.toggle('on',tab==='home');$('#navSet').classList.toggle('on',tab==='more');
   if(detail)rDetail(m);
-  else({home:rHome,workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore})[tab](m);
+  else({home:rHome,workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore,report:rReport})[tab](m);
   m.firstElementChild&&m.firstElementChild.classList.add('view');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)m.querySelectorAll('.tilt').forEach(tilt);
   tickClock();
@@ -696,6 +744,16 @@ function tilt(el){
 }
 const tileH=(v,l,c='',i='')=>`<div class="tile glass">${i?ico(i):''}<b class="${c}">${v}</b><span>${l}</span></div>`;
 const seg=(items,on,attr)=>{const i=Math.max(0,items.findIndex(x=>x[0]===on));return `<div class="seg glass"><div class="lens" style="transform:translateX(${i*100}%)"></div>${items.map(([k,l])=>`<button data-${attr}="${k}" class="${k===on?'on':''}">${l}</button>`).join('')}</div>`};
+
+/* ---------- iPhone install guide (only shows in Safari, not in the home-screen app) ---------- */
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isStandalone=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+function installHint(){
+  if(!isIOS||isStandalone)return '';
+  return `<div class="glass install"><b>${ico('download')}Install on your iPhone</b>
+    <p>Open the app from your Home Screen so your data is kept safely. Safari can clear website data, the installed app keeps it.</p>
+    <ol><li>Tap the <b>Share</b> button in Safari's toolbar (square with an arrow).</li><li>Scroll and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>, then always open <b>Aesthetic Body</b> from its icon.</li></ol></div>`;
+}
 
 /* ---------- Home ---------- */
 const poster=k=>{const n=PROGRAM[k].ex[0][0];return VIDEOS[n]?`videos/${VIDEOS[n]}.jpg`:''};
@@ -739,6 +797,7 @@ function rHome(m){
   }
   m.innerHTML=`<section>
     <div class="hello"><div class="avatar">R</div><div><small>${greet}</small><b>Rahul</b></div></div>
+    ${installHint()}
     ${plan}
     <div class="label">This week<small>${weekS.length} of ${target} workouts</small></div>
     <div class="act glass">
@@ -752,6 +811,11 @@ function rHome(m){
       </div>
     </div>
     <div class="week glass">${week}</div>
+    <div class="label">Reports</div>
+    <div class="rgo">
+      <button class="glass rcard" data-report="d">${ico('calendar-days')}<b>Daily report</b><small>Today at a glance</small></button>
+      <button class="glass rcard" data-report="w">${ico('chart-column')}<b>Weekly report</b><small>This week vs last</small></button>
+    </div>
     <div class="label">Quick workouts<small>${mins} min this week</small></div>
     <div class="qw">${Object.entries(PROGRAM).map(([k,p])=>`<button class="qcard" data-start="${k}"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="tag">${DAYS[p.wd].slice(0,3)}</span><div class="qt"><b>${esc(p.name)}</b><small>${p.ex.length} exercises · ~50 min</small></div><span class="go">${ico('arrow-right')}</span></button>`).join('')}</div>
     ${lastH}
@@ -938,6 +1002,99 @@ function rWeight(m){
   smoothChart($('#wChart'),pts.map(p=>p.kg),pts.map(p=>shortDate(p.date)),{overlay:ma,empty:'Log at least 2 days to see your trend.'});
 }
 
+/* ---------- Reports (daily and weekly) ---------- */
+let repMode='d',repOff=0;
+const sessVol=s=>Math.round(Object.values(s.sets).reduce((t,ss)=>t+ss.reduce((a,x)=>a+x.w*x.r,0),0));
+const setsN=s=>Object.values(s.sets).reduce((a,b)=>a+b.length,0);
+const pctTxt=(a,b)=>b?Math.round((a-b)/b*100):null;
+function delta(a,b,unit='',lowerIsGood=false,dec=0){
+  if(b==null||a==null)return '<small class="dl">—</small>';
+  const d=a-b;if(Math.abs(d)<(dec?0.05:0.5))return '<small class="dl">same as before</small>';
+  const good=lowerIsGood?d<0:d>0;
+  return `<small class="dl ${good?'good':'bad'}">${ico(d>0?'trending-up':'trending-down')}${d>0?'+':'−'}${Math.abs(d).toFixed(dec)}${unit}</small>`;
+}
+// best estimated 1RM per exercise before a timestamp
+function bestBefore(t){const b={};for(const s of db.sessions){if(s.start>=t)continue;for(const [n,ss] of Object.entries(s.sets))for(const x of ss){const v=e1rm(x.w,x.r);if(!b[n]||v>b[n])b[n]=v}}return b}
+function prsIn(list){
+  const out=[];
+  for(const s of list){const prev=bestBefore(s.start);for(const [n,ss] of Object.entries(s.sets)){let top=null;for(const x of ss){const v=e1rm(x.w,x.r);if(!top||v>top.v)top={...x,v}}
+    if(top&&prev[n]&&top.v>prev[n]+0.01)out.push({n,top,gain:top.v-prev[n],date:s.date})}}
+  return out;
+}
+function muscleVol(list){const m={};for(const s of list)for(const [n,ss] of Object.entries(s.sets)){const e=EX[n];if(!e)continue;const v=ss.reduce((a,x)=>a+x.w*x.r,0);e.p.forEach(k=>m[k]=(m[k]||0)+v);e.s.forEach(k=>m[k]=(m[k]||0)+v/2)}
+  return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function rReport(m){
+  const head=(label,canNext)=>`<div class="rnav glass"><button class="tbtn" data-repnav="-1" aria-label="Previous">${ico('chevron-left')}</button><b>${label}</b><button class="tbtn" data-repnav="1" aria-label="Next" ${canNext?'':'disabled'}>${ico('chevron-right')}</button></div>`;
+  let body='',share='';
+  if(repMode==='d'){
+    const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+repOff);const ds=dstr(d);
+    const list=db.sessions.filter(x=>x.date===ds),prs=prsIn(list);
+    const mins=list.reduce((a,b)=>a+b.min,0),kcal=list.reduce((a,b)=>a+b.kcal,0),vol=list.reduce((a,b)=>a+sessVol(b),0),sets=list.reduce((a,b)=>a+setsN(b),0);
+    const ws=sortedWeights(),wi=ws.findIndex(w=>w.date===ds),w=wi>=0?ws[wi]:null,wp=wi>0?ws[wi-1]:null;
+    const label=repOff===0?'Today':repOff===-1?'Yesterday':d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'});
+    body=`${head(label,repOff<0)}
+      <div class="tiles">${tileH(list.length,list.length===1?'workout':'workouts','','dumbbell')}${tileH(mins,'minutes','','timer')}${tileH(kcal,'kcal burned','','flame')}</div>
+      <div class="tiles">${tileH(sets,'sets done','','check')}${tileH(vol.toLocaleString(),'kg lifted','','activity')}${tileH(prs.length,'personal bests','','trophy')}</div>
+      <div class="glass card"><div class="label" style="margin:0 0 6px">Body weight</div>
+        ${w?`<div class="bigrow"><b>${fmt(w.kg)} kg</b>${delta(w.kg,wp&&wp.kg,' kg',true,1)}</div><div class="note" style="margin-top:4px">${wp?`Previous entry ${fmt(wp.kg)} kg on ${shortDate(wp.date)}.`:'First entry.'}</div>`:`<p class="empty" style="padding:4px 0">No weigh-in this day. <button class="addset" data-go="weight">${ico('plus')}Log weight</button></p>`}</div>
+      ${list.length?list.map(s=>{const p=PROGRAM[s.day]||{name:s.day};return `<div class="glass card"><div class="label" style="margin:0 0 4px">${esc(p.name)}<small>${s.min} min · ${s.kcal} kcal</small></div>
+        <div class="note" style="margin:0 0 6px">Effort ${(EFFORT.find(e=>e.k===s.effort)||{}).label||'—'} · finisher ${s.finisher?'done':'skipped'} · ${sessVol(s).toLocaleString()} kg lifted</div>
+        ${Object.entries(s.sets).map(([n,ss])=>{const pr=prs.find(x=>x.n===n);return `<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(n)}</b><br>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span>${pr?`<span class="prb">${ico('trophy')}PB</span>`:''}</div>`}).join('')}</div>`}).join('')
+      :`<div class="glass card"><div class="label" style="margin:0 0 4px">${ico('moon')} Rest day</div><p class="note" style="margin:0">No workout logged${repOff===0?' yet today':''}. ${Object.values(PROGRAM).some(p=>p.wd===d.getDay())?'This is a training day in your plan.':'Rest days help you recover. Go for a walk.'}</p></div>`}`;
+    share=`Aesthetic Body daily report, ${d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}\n`+
+      (list.length?list.map(s=>`${(PROGRAM[s.day]||{name:s.day}).name}: ${s.min} min, ${s.kcal} kcal, ${setsN(s)} sets, ${sessVol(s)} kg lifted`).join('\n'):'Rest day')+
+      (prs.length?`\nPersonal bests: ${prs.map(p=>`${p.n} ${fmt(p.top.w)} × ${p.top.r}`).join('; ')}`:'')+(w?`\nBody weight: ${fmt(w.kg)} kg`:'');
+  }else{
+    const ws=weekStart();ws.setDate(ws.getDate()+7*repOff);const we=new Date(ws);we.setDate(we.getDate()+7);const ps=new Date(ws);ps.setDate(ps.getDate()-7);
+    const inR=(a,b)=>db.sessions.filter(x=>x.start>=a.getTime()&&x.start<b.getTime());
+    // this week so far is compared with the same point last week; past weeks with the whole week before
+    const pe=repOff===0?new Date(ps.getTime()+(Date.now()-ws.getTime())):ws;
+    const list=inR(ws,we),prev=inR(ps,pe),target=Object.keys(PROGRAM).length;
+    const sum=(l,f)=>l.reduce((a,b)=>a+f(b),0);
+    const mins=sum(list,x=>x.min),kcal=sum(list,x=>x.kcal),vol=sum(list,sessVol),pmins=sum(prev,x=>x.min),pkcal=sum(prev,x=>x.kcal),pvol=sum(prev,sessVol);
+    const avgW=(a,b)=>{const l=db.weights.filter(w=>w.date>=dstr(a)&&w.date<dstr(b));return l.length?l.reduce((t,w)=>t+w.kg,0)/l.length:null};
+    const aw=avgW(ws,we),pw=avgW(ps,ws),prs=prsIn(list),mv=muscleVol(list),mmax=mv.length?mv[0][1]:1;
+    const before=bestBefore(ws.getTime()),gains={};for(const s of list)for(const [n,ss] of Object.entries(s.sets))for(const x of ss){const v=e1rm(x.w,x.r);if(!gains[n]||v>gains[n])gains[n]=v}
+    const glist=Object.entries(gains).filter(([n])=>before[n]).map(([n,v])=>[n,v-before[n]]).sort((a,b)=>b[1]-a[1]);
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((dn,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);const done=db.sessions.some(x=>x.date===dstr(d));const pl=Object.values(PROGRAM).some(p=>p.wd===d.getDay());return `<div class="wd ${done?'done':''} ${pl?'sched':''}"><i>${done?ico('check'):d.getDate()}</i>${dn}</div>`}).join('');
+    const end=new Date(we);end.setDate(end.getDate()-1);
+    const label=repOff===0?'This week':repOff===-1?'Last week':`${ws.toLocaleDateString(undefined,{day:'numeric',month:'short'})} – ${end.toLocaleDateString(undefined,{day:'numeric',month:'short'})}`;
+    const vp=pctTxt(vol,pvol);
+    const verdict=list.length>=target?'Every planned workout done. Great week.':list.length?`${list.length} of ${target} planned workouts done.`:'No workouts logged this week yet.';
+    body=`${head(label,repOff<0)}
+      <div class="glass card summary">${ico('sparkles')}<p>${verdict}${vp!=null&&list.length?` Volume ${vp>=0?'up':'down'} ${Math.abs(vp)}% on ${repOff===0?'this point last week':'the week before'}.`:''}${aw!=null&&pw!=null?` Average weight ${aw<=pw?'down':'up'} ${Math.abs(aw-pw).toFixed(1)} kg.`:''}${prs.length?` ${prs.length} personal best${prs.length>1?'s':''}.`:''}</p></div>
+      <div class="week glass">${days}</div>
+      <div class="rtiles">
+        <div class="glass tile">${ico('dumbbell')}<b>${list.length}<span class="of">/${target}</span></b><span>workouts</span>${delta(list.length,prev.length)}</div>
+        <div class="glass tile">${ico('timer')}<b>${mins}</b><span>minutes</span>${delta(mins,pmins,' min')}</div>
+        <div class="glass tile">${ico('flame')}<b>${kcal.toLocaleString()}</b><span>kcal burned</span>${delta(kcal,pkcal)}</div>
+        <div class="glass tile">${ico('activity')}<b>${vol.toLocaleString()}</b><span>kg lifted</span>${delta(vol,pvol,' kg')}</div>
+        <div class="glass tile">${ico('scale')}<b>${aw!=null?aw.toFixed(1):'—'}</b><span>avg kg</span>${delta(aw,pw,' kg',true,1)}</div>
+        <div class="glass tile">${ico('trophy')}<b>${prs.length}</b><span>personal bests</span><small class="dl">&nbsp;</small></div>
+      </div>
+      <div class="glass card"><div class="label" style="margin:0 0 8px">Muscles worked<small>by volume</small></div>
+        ${mv.length?mv.slice(0,8).map(([k,v])=>`<div class="mbar"><span>${esc(cap(MNAME[k]))}</span><i><b style="width:${Math.max(4,v/mmax*100)}%"></b></i><em>${Math.round(v).toLocaleString()}</em></div>`).join(''):'<p class="empty">Log a workout to see this.</p>'}</div>
+      <div class="glass card"><div class="label" style="margin:0 0 4px">Strength changes<small>est. 1RM vs before</small></div>
+        ${glist.length?glist.slice(0,8).map(([n,g])=>`<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(n)}</b></span>${delta(g,0,' kg',false,1)}</div>`).join(''):'<p class="empty">Train an exercise twice to compare.</p>'}</div>
+      ${prs.length?`<div class="glass card"><div class="label" style="margin:0 0 4px">Personal bests</div>${prs.map(p=>`<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(p.n)}</b><br>${shortDate(p.date)}</span><b>${fmt(p.top.w)} × ${p.top.r}</b></div>`).join('')}</div>`:''}`;
+    share=`Aesthetic Body weekly report, ${label.toLowerCase()==='this week'||label==='Last week'?label:label}\n${list.length}/${target} workouts, ${mins} min, ${kcal} kcal, ${vol} kg lifted`+
+      (vp!=null?` (${vp>=0?'+':''}${vp}% volume)`:'')+(aw!=null?`\nAverage weight ${aw.toFixed(1)} kg${pw!=null?` (${aw-pw<=0?'−':'+'}${Math.abs(aw-pw).toFixed(1)})`:''}`:'')+
+      (prs.length?`\nPersonal bests: ${prs.map(p=>p.n).join(', ')}`:'');
+  }
+  m.innerHTML=`<section>
+    <div class="eyebrow">Your training summary</div><h1>Reports</h1>
+    ${seg([['d','Daily'],['w','Weekly']],repMode,'repmode')}
+    ${body}
+    ${repMode==='w'?`<p class="note" style="margin:-4px 4px 12px">Changes compare with ${repOff===0?'the same point last week':'the week before'}.</p>`:''}
+    <button class="finish" id="shareRep" style="margin-top:4px">${ico('upload')}Share report</button>
+  </section>`;
+  $('#shareRep').dataset.text=share;
+}
+async function shareReport(text){
+  try{if(navigator.share){await navigator.share({title:'Aesthetic Body report',text});return}}catch(e){if(e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(text);toast('Report copied. Paste it anywhere.')}catch(e){toast('Sharing is not available here')}
+}
+
 /* ---------- Progress ---------- */
 function rProgress(m){
   const names=Object.keys(EX).filter(n=>db.sessions.some(s=>s.sets[n]));
@@ -955,6 +1112,10 @@ function rProgress(m){
   m.innerHTML=`<section>
   <div class="eyebrow">Your training at a glance</div>
   <h1>Progress</h1>
+  <div class="rgo">
+    <button class="glass rcard" data-report="d">${ico('calendar-days')}<b>Daily report</b><small>Any day</small></button>
+    <button class="glass rcard" data-report="w">${ico('chart-column')}<b>Weekly report</b><small>Any week</small></button>
+  </div>
   <div class="tiles">${tileH(db.sessions.length,'workouts logged','','dumbbell')}${tileH(total.toLocaleString(),'kcal burned in total','','flame')}${tileH(prs.length,'exercises tracked','','trophy')}</div>
   <div class="perspective"><div class="mapcard glass tilt">
     <div class="figs">${pair([...hard],[...light],60)}</div>
@@ -987,6 +1148,7 @@ function rHistory(m){
 
 /* ---------- Settings ---------- */
 function rMore(m){
+  setTimeout(storageStatus,0);
   const st=db.settings,all=[];PLATES_PER_SIDE.forEach(([p,c])=>{for(let i=0;i<c;i++)all.push(p)});
   m.innerHTML=`<section>
   <div class="eyebrow">Aesthetic Body</div>
@@ -1010,12 +1172,17 @@ function rMore(m){
   </div>
   <div class="label">Your data</div>
   <div class="glass listcard">
-    <p class="fhelp" style="margin:4px 0 2px">Everything stays on this phone. Export a backup every week or two so nothing is lost if you delete the app.</p>
+    <div class="field" style="border-bottom:0;padding-top:12px"><span style="display:flex;gap:8px;align-items:center">${ico('check')}Saved automatically on this phone</span></div>
+    <p class="fhelp" style="margin:0 0 2px" id="storeInfo">Every change is saved instantly${window.AndroidApp&&AndroidApp.saveData?', with backup copies in the browser database and the Android app':' with a backup copy in the browser database'}. Export a backup every week or two so nothing is lost if you delete the app.</p>
     <div class="btn2"><button class="soft" id="exp">${ico('download')}Export backup</button><button class="soft" id="imp">${ico('upload')}Import backup</button></div>
     <input type="file" id="impFile" accept="application/json,.json" hidden>
     <button class="danger" id="reset">${ico('trash-2')}Erase all data</button>
   </div>
   </section>`;
+}
+function storageStatus(){
+  if(!navigator.storage||!navigator.storage.persisted)return;
+  navigator.storage.persisted().then(p=>{const el=$('#storeInfo');if(el&&p)el.textContent+=' Storage is marked as persistent, so the system won\u2019t clear it automatically.'}).catch(()=>{});
 }
 async function exportData(){
   const name=`aesthetic-body-backup-${dstr()}.json`,blob=new Blob([JSON.stringify(db)],{type:'application/json'});
@@ -1049,6 +1216,10 @@ main.addEventListener('click',e=>{
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){go('workout',t.dataset.open);return}
   if(t.dataset.go){go(t.dataset.go);return}
+  if(t.dataset.report){repMode=t.dataset.report;repOff=0;go('report');return}
+  if(t.dataset.repmode){repMode=t.dataset.repmode;repOff=0;render();return}
+  if(t.dataset.repnav){repOff=Math.min(0,repOff+(+t.dataset.repnav));render();return}
+  if(t.id==='shareRep')return shareReport(t.dataset.text);
   if(t.id==='demoToggle'){const v=$('#exVid');if(!v)return;if(v.paused)v.play().catch(()=>{});else v.pause();
     $('#demoIco').innerHTML=ico(v.paused?'play':'pause');$('#demoLbl').textContent=v.paused?'Play':'Pause';return}
   if(t.id==='vRetry'){const v=$('#exVid');$('#vMsg').hidden=true;v.load();v.play().catch(()=>{});return}
@@ -1095,6 +1266,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('online',checkForUpdate);
 setTimeout(checkForUpdate,3000);
 
+restoreIfNeeded();
 (()=>{const [t,ex]=location.hash.slice(1).split('/');if(TABS.includes(t)){tab=t;curEx=ex?decodeURIComponent(ex):null}
   try{history.replaceState({tab,ex:curEx,i:0,max:0},'',navHash(tab,curEx))}catch(e){}})();
 render();

@@ -231,6 +231,30 @@ public class MainActivity extends Activity {
 
     /** Called from index.html's exportData() so backups can be saved from inside the app. */
     private class Bridge {
+        /** Private copy of the app data (written on every save) so it survives WebView storage being cleared. */
+        @JavascriptInterface
+        public void saveData(String json) {
+            try {
+                java.io.File dir = getFilesDir(), tmp = new java.io.File(dir, "data.json.tmp"), dst = new java.io.File(dir, "data.json");
+                try (OutputStream out = new java.io.FileOutputStream(tmp)) { out.write(json.getBytes(StandardCharsets.UTF_8)); }
+                if (!tmp.renameTo(dst)) { dst.delete(); tmp.renameTo(dst); }
+            } catch (Exception ignored) {}
+        }
+
+        @JavascriptInterface
+        public String loadData() {
+            java.io.File f = new java.io.File(getFilesDir(), "data.json");
+            if (!f.exists()) return "";
+            try (InputStream in = new java.io.FileInputStream(f)) {
+                ByteArrayOutputStream buf = new ByteArrayOutputStream();
+                byte[] b = new byte[8192];
+                for (int n; (n = in.read(b)) > 0; ) buf.write(b, 0, n);
+                return buf.toString("UTF-8");
+            } catch (Exception e) {
+                return "";
+            }
+        }
+
         @JavascriptInterface
         public void saveBackup(String name, String json) {
             runOnUiThread(() -> {

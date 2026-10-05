@@ -11,7 +11,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - `index.html` — the entire app (HTML + CSS + JS). No build step, no external libraries, no CDNs. It must keep working offline.
 - `sw.js` — service worker. `index.html` is fetched network-first, so the phone picks up updates automatically. Other assets are cache-first.
 - `manifest.json` — PWA manifest.
-- `icon-180.png`, `icon-192.png`, `icon-512.png` — app icons (dumbbell with yellow/green/white plates on #1c2129).
+- `icon-180.png`, `icon-192.png`, `icon-512.png` — app icons: glossy neon-lime dumbbell at 35° with glow inside a lime progress ring on a dark charcoal-green background (generated with Pillow; Android adaptive foreground is a smaller-scaled copy so it fits the safe zone).
 
 ## Android app
 - `android/` is a minimal native WebView wrapper (Java, no AndroidX) that loads the live Pages URL, so web changes reach it automatically; the service worker handles offline.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#1c2129</color><!-- icon background -->
+    <color name="bg">#07090a</color><!-- icon background -->
     <color name="app_bg">#0a0d0f</color>
     <style name="AppTheme" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/app_bg</item>

@@ -119,6 +119,46 @@ h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 10px;font-
 .tabbar button{flex:1;border:0;background:none;font:inherit;font-size:10.5px;font-weight:700;color:#7a8296;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:22px;cursor:pointer}
 .tabbar button.on{color:var(--text);background:rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,0 4px 12px -4px rgba(40,50,90,.25)}
 .tabbar svg{width:23px;height:23px}
+/* Set logging */
+.log{padding:14px 14px 12px;margin:8px 0 14px}
+.loghead{display:flex;justify-content:space-between;align-items:baseline}
+.lasttime{font-size:12.5px;color:var(--muted);font-weight:600;margin:4px 0 2px}
+.tip{font-size:12.5px;font-weight:700;color:#b07d1c;margin:2px 0}
+.tip:empty{display:none}
+.sgrid{display:grid;grid-template-columns:24px 1fr 1fr 52px;gap:8px;align-items:center}
+.sgrid.h{font-size:11.5px;font-weight:700;color:var(--muted);margin:10px 0 6px;text-align:center}
+.srow{margin-bottom:8px}
+.srow .n{text-align:center;font-weight:800;color:#a3aabb}
+.srow input{width:100%;min-width:0;font:inherit;font-size:19px;font-weight:800;text-align:center;padding:11px 4px;border-radius:14px;border:1px solid rgba(255,255,255,.85);
+  background:rgba(255,255,255,.62);box-shadow:inset 0 2px 5px rgba(40,50,90,.08);color:var(--text);outline:none;transition:background .2s,box-shadow .2s;font-variant-numeric:tabular-nums}
+.srow input:focus{border-color:rgba(217,164,65,.8);box-shadow:0 0 0 3px rgba(217,164,65,.22)}
+.srow input::placeholder{color:#b3b9c6;font-weight:700}
+.tick{height:47px;border-radius:14px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);font:inherit;font-size:19px;font-weight:900;color:#a3aabb;cursor:pointer;
+  box-shadow:0 3px 8px -3px rgba(40,50,90,.22),inset 0 1px 0 #fff;transition:transform .12s}
+.tick:active{transform:scale(.94)}
+.srow.ok .tick{background:radial-gradient(circle at 35% 30%,#8fd4b3,#4f9f7c);color:#fff;border-color:transparent;box-shadow:0 6px 14px -4px rgba(79,159,124,.6),inset 0 1px 1px rgba(255,255,255,.6)}
+.srow.ok input{background:rgba(214,240,227,.75);color:#2f6e53}
+.addset{border:0;background:none;font:inherit;font-weight:800;color:#b07d1c;padding:4px 0;cursor:pointer}
+.plates{display:flex;gap:5px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;min-height:24px}
+.pl{min-width:28px;height:22px;padding:0 6px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#2a2f3d;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.75),inset 0 -2px 3px rgba(0,0,0,.12),0 2px 5px -2px rgba(0,0,0,.25)}
+.finish{display:block;width:100%;margin-top:8px;border:0;border-radius:20px;padding:17px;font:inherit;font-size:17px;font-weight:800;color:#3d2a06;cursor:pointer;
+  background:linear-gradient(180deg,#f6d27e,#dea94a);box-shadow:0 12px 24px -10px rgba(217,164,65,.7),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(0,0,0,.08)}
+.finish:active{transform:scale(.98)}
+.rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:11;width:min(394px,calc(100% - 28px));
+  display:none;align-items:center;gap:10px;padding:10px 12px 12px 18px;border-radius:24px;overflow:hidden}
+@media (min-width:600px){.rest{position:absolute;bottom:100px}}
+.rest.on{display:flex}
+.rest b{font-size:24px;font-weight:800;min-width:66px;font-variant-numeric:tabular-nums}
+.rest span{flex:1;font-size:14px;font-weight:700;color:var(--muted)}
+.rest button{border:0;font:inherit;font-weight:800;font-size:13.5px;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.8);color:var(--text);box-shadow:0 2px 6px -2px rgba(40,50,90,.25);cursor:pointer}
+.rest #restBar{position:absolute;left:0;bottom:0;height:4px;background:linear-gradient(90deg,#f0c56d,#d9a441);transition:width .25s linear}
+.rest.go{background:rgba(198,238,218,.75)}
+.rest.go b{color:#2f7a58}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-160px);z-index:20;padding:12px 18px;border-radius:18px;font-size:14px;font-weight:700;
+  max-width:90%;text-align:center;transition:transform .3s cubic-bezier(.3,1.3,.5,1)}
+@media (min-width:600px){.toast{position:absolute}}
+.toast.on{transform:translate(-50%,0)}
 .note{font-size:12px;color:var(--muted);text-align:center;margin:18px 8px 0}
 </style>
 </head>
@@ -157,20 +197,30 @@ h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 10px;font-
           <div class="info">
             <div class="eyebrow" style="font-size:12.5px">Today you train</div>
             <div class="big">Chest, triceps and front delts</div>
-            <div class="bar"><i style="width:40%"></i></div>
-            <div class="muted" style="font-size:12px;margin-top:6px;font-weight:600">2 of 5 done · 214 kcal so far</div>
+            <div class="bar"><i id="heroBar" style="width:0"></i></div>
+            <div class="muted" style="font-size:12px;margin-top:6px;font-weight:600" id="heroTxt">0 of 5 done</div>
           </div>
         </div>
       </div>
       <div class="label">Exercises</div>
       <div id="list"></div>
-      <p class="note">Design preview with sample data. Tap an exercise to open it.</p>
+      <button class="finish" id="finish">Finish and save</button>
+      <p class="note">Design preview with sample data. Tap an exercise to log your sets. Nothing is saved.</p>
     </section>
 
     <!-- Exercise detail -->
     <section class="view" id="detail">
       <div class="top"><button class="iconbtn glass" id="back" aria-label="Back">‹</button><div class="eyebrow">Chest + Triceps</div><button class="iconbtn glass" aria-label="More">···</button></div>
       <h1 id="dName">Barbell bench press</h1>
+      <div class="log glass">
+        <div class="loghead"><div class="label" style="margin:0">Today's sets</div><span class="muted" id="unit" style="font-size:12px;font-weight:600"></span></div>
+        <div class="lasttime" id="lastTxt"></div>
+        <div class="tip" id="tip"></div>
+        <div class="sgrid h"><span></span><span>kg</span><span>Reps</span><span></span></div>
+        <div id="rows"></div>
+        <button class="addset" id="addset">+ Add set</button>
+        <div class="plates" id="plates"></div>
+      </div>
       <div class="perspective">
         <div class="mapcard glass" id="mapcard">
           <div class="figs" id="dFigs"></div>
@@ -184,12 +234,14 @@ h1{font-size:32px;line-height:1.05;letter-spacing:-.02em;margin:4px 0 10px;font-
       </div>
       <div class="seg glass" id="seg"><div class="lens"></div><button class="on" data-m="w">Weight</button><button data-m="r">Reps</button><button data-m="e">Est. 1RM</button></div>
       <div class="chart glass"><svg id="chart" viewBox="0 0 320 150" role="img" aria-label="Progress chart"></svg></div>
-      <div class="label">Sessions</div>
+      <div class="label">Previous sessions</div>
       <div id="sessions"></div>
     </section>
 
   </div>
 
+  <div class="rest glass" id="rest" role="status"><b id="restT">2:30</b><span id="restL">Rest</span><button data-r="30">+30s</button><button data-r="skip">Skip</button><i id="restBar"></i></div>
+  <div class="toast glass" id="toast" role="status"></div>
   <nav class="tabbar glass">
     <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>Workout</button>
     <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9.5a4 4 0 0 1 6 0M12 12l1.5-2.5"/></svg>Weight</button>
@@ -239,11 +291,11 @@ const NAMES={chest:'chest',delts:'front delts',triceps:'triceps',biceps:'biceps'
 
 /* ---------- Sample data ---------- */
 const EXS=[
-  {n:'Barbell bench press',p:['chest'],s:['delts','triceps'],sets:'3 sets',last:'60 × 8, 60 × 8, 60 × 7',done:true,base:50},
-  {n:'Incline barbell press',p:['chest','delts'],s:['triceps'],sets:'3 sets',last:'45 × 8, 45 × 7, 45 × 6',done:true,base:37.5},
-  {n:'Decline dumbbell press',p:['chest'],s:['triceps'],sets:'2 sets',last:'Add 2 kg today',next:true,base:16},
-  {n:'Close-grip bench press',p:['triceps'],s:['chest','delts'],sets:'3 sets',last:'40 × 8, 40 × 7, 40 × 7',base:32.5},
-  {n:'EZ-bar skull crusher',p:['triceps'],s:[],sets:'2 sets',last:'25 × 8, 25 × 7',base:20}
+  {n:'Barbell bench press',p:['chest'],s:['delts','triceps'],k:3,t:'c',eq:'bb',base:50},
+  {n:'Incline barbell press',p:['chest','delts'],s:['triceps'],k:3,t:'c',eq:'bb',base:37.5},
+  {n:'Decline dumbbell press',p:['chest'],s:['triceps'],k:2,t:'c',eq:'db',base:16},
+  {n:'Close-grip bench press',p:['triceps'],s:['chest','delts'],k:3,t:'c',eq:'bb',base:32.5},
+  {n:'EZ-bar skull crusher',p:['triceps'],s:[],k:2,t:'i',eq:'ez',base:20}
 ];
 function history(base){ // 10 sessions, gentle progression
   const out=[];const d=new Date(2026,8,3);
@@ -257,17 +309,57 @@ const fmt=n=>(Math.round(n*10)/10).toString();
 /* ---------- Render ---------- */
 const $=s=>document.querySelector(s);
 $('#heroFigs').innerHTML=pair(['chest','triceps'],['delts'],50);
-$('#list').innerHTML=EXS.map((e,i)=>`
-  <div class="ex glass ${e.next?'up':''}" data-i="${i}">
+/* Today's log: first exercise already done so the preview shows both states */
+const lastOf=e=>{const h=history(e.base);return h[h.length-1]};
+const log=EXS.map((e,i)=>Array.from({length:e.k},(_,j)=>i===0?{w:lastOf(e).w[j]+2.5,r:[8,8,7][j],done:true}:{w:null,r:null,done:false}));
+const doneSets=i=>log[i].filter(s=>s.done).length;
+const allDone=i=>log[i].length>0&&doneSets(i)===log[i].length;
+const lastTxt=e=>{const l=lastOf(e);return l.w.map((w,j)=>`${fmt(w)} × ${l.r[j]}`).join(', ')};
+const hit8=e=>lastOf(e).r.every(r=>r>=8);
+function renderList(){
+  const next=EXS.findIndex((e,i)=>!allDone(i));
+  $('#list').innerHTML=EXS.map((e,i)=>{
+    const d=doneSets(i),k=log[i].length,up=i===next;
+    const meta=d&&d<k?`${d} of ${k} sets logged`:allDone(i)?log[i].map(s=>`${fmt(s.w)} × ${s.r}`).join(', '):up&&hit8(e)?'Up next · add 2–4 kg today':`${k} sets · last ${lastTxt(e)}`;
+    return `<div class="ex glass ${up?'up':''}" data-i="${i}">
     <div class="thumb">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,33)}</div>
-    <div style="flex:1"><div class="name">${e.n}</div><div class="${e.next?'next':'meta'}">${e.sets} · ${e.last}</div></div>
-    ${e.done?'<span class="done">✓</span>':'<span class="chev">›</span>'}
-  </div>`).join('');
+    <div style="flex:1"><div class="name">${e.n}</div><div class="${up&&!d?'next':'meta'}">${meta}</div></div>
+    ${allDone(i)?'<span class="done">✓</span>':'<span class="chev">›</span>'}
+  </div>`}).join('');
+  const nd=EXS.filter((e,i)=>allDone(i)).length;
+  $('#heroBar').style.width=(nd/EXS.length*100)+'%';
+  $('#heroTxt').textContent=`${nd} of ${EXS.length} done`;
+}
+renderList();
+
+/* plate guide (per side) */
+const PLATES=[15,10,5,5,3,3,2.5,2,2,1],PCOL={15:'#f2c45f',10:'#7cc9a2',5:'#ffffff',3:'#8db1ff',2.5:'#f08f8f',2:'#bcd3ff',1:'#d3d8e2'};
+function platesHTML(e,w){
+  if(e.eq==='db'||w==null)return '';
+  const bar=e.eq==='ez'?10:20;let side=Math.round((w-bar)/2*10)/10;
+  if(side<0)return `<span>Below the ${bar} kg bar</span>`;if(!side)return '<span>Empty bar</span>';
+  const out=[];for(const p of PLATES)if(p<=side+1e-9){out.push(p);side=Math.round((side-p)*10)/10}
+  return `<span>Each side</span>${out.map(p=>`<span class="pl" style="background:${PCOL[p]}">${p}</span>`).join('')}${side>0?`<span>(${fmt(side)} kg short)</span>`:''}`;
+}
+function renderLog(){
+  const e=EXS[cur],l=lastOf(e),sets=log[cur];
+  $('#unit').textContent=e.eq==='db'?'kg per dumbbell':e.eq==='ez'?'kg incl. EZ bar':'kg incl. bar';
+  $('#lastTxt').textContent='Last time: '+lastTxt(e);
+  $('#tip').textContent=hit8(e)?'You hit 8 reps on every set. Add 2–4 kg today.':'';
+  $('#rows').innerHTML=sets.map((s,j)=>`<div class="sgrid srow ${s.done?'ok':''}" data-j="${j}">
+    <span class="n">${j+1}</span>
+    <input inputmode="decimal" data-f="w" aria-label="Set ${j+1} weight" value="${s.w??''}" placeholder="${l.w[j]!=null?fmt(l.w[j]):'kg'}">
+    <input inputmode="numeric" data-f="r" aria-label="Set ${j+1} reps" value="${s.r??''}" placeholder="${l.r[j]??'6–8'}">
+    <button class="tick" aria-label="Mark set ${j+1} done">✓</button></div>`).join('');
+  const cw=[...sets].reverse().find(s=>s.w!=null);
+  $('#plates').innerHTML=platesHTML(e,cw?cw.w:l.w[0]);
+}
 
 let cur=0,mode='w';
 function open(i){
   cur=i;const e=EXS[i],h=history(e.base),last=h[h.length-1];
   $('#dName').textContent=e.n;
+  renderLog();
   $('#dFigs').innerHTML=pair(e.p,e.s,58);
   $('#dPrim').textContent='Primary: '+e.p.map(m=>NAMES[m]).join(', ');
   $('#dSec').textContent=e.s.length?'Also: '+e.s.map(m=>NAMES[m]).join(', '):'Isolation exercise';
@@ -299,7 +391,42 @@ function drawChart(){
 }
 function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));(document.querySelector('.screen')).scrollTop=0;window.scrollTo(0,0)}
 $('#list').addEventListener('click',e=>{const c=e.target.closest('.ex');if(c)open(+c.dataset.i)});
-$('#back').addEventListener('click',()=>show('home'));
+$('#back').addEventListener('click',()=>{renderList();show('home')});
+
+/* set entry */
+const num=v=>{v=String(v).trim().replace(',','.');if(!v)return null;const n=parseFloat(v);return isFinite(n)?n:null};
+$('#rows').addEventListener('input',ev=>{const i=ev.target;if(!i.dataset.f)return;const s=log[cur][+i.closest('.srow').dataset.j];
+  const v=num(i.value);s[i.dataset.f]=i.dataset.f==='r'&&v!=null?Math.round(v):v;
+  if(i.dataset.f==='w')$('#plates').innerHTML=platesHTML(EXS[cur],v)});
+$('#rows').addEventListener('click',ev=>{const b=ev.target.closest('.tick');if(!b)return;unlock();
+  const row=b.closest('.srow'),s=log[cur][+row.dataset.j],[wi,ri]=row.querySelectorAll('input');
+  if(s.done){s.done=false;row.classList.remove('ok');return}
+  if(s.w==null&&num(wi.placeholder)!=null){s.w=num(wi.placeholder);wi.value=fmt(s.w)}
+  if(s.r==null&&/^\d+$/.test(ri.placeholder)){s.r=+ri.placeholder;ri.value=s.r}
+  if(s.w==null||s.r==null){toast('Enter the weight and reps first');(s.w==null?wi:ri).focus();return}
+  s.done=true;row.classList.add('ok');
+  startRest(EXS[cur].t==='c'?150:90);
+  if(allDone(cur))toast('Exercise done. Nice work.');
+});
+$('#addset').addEventListener('click',()=>{log[cur].push({w:null,r:null,done:false});renderLog()});
+$('#finish').addEventListener('click',()=>{const n=log.flat().filter(s=>s.done).length;
+  toast(n?`Saved: ${n} sets, about 240 kcal (preview only)`:'Tick at least one set first')});
+
+/* rest timer */
+let rest=null,actx;
+function unlock(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}}
+function beep(){try{[0,.22,.44].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=t>.4?1320:880;o.connect(g);g.connect(actx.destination);const s=actx.currentTime+t;g.gain.setValueAtTime(.001,s);g.gain.exponentialRampToValueAtTime(.35,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+.18);o.start(s);o.stop(s+.2)})}catch(e){}if(navigator.vibrate)navigator.vibrate([200,100,200])}
+function startRest(sec){rest={end:Date.now()+sec*1000,total:sec,done:false};tick()}
+function tick(){
+  const r=$('#rest');if(!rest){r.classList.remove('on','go');return}
+  const left=(rest.end-Date.now())/1000;r.classList.add('on');
+  if(left<=0){if(!rest.done){rest.done=true;beep();setTimeout(()=>{if(rest&&rest.done){rest=null;tick()}},4000)}
+    r.classList.add('go');$('#restT').textContent='Go';$('#restL').textContent='Next set';$('#restBar').style.width='100%'}
+  else{r.classList.remove('go');const s=Math.ceil(left);$('#restT').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;$('#restL').textContent='Rest';$('#restBar').style.width=(100-left/rest.total*100)+'%'}
+}
+setInterval(tick,250);
+$('#rest').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b||!rest)return;if(b.dataset.r==='skip')rest=null;else{rest.end+=30000;rest.total+=30;rest.done=false}tick()});
+let tt;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),2600)}
 $('#seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;
   const idx=[...b.parentNode.querySelectorAll('button')].indexOf(b);
   b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));

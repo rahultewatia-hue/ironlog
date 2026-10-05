@@ -35,7 +35,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - **Progress tab:** weekly calories bar chart, strength chart (estimated 1RM per session, Epley formula), and personal bests.
 - **History tab:** past sessions, expandable, deletable.
 - **Settings tab:** barbell and EZ bar weights, rest times, calorie explanation, export/import JSON backup, erase all.
-- Charts are hand-drawn on `<canvas>` (`drawLine`, `drawBars`).
+- Charts are hand-drawn SVG (`smoothChart`) and CSS 3D bars; no libraries.
 
 ## Training program (the `PROGRAM` object)
 Goal: fat loss. 6–8 reps, low volume, high intensity, sets taken 1–2 reps short of failure.
@@ -56,8 +56,13 @@ This is `PLATES_PER_SIDE` = 15×1, 10×1, 5×2, 3×2, 2.5×1, 2×2, 1×1 per sid
 These are active calories (net of resting burn) and are presented as an estimate. Body weight is the latest logged entry. Sessions open more than 120 min prompt for the real duration.
 
 ## Design
-Dark slate theme: bg `#1c2129`, surface `#252b35`, surface2 `#2f3642`, text `#eef1f5`, muted `#8f98a8`.
-Primary accent is plate yellow `#f2c230`; green `#3fb27f` marks done/good.
-Plate chip colours: 15 yellow, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey.
-Font is `ui-rounded` (SF Pro Rounded on iPhone). Sentence-case labels, no all-caps. Bottom tab bar, safe-area aware.
-Mobile-first (iPhone ~390 px wide).
+Light "liquid glass" theme (redesigned 2026-10-05). bg `#eef0f5` with soft blurred colour blobs (peach, lavender, mint) behind
+frosted `.glass` surfaces (`backdrop-filter: blur(22px) saturate(180%)`, white hairline border, inner highlight, sheen).
+Text `#1d2230`, muted `#7a8296`. Accent is soft gold `#d9a441` (text `#b07d1c`); green `#3f9a72` / sage gradient marks done/good.
+3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` primary, `gS` secondary, `gN` untrained), tilt-on-drag
+cards (`.tilt`), glossy 3D plates, 3D calorie bars, floating glass tab bar, sliding glass "lens" on segmented controls.
+`MUSCLES` maps every exercise to [primary, secondary] muscles; keep it in sync with `PROGRAM`.
+Workout flow: Start workout → exercise list → tap an exercise to open its detail screen (Today's sets logging, plate guide,
+muscle map, Weight/Reps/Est. 1RM chart, previous sessions) → finisher + effort → Finish and save.
+Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey.
+Font is `ui-rounded` (SF Pro Rounded on iPhone). Sentence-case labels, no all-caps. Safe-area aware. Mobile-first (iPhone ~390 px wide).

@@ -514,7 +514,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-06.1';
+const APP_BUILD='2026-10-06.2';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -576,6 +576,7 @@ const HOWTO = {
   'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.']
 };
 // Stock demo clips in videos/ (Pexels free licence, re-encoded to 720×405; sources in videos/CREDITS.md)
+const VID_V='3';// bump when the clips change so phones refetch them
 const VIDEOS = {
   'Barbell bench press':'bench-press','Incline barbell press':'incline-press','Decline dumbbell press':'decline-db-press',
   'Close-grip bench press':'close-grip-bench','EZ-bar skull crusher':'skull-crusher','Barbell back squat':'back-squat',
@@ -683,7 +684,7 @@ function figure(side,prim,sec,w){
 const pair=(p,s,w)=>figure('f',p,s,w)+figure('b',p,s,w);
 const thumb=(p,s)=>`<div class="thumb">${figure(p.some(m=>BACK.includes(m))?'b':'f',p,s,33)}</div>`;
 // Exercise photo (cut from its stock clip); the muscle figure underneath shows if the photo can't load
-const photo=n=>{const e=EX[n];return VIDEOS[n]?`<div class="thumb photo">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,33)}<img src="videos/thumbs/${VIDEOS[n]}.jpg" alt="" decoding="async" onerror="this.remove()"></div>`:thumb(e.p,e.s)};
+const photo=n=>{const e=EX[n];return VIDEOS[n]?`<div class="thumb photo">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,33)}<img src="videos/thumbs/${VIDEOS[n]}.jpg?v=${VID_V}" alt="" decoding="async" onerror="this.remove()"></div>`:thumb(e.p,e.s)};
 
 /* plate solver: fewest plates per side for each reachable load */
 const PLATE_MAP=(()=>{const map=new Map();
@@ -802,7 +803,7 @@ function installHint(){
 }
 
 /* ---------- Home ---------- */
-const poster=k=>{const n=PROGRAM[k].ex[0][0];return VIDEOS[n]?`videos/${VIDEOS[n]}.jpg`:''};
+const poster=k=>{const n=PROGRAM[k].ex[0][0];return VIDEOS[n]?`videos/${VIDEOS[n]}.jpg?v=${VID_V}`:''};
 function rHome(m){
   const now=new Date(),h=now.getHours(),wd=now.getDay();
   const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
@@ -926,7 +927,7 @@ function setupVideo(){
   v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video needs an internet connection'));
   v.addEventListener('playing',()=>{if(!v.isConnected)return;$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
   if(!navigator.onLine)msg('Video needs an internet connection');
-  const p=v.play();if(p&&p.catch)p.catch(()=>{$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
+  const p=v.play();if(p&&p.catch)p.catch(()=>{if(!v.isConnected||!$('#demoIco'))return;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
 }
 
 /* ---------- Exercise detail (log sets) ---------- */
@@ -943,7 +944,7 @@ function rDetail(m){
   const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' proper form');
   m.innerHTML=`<section>
     <div class="stage">
-      <video id="exVid" src="videos/${VIDEOS[name]}.mp4" poster="videos/${VIDEOS[name]}.jpg" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
+      <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
       <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video needs an internet connection</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
       <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>

@@ -72,10 +72,11 @@ Fonts are bundled in `fonts/` (SIL OFL, licences included): **Outfit** for headi
 Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<body>`; use `ico('name')`. To add an icon, copy its inner SVG from lucide-static into a new `<symbol id="i-name">`.
 3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained), tilt cards, 3D bars.
 `MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
-Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
-Pexels clips trimmed to 10 s, 720×405, sources in `videos/CREDITS.md`). MP4s stream from the site and are not cached by the service worker; posters are cached.
+Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise showing correct form (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
+Pexels and Mixkit clips, 800×700 H.264 with the full frame letterboxed over a blurred copy of itself so the whole body stays visible, sources in `videos/CREDITS.md`).
+MP4s stream from the site and are not cached by the service worker; posters/thumbs are cached. When you replace clips bump `VID_V` (cache-busting `?v=`) and the SW `VERSION`.
 If a clip can't play (offline/error) the poster stays with a "Retry" message. The user does NOT want animated/motion-graphic demos, only real footage.
-Pause/play pill and a "Full tutorial" link that opens a YouTube search. List rows show a photo from `videos/thumbs/<slug>.jpg` (168×210 crop of the clip) via `photo()`, with the muscle figure as fallback.
+Pause/play pill and a "Full tutorial" link that opens a YouTube search. List rows show a photo from `videos/thumbs/<slug>.jpg` (168×210 portrait crop cut from the source clip) via `photo()`, with the muscle figure as fallback.
 New exercise → add a clip to `videos/`, a thumb to `videos/thumbs/`, and entries in `VIDEOS`, `MUSCLES`, `HOWTO`.
 Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).
 Plate chip colours: 15 gold, 10 green, 5 white, 3 blue, 2.5 red, 2 light blue, 1 grey. Sentence-case labels. Safe-area aware. Mobile-first (iPhone ~390 px wide).

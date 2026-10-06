@@ -68,7 +68,7 @@ These are active calories (net of resting burn) and are presented as an estimate
 Dark theme with a restrained lime accent (redesigned 2026-10-05 from a reference, then toned down and made more professional on 2026-10-06).
 bg `#0b0e10`, mostly solid dark surfaces `rgba(22,27,30,.84)` with light blur, 8% white hairline borders, 18px radius (16 tiles, 20 hero/plan/sheets), neutral shadows only.
 No coloured glows, glossy highlights, 3D tilt, bouncy easing or decorative 3D plates. Keep motion to short ease-out `cubic-bezier(.2,.8,.2,1)`.
-Text `#f3f6f4`, muted `#8a949b`. Accent is a softer lime `#b9d65a` (`--lime`; text on lime `#0b0f05`); `--sage` `#a3b27a` for secondary icons/labels; red `#ff6b5b` for bad/danger. Use the accent only for primary actions, active state, progress and ticks.
+Text `#f3f6f4`, muted `#8a949b`. Accent is a livelier lime `#c2ea3f` (`--lime`; text on lime `#0b0f05`); `--sage` `#a9be72` for secondary icons/labels; red `#ff6b5b` for bad/danger. Use the accent only for primary actions, active state, progress and ticks.
 Primary buttons are lime pills (Start workout has a dark circle with a play icon); segmented controls use a sliding lime lens.
 Fonts are bundled in `fonts/` (SIL OFL, licences included): **Outfit** for headings and big numbers (`--display`), **Plus Jakarta Sans** for UI text (`--font`).
 Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<body>`; use `ico('name')`. To add an icon, copy its inner SVG from lucide-static into a new `<symbol id="i-name">`.

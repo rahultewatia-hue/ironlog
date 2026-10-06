@@ -90,6 +90,14 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 .thumb.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .thumb.photo::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 -18px 18px -14px rgba(0,0,0,.55);pointer-events:none}
 .ex.up .thumb.photo{border-color:rgba(194,234,63,.55)}
+.thumb.photo.sm{width:42px;height:50px;border-radius:12px;flex:none}
+.hphotos{display:flex;flex:none;padding-left:18px}
+.hphotos .thumb{margin-left:-18px;width:56px;height:68px;border:2px solid #14181b;box-shadow:0 4px 10px -4px rgba(0,0,0,.7)}
+.pr .thumb,.b3row .thumb{grid-row:auto}
+.pr .thumb{grid-row:span 2}
+.sx .xr{display:flex;gap:12px;align-items:center;margin:10px 0;font-size:14px;font-weight:700}
+.sx .xr span{display:block;color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+.li .thumb{margin-right:2px}
 .ex .txt{flex:1;min-width:0}
 .ex .name{font-size:15.5px;font-weight:700}
 .ex .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
@@ -533,7 +541,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-06.8';
+const APP_BUILD='2026-10-06.9';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -704,6 +712,8 @@ const pair=(p,s,w)=>figure('f',p,s,w)+figure('b',p,s,w);
 const thumb=(p,s)=>`<div class="thumb">${figure(p.some(m=>BACK.includes(m))?'b':'f',p,s,33)}</div>`;
 // Exercise photo (cut from its stock clip); the muscle figure underneath shows if the photo can't load
 const photo=n=>{const e=EX[n];return VIDEOS[n]?`<div class="thumb photo">${figure(e.p.some(m=>BACK.includes(m))?'b':'f',e.p,e.s,33)}<img src="videos/thumbs/${VIDEOS[n]}.jpg?v=${VID_V}" alt="" decoding="async" onerror="this.remove()"></div>`:thumb(e.p,e.s)};
+const photoSm=n=>photo(n).replace('class="thumb photo"','class="thumb photo sm"');
+const heroPhotos=day=>`<div class="hphotos" aria-hidden="true">${(PROGRAM[day]?PROGRAM[day].ex:[]).slice(0,3).map(e=>photo(e[0])).join('')}</div>`;
 
 /* plate solver: fewest plates per side for each reachable load */
 const PLATE_MAP=(()=>{const map=new Map();
@@ -896,7 +906,7 @@ function rWorkout(m){
     const ws=weekStats(),lw=sortedWeights().slice(-1)[0];
     let hero;
     if(sug){const dm=dayMuscles(sug[0]);
-      hero=`<div class="perspective"><div class="hero glass"><div class="figs">${pair(dm.p,dm.s,46)}</div>
+      hero=`<div class="perspective"><div class="hero glass">${heroPhotos(sug[0])}
         <div class="info"><span class="badge">${ico('target')}Today you train</span><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
         <button class="gold block" data-start="${sug[0]}">Start workout<span class="arr">${ico('play')}</span></button></div></div></div>`;
     }else hero=`<div class="hero glass"><div class="info"><div class="big">Rest day</div><div class="muted" style="font-size:14px">Go for a 30–45 minute walk. You can still start any workout below.</div></div></div>`;
@@ -920,7 +930,7 @@ function rWorkout(m){
     <div class="workbar"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>
     <div class="eyebrow">Started ${new Date(a.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div>
     <h1>${esc(p.name)}</h1>
-    <div class="perspective"><div class="hero glass"><div class="figs">${pair(dm.p,dm.s,46)}</div>
+    <div class="perspective"><div class="hero glass">${heroPhotos(a.day)}
       <div class="info"><span class="badge">${ico('target')}Today you train</span><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
       <div class="bar"><i style="width:${doneN/names.length*100}%"></i></div>
       <div class="muted" style="font-size:12px;margin-top:6px;font-weight:600">${doneN} of ${names.length} done · ${setsN} sets logged</div></div></div></div>
@@ -1106,7 +1116,7 @@ function prCard(ex){
 function big3Card(){
   const bs=PR_LIFTS.map(ex=>[ex,prBest(ex)]),all=bs.every(x=>x[1]),tot=bs.reduce((a,x)=>a+(x[1]?x[1].w:0),0);
   return `<div class="glass listcard big3"><div class="b3head"><div><div class="label" style="margin:0">Big 3 records</div><small class="muted">Bench press · Deadlift · Squat</small></div>${all?`<div class="b3tot"><b>${fmt(tot)}</b><small>kg total</small></div>`:''}</div>
-    ${bs.map(([ex,b])=>`<div class="b3row"><span class="medal">${ico('trophy')}</span><div class="b3n"><b>${esc(PR_SHORT[ex])}</b><small>${b?`${shortDate(b.date)} · est. 1RM ${Math.round(b.v)} kg`:'No record yet'}</small></div>
+    ${bs.map(([ex,b])=>`<div class="b3row">${photoSm(ex)}<div class="b3n"><b>${esc(PR_SHORT[ex])}</b><small>${b?`${shortDate(b.date)} · est. 1RM ${Math.round(b.v)} kg`:'No record yet'}</small></div>
       <div class="b3v"><b>${b?`${fmt(b.w)} × ${b.r}`:'—'}</b><button class="soft prbtn" data-pr="${esc(ex)}">${ico('plus')}Log PR</button></div></div>`).join('')}</div>`;
 }
 let prEx=null;
@@ -1173,7 +1183,7 @@ function rReport(m){
         ${w?`<div class="bigrow"><b>${fmt(w.kg)} kg</b>${delta(w.kg,wp&&wp.kg,' kg',true,1)}</div><div class="note" style="margin-top:4px">${wp?`Previous entry ${fmt(wp.kg)} kg on ${shortDate(wp.date)}.`:'First entry.'}</div>`:`<p class="empty" style="padding:4px 0">No weigh-in this day. <button class="addset" data-go="weight">${ico('plus')}Log weight</button></p>`}</div>
       ${list.length?list.map(s=>{const p=PROGRAM[s.day]||{name:s.day};return `<div class="glass card"><div class="label" style="margin:0 0 4px">${esc(p.name)}<small>${s.min} min · ${s.kcal} kcal</small></div>
         <div class="note" style="margin:0 0 6px">Effort ${(EFFORT.find(e=>e.k===s.effort)||{}).label||'—'} · finisher ${s.finisher?'done':'skipped'} · ${sessVol(s).toLocaleString()} kg lifted</div>
-        ${Object.entries(s.sets).map(([n,ss])=>{const pr=prs.find(x=>x.n===n);return `<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(n)}</b><br>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span>${pr?`<span class="prb">${ico('trophy')}PB</span>`:''}</div>`}).join('')}</div>`}).join('')
+        ${Object.entries(s.sets).map(([n,ss])=>{const pr=prs.find(x=>x.n===n);return `<div class="li">${EX[n]?photoSm(n):''}<span><b style="color:var(--text);font-size:14px">${esc(n)}</b><br>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span>${pr?`<span class="prb">${ico('trophy')}PB</span>`:''}</div>`}).join('')}</div>`}).join('')
       :`<div class="glass card"><div class="label" style="margin:0 0 4px">${ico('moon')} Rest day</div><p class="note" style="margin:0">No workout logged${repOff===0?' yet today':''}. ${Object.values(PROGRAM).some(p=>p.wd===d.getDay())?'This is a training day in your plan.':'Rest days help you recover. Go for a walk.'}</p></div>`}`;
     share=`Aesthetic Body daily report, ${d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}\n`+
       (list.length?list.map(s=>`${(PROGRAM[s.day]||{name:s.day}).name}: ${s.min} min, ${s.kcal} kcal, ${setsN(s)} sets, ${sessVol(s)} kg lifted`).join('\n'):'Rest day')+
@@ -1209,8 +1219,8 @@ function rReport(m){
       <div class="glass card"><div class="label" style="margin:0 0 8px">Muscles worked<small>by volume</small></div>
         ${mv.length?mv.slice(0,8).map(([k,v])=>`<div class="mbar"><span>${esc(cap(MNAME[k]))}</span><i><b style="width:${Math.max(4,v/mmax*100)}%"></b></i><em>${Math.round(v).toLocaleString()}</em></div>`).join(''):'<p class="empty">Log a workout to see this.</p>'}</div>
       <div class="glass card"><div class="label" style="margin:0 0 4px">Strength changes<small>est. 1RM vs before</small></div>
-        ${glist.length?glist.slice(0,8).map(([n,g])=>`<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(n)}</b></span>${delta(g,0,' kg',false,1)}</div>`).join(''):'<p class="empty">Train an exercise twice to compare.</p>'}</div>
-      ${prs.length?`<div class="glass card"><div class="label" style="margin:0 0 4px">Personal bests</div>${prs.map(p=>`<div class="li"><span><b style="color:var(--text);font-size:14px">${esc(p.n)}</b><br>${shortDate(p.date)}</span><b>${fmt(p.top.w)} × ${p.top.r}</b></div>`).join('')}</div>`:''}`;
+        ${glist.length?glist.slice(0,8).map(([n,g])=>`<div class="li">${EX[n]?photoSm(n):''}<span><b style="color:var(--text);font-size:14px">${esc(n)}</b></span>${delta(g,0,' kg',false,1)}</div>`).join(''):'<p class="empty">Train an exercise twice to compare.</p>'}</div>
+      ${prs.length?`<div class="glass card"><div class="label" style="margin:0 0 4px">Personal bests</div>${prs.map(p=>`<div class="li">${EX[p.n]?photoSm(p.n):''}<span><b style="color:var(--text);font-size:14px">${esc(p.n)}</b><br>${shortDate(p.date)}</span><b>${fmt(p.top.w)} × ${p.top.r}</b></div>`).join('')}</div>`:''}`;
     share=`Aesthetic Body weekly report, ${label.toLowerCase()==='this week'||label==='Last week'?label:label}\n${list.length}/${target} workouts, ${mins} min, ${kcal} kcal, ${vol} kg lifted`+
       (vp!=null?` (${vp>=0?'+':''}${vp}% volume)`:'')+(aw!=null?`\nAverage weight ${aw.toFixed(1)} kg${pw!=null?` (${aw-pw<=0?'−':'+'}${Math.abs(aw-pw).toFixed(1)})`:''}`:'')+
       (prs.length?`\nPersonal bests: ${prs.map(p=>p.n).join(', ')}`:'');
@@ -1264,7 +1274,7 @@ function rProgress(m){
     <svg id="sChart" viewBox="0 0 320 170" role="img" aria-label="Estimated one-rep max over time"></svg>
     <div class="note" style="margin:4px 4px 4px">Estimated one-rep max from your best set each workout. A rising line means you're getting stronger.</div></div>
   <div class="label">Personal bests</div>
-  <div class="glass listcard">${prs.length?prs.map(p=>`<div class="pr"><span class="medal">${ico('trophy')}</span><b>${esc(p.n)}</b><span class="v">${fmt(p.best.w)} × ${p.best.r}</span><small>Heaviest ${fmt(p.heavy)} kg · est. 1RM ${Math.round(p.best.v)} kg</small><small style="text-align:right">${shortDate(p.best.date)}</small></div>`).join(''):'<p class="empty">Finish your first workout to see personal bests.</p>'}</div>
+  <div class="glass listcard">${prs.length?prs.map(p=>`<div class="pr">${photoSm(p.n)}<b>${esc(p.n)}</b><span class="v">${fmt(p.best.w)} × ${p.best.r}</span><small>Heaviest ${fmt(p.heavy)} kg · est. 1RM ${Math.round(p.best.v)} kg</small><small style="text-align:right">${shortDate(p.best.date)}</small></div>`).join(''):'<p class="empty">Finish your first workout to see personal bests.</p>'}</div>
   </section>`;
   const ses=progEx?db.sessions.filter(s=>s.sets[progEx]&&s.sets[progEx].length):[];
   smoothChart($('#sChart'),ses.map(s=>Math.round(Math.max(...s.sets[progEx].map(x=>e1rm(x.w,x.r)))*10)/10),ses.map(s=>shortDate(s.date)),{empty:'Log an exercise twice to see the line.'});
@@ -1276,7 +1286,7 @@ function rHistory(m){
   m.innerHTML=`<section><div class="eyebrow">${s.length} workout${s.length===1?'':'s'} logged</div><h1>History</h1>`+(s.length?s.map(x=>{const p=PROGRAM[x.day]||{name:x.day};const nsets=Object.values(x.sets).reduce((a,b)=>a+b.length,0);const d=new Date(x.start);
     return `<details class="hs glass"><summary><div class="dchip"><b>${d.getDate()}</b>${d.toLocaleDateString(undefined,{weekday:'short'})}</div>
     <div class="t"><b>${esc(p.name)}</b><small>${d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})} · ${x.min} min · ${nsets} sets</small></div><div class="k">${x.kcal}<small>${ico('flame')}kcal</small></div></summary>
-    <div class="sx">${Object.entries(x.sets).map(([n,ss])=>`<p>${esc(n)}<span>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span></p>`).join('')}
+    <div class="sx">${Object.entries(x.sets).map(([n,ss])=>`<div class="xr">${EX[n]?photoSm(n):''}<div>${esc(n)}<span>${ss.map(q=>`${fmt(q.w)} × ${q.r}`).join(', ')}</span></div></div>`).join('')}
     <p><span>Effort: ${(EFFORT.find(e=>e.k===x.effort)||{}).label||'—'} · Finisher ${x.finisher?'done':'skipped'} · Body weight used: ${fmt(x.bw)} kg</span></p>
     <button class="danger" data-dels="${x.id}">${ico('trash-2')}Delete workout</button></div></details>`}).join(''):'<p class="empty">No workouts yet. Start one from the Workout tab.</p>')+'</section>';
 }

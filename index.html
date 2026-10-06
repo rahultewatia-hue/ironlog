@@ -281,6 +281,14 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 .mbtns{display:flex;gap:10px}
 .mbtns button{flex:1;justify-content:center;padding:14px}
 .mbtns .gold.red{background:var(--red);color:#fff;box-shadow:0 10px 24px -10px rgba(255,107,91,.6)}
+/* timer + finish/discard row */
+.workbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.wacts{display:flex;gap:6px;align-items:center}
+.wact{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:99px;border:0;font-weight:700;font-size:13.5px;white-space:nowrap}
+.wact .ic{width:16px;height:16px;stroke-width:2.6}
+.wact.fin{background:var(--lime);color:var(--onlime);box-shadow:0 8px 18px -8px rgba(198,244,50,.7),inset 0 1px 0 rgba(255,255,255,.5)}
+.wact.dis{background:rgba(48,24,24,.72);color:var(--red);border:1px solid rgba(255,107,91,.4);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.wact:active{transform:scale(.96)}
 /* personal records */
 .gold.sm{padding:10px 14px;font-size:13.5px;gap:6px;flex:none}
 .gold.sm .ic{width:16px;height:16px;stroke-width:2.6}
@@ -413,7 +421,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 .stage .vmsg{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 18px;border-radius:20px;font-size:13.5px;font-weight:600;text-align:center;white-space:nowrap}
 .stage .vmsg[hidden]{display:none}
 .stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
-.stage .tl{top:12px;left:14px;right:14px;justify-content:flex-end}
+.stage .tl{top:12px;left:14px;right:14px;justify-content:space-between}
 .stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
 .pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;font-size:12.5px;font-weight:700;color:var(--text);text-decoration:none;border:0}
 .pill .ic{width:15px;height:15px;color:var(--lime)}
@@ -514,7 +522,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-06.2';
+const APP_BUILD='2026-10-06.3';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -789,6 +797,9 @@ function tilt(el){
   el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();const dx=(e.clientX-r.left)/r.width-.5,dy=(e.clientY-r.top)/r.height-.5;el.style.transform=`rotateY(${dx*12}deg) rotateX(${-dy*12}deg)`});
   const reset=()=>el.style.transform='';el.addEventListener('pointerleave',reset);el.addEventListener('pointerup',reset);el.addEventListener('pointercancel',reset);
 }
+/* Finish / Discard buttons shown next to the timer while a workout is running */
+const workBtns=()=>`<button class="wact fin" data-act="finish" aria-label="Finish and save workout">${ico('check')}Finish</button><button class="wact dis" data-act="discard" aria-label="Discard workout">${ico('trash-2')}Discard</button>`;
+function discardWorkout(){ask('Discard this workout? Logged sets will be lost.',{ok:'Discard',danger:true}).then(y=>{if(y){db.active=null;rest=null;curEx=null;save();go('workout',null,true);toast('Workout discarded')}})}
 const tileH=(v,l,c='',i='')=>`<div class="tile glass">${i?ico(i):''}<b class="${c}">${v}</b><span>${l}</span></div>`;
 const seg=(items,on,attr)=>{const i=Math.max(0,items.findIndex(x=>x[0]===on));return `<div class="seg glass"><div class="lens" style="transform:translateX(${i*100}%)"></div>${items.map(([k,l])=>`<button data-${attr}="${k}" class="${k===on?'on':''}">${l}</button>`).join('')}</div>`};
 
@@ -900,7 +911,8 @@ function rWorkout(m){
   const doneN=names.filter(isDone).length,setsN=names.reduce((t,n)=>t+a.sets[n].filter(s=>s.done).length,0);
   const next=names.find(n=>!isDone(n));
   m.innerHTML=`<section>
-    <div class="top"><div class="eyebrow">Started ${new Date(a.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
+    <div class="workbar"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>
+    <div class="eyebrow">Started ${new Date(a.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div>
     <h1>${esc(p.name)}</h1>
     <div class="perspective"><div class="hero glass tilt">${plates3d}<div class="figs">${pair(dm.p,dm.s,46)}</div>
       <div class="info"><span class="badge">${ico('target')}Today you train</span><div class="big">${esc(cap(andList(dm.p.map(x=>MNAME[x]))))}</div>
@@ -947,7 +959,7 @@ function rDetail(m){
       <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
       <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video needs an internet connection</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
-      <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div></div>
+      <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>
       <div class="ov bl">
         <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Pause</span></button>
         <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
@@ -1322,8 +1334,8 @@ main.addEventListener('click',e=>{
   if(t.hasAttribute('data-add')){db.active.sets[curEx].push({w:null,r:null,done:false});save();render();return}
   if(t.dataset.mode){exMode=t.dataset.mode;const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;drawExChart();return}
   if(t.dataset.effort){db.active.effort=t.dataset.effort;save();const sg=t.parentNode,i=[...sg.querySelectorAll('button')].indexOf(t);sg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));sg.querySelector('.lens').style.transform=`translateX(${i*100}%)`;return}
-  if(t.id==='finish')return finish();
-  if(t.id==='discard'){ask('Discard this workout? Logged sets will be lost.',{ok:'Discard',danger:true}).then(y=>{if(y){db.active=null;rest=null;curEx=null;save();go('workout',null,true);toast('Workout discarded')}});return}
+  if(t.id==='finish'||t.dataset.act==='finish')return finish();
+  if(t.id==='discard'||t.dataset.act==='discard'){discardWorkout();return}
   if(t.id==='wSave'){const v=parseNum($('#wIn').value);if(!v||v<20||v>350){toast('Enter your weight in kg, like 78.4');return}upsertWeight(dstr(),v);render();toast(`Logged ${fmt(v)} kg`);return}
   if(t.dataset.delw){const d=t.dataset.delw;ask('Delete this weight entry?',{ok:'Delete',danger:true}).then(y=>{if(y){db.weights=db.weights.filter(w=>w.date!==d);save();render()}});return}
   if(t.dataset.dels){const id=t.dataset.dels;ask('Delete this workout?',{ok:'Delete',danger:true}).then(y=>{if(y){db.sessions=db.sessions.filter(s=>String(s.id)!==id);save();render()}});return}

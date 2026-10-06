@@ -11,7 +11,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - `index.html` — the entire app (HTML + CSS + JS). No build step, no external libraries, no CDNs. It must keep working offline.
 - `sw.js` — service worker. `index.html` is fetched network-first, so the phone picks up updates automatically. Other assets are cache-first.
 - `manifest.json` — PWA manifest.
-- `icon-180.png`, `icon-192.png`, `icon-512.png` — app icons: glossy neon-lime dumbbell at 35° with glow inside a lime progress ring on a dark charcoal-green background (generated with Pillow; Android adaptive foreground is a smaller-scaled copy so it fits the safe zone).
+- `icon-180.png`, `icon-192.png`, `icon-512.png` — app icons: glossy lime dumbbell at 35° with glow inside a lime progress ring on a dark charcoal-green background (generated with Pillow; Android adaptive foreground is a smaller-scaled copy so it fits the safe zone).
 
 ## Android app
 - `android/` is a minimal native WebView wrapper (Java, no AndroidX) that loads the live Pages URL, so web changes reach it automatically; the service worker handles offline.
@@ -65,13 +65,14 @@ This is `PLATES_PER_SIDE` = 15×1, 10×1, 5×2, 3×2, 2.5×1, 2×2, 1×1 per sid
 These are active calories (net of resting burn) and are presented as an estimate. Body weight is the latest logged entry. Sessions open more than 120 min prompt for the real duration.
 
 ## Design
-Dark "neon lime" theme with dark liquid glass (redesigned 2026-10-05 from a reference the user shared).
-bg `#0a0d0f`, glass surfaces `rgba(24,29,33,.66)` with blur, 7% white hairline borders and a faint sheen; soft lime glow blobs behind.
-Text `#f3f6f4`, muted `#8a949b`. Accent is neon lime `#c6f432` (text on lime `#0b0f05`); red `#ff6b5b` for bad/danger.
+Dark theme with a restrained lime accent (redesigned 2026-10-05 from a reference, then toned down and made more professional on 2026-10-06).
+bg `#0b0e10`, mostly solid dark surfaces `rgba(22,27,30,.84)` with light blur, 8% white hairline borders, 18px radius (16 tiles, 20 hero/plan/sheets), neutral shadows only.
+No coloured glows, glossy highlights, 3D tilt, bouncy easing or decorative 3D plates. Keep motion to short ease-out `cubic-bezier(.2,.8,.2,1)`.
+Text `#f3f6f4`, muted `#8a949b`. Accent is a softer lime `#b9d65a` (`--lime`; text on lime `#0b0f05`); `--sage` `#a3b27a` for secondary icons/labels; red `#ff6b5b` for bad/danger. Use the accent only for primary actions, active state, progress and ticks.
 Primary buttons are lime pills (Start workout has a dark circle with a play icon); segmented controls use a sliding lime lens.
 Fonts are bundled in `fonts/` (SIL OFL, licences included): **Outfit** for headings and big numbers (`--display`), **Plus Jakarta Sans** for UI text (`--font`).
 Icons are **Lucide** (ISC), inlined as an SVG `<symbol>` sprite at the top of `<body>`; use `ico('name')`. To add an icon, copy its inner SVG from lucide-static into a new `<symbol id="i-name">`.
-3D touches: shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained), tilt cards, 3D bars.
+Shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` olive = helper, `gN` = untrained) and CSS 3D bars.
 `MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
 Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise showing correct form (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
 Pexels and Mixkit clips, 800×700 H.264 with the full frame letterboxed over a blurred copy of itself so the whole body stays visible, sources in `videos/CREDITS.md`).

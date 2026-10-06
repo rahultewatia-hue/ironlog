@@ -39,7 +39,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 - **Reports tab** (`#report`, opened from Home or Progress): Daily (any day: workouts, minutes, kcal, sets, kg lifted, PBs, weight vs previous entry, per-exercise sets) and Weekly (summary sentence, Mon–Sun strip, deltas vs the same point last week / the week before, muscles by volume, est. 1RM changes, PBs). "Share report" uses Web Share or copies text.
 - **iPhone:** Home shows an "Install on your iPhone" guide when opened in Safari (not standalone); home-screen apps keep storage, Safari can clear it.
 - **Workout tab:** opens on today's workout. Each exercise has set rows (kg + reps + ✓). Ticking a set starts the rest timer (compound `restC` = 150 s, isolation `restI` = 90 s) with a beep. Shows last session's sets as placeholders and "add 2–4 kg" when every set hit 8 reps. Includes a plate guide, a finisher checkbox, and an effort selector. The session is saved on Finish.
-- **Weight tab:** daily body weight log, 7-day average, and a trend chart.
+- **Weight tab:** body weight log for any calendar date up to today (date picker `#wDay`, `wDate` state; tapping an entry loads its date for editing; one entry per date via `upsertWeight`), 7-day average, and a trend chart.
 - **Progress tab:** weekly calories bar chart, strength chart (estimated 1RM per session, Epley formula), and personal bests.
 - **History tab:** past sessions, expandable, deletable.
 - **Settings tab:** barbell and EZ bar weights, rest times, calorie explanation, export/import JSON backup, erase all.

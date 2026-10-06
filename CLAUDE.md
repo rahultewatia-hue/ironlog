@@ -25,7 +25,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 1. **Never break saved data.** Data lives in localStorage under the key `ironlog-v1` with the shape
    `{sessions:[], weights:[], active:null|{...}, prs:[{id,ex,w,r,date}], settings:{restC, restI, bar, ez}}` (`prs` was added later; `load()`, restore and import default it to `[]`).
    If the data shape must change, add a migration in `load()` so old data keeps working.
-2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: exercise videos stream from the site (poster + Retry when offline) and the user-tapped "Full tutorial" link.
+2. **Stay offline-capable.** No network requests, no external fonts, scripts or images (fonts and icons are bundled). Exceptions: the user-tapped "Full tutorial" link (opens YouTube). Exercise videos are saved on the phone by the service worker (cache `MEDIA` = `ironlog-media-N`, all 19 clips + posters + thumbs, ~10 MB, saved on activate and again via a `save-media` message each time the app is opened online) and served with Range support, so they play offline. When you add or replace a clip: update `SLUGS` in `sw.js`, bump `MEDIA` there and `MEDIA_CACHE` + `VID_V` in `index.html`, and bump `VERSION`.
 3. **Bump `APP_BUILD` near the top of the `<script>` in `index.html` on every change to it** (open apps compare it with the live file and reload). **If you change `sw.js`, `manifest.json` or any icon, also bump `VERSION` in `sw.js`** (`ironlog-v1` → `ironlog-v2`, etc.). Changes to `index.html` alone need only the `APP_BUILD` bump, not a `VERSION` bump.
 4. After every change, extract the `<script>` from `index.html` and check it for syntax errors (e.g. `node --check`), then commit with a clear message and push to `main`. Tell Rahul in a sentence or two what changed.
 
@@ -76,8 +76,9 @@ Shaded SVG muscle maps (`figure()` / `pair()`, gradients `gP` lime = main, `gS` 
 `MUSCLES` maps every exercise to [primary, secondary] muscles and `HOWTO` holds 3 steps + a tip; keep both in sync with `PROGRAM`.
 Exercise screen: top half is a sticky stage playing a muted, looping **stock video** of the exercise showing correct form (`VIDEOS` maps exercise → `videos/<slug>.mp4` + `.jpg` poster;
 Pexels and Mixkit clips, 800×700 H.264 with the full frame letterboxed over a blurred copy of itself so the whole body stays visible, sources in `videos/CREDITS.md`).
-MP4s stream from the site and are not cached by the service worker; posters/thumbs are cached. When you replace clips bump `VID_V` (cache-busting `?v=`) and the SW `VERSION`.
-If a clip can't play (offline/error) the poster stays with a "Retry" message. The user does NOT want animated/motion-graphic demos, only real footage.
+MP4s, posters and thumbs are saved offline by the service worker (see hard rule 2); `sw.js` answers Range requests from the cache because Safari/WebViews need 206 responses. Settings shows how many videos are saved (`mediaStatus`).
+If a clip can't load (not yet saved and no internet) the poster stays with a "Retry" message.
+Form coach: the clips are generic stock footage, so `formCoach()` overlays the `HOWTO` steps and tip one at a time on the stage (auto-advances every 5 s while playing, tap for next) to turn the footage into a guided tutorial. The user does NOT want animated/motion-graphic demos, only real footage.
 Pause/play pill and a "Full tutorial" link that opens a YouTube search. List rows show a photo from `videos/thumbs/<slug>.jpg` (168×210 portrait crop cut from the source clip) via `photo()`, with the muscle figure as fallback.
 New exercise → add a clip to `videos/`, a thumb to `videos/thumbs/`, and entries in `VIDEOS`, `MUSCLES`, `HOWTO`.
 Bottom half: muscle chips, How to do it, Today's sets logging, plate guide, muscle map, chart, previous sessions. Tab bar hides there (`body.focus`).

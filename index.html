@@ -424,6 +424,15 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 .stage .ov{position:absolute;z-index:2;display:flex;gap:8px;align-items:center}
 .stage .tl{top:12px;left:14px;right:14px;justify-content:space-between}
 .stage .bl{bottom:12px;left:14px;right:14px;justify-content:space-between}
+.stage .cue{position:absolute;z-index:2;left:14px;right:14px;bottom:58px;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;text-align:left;color:var(--text);
+  background:rgba(10,13,15,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);font-size:13px;line-height:1.4;font-weight:600}
+.stage .cue[hidden]{display:none}
+.stage .cue .num{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:12px;font-weight:700;background:var(--lime);color:var(--onlime)}
+.stage .cue .num .ic{width:13px;height:13px;stroke-width:2.6}
+.stage .cue .ctx{flex:1;min-width:0}
+.stage .cue .cdots{display:flex;gap:4px;margin-top:7px}
+.stage .cue .cdots i{width:16px;height:3px;border-radius:2px;background:rgba(255,255,255,.2)}
+.stage .cue .cdots i.on{background:var(--lime)}
 .pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;font-size:12.5px;font-weight:700;color:var(--text);text-decoration:none;border:0}
 .pill .ic{width:15px;height:15px;color:var(--sage)}
 .pill.lime{background:var(--lime);color:var(--onlime)}
@@ -468,6 +477,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
   <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4" /> <path d="M3 11v-1a4 4 0 0 1 4-4h14" /> <path d="m7 22-4-4 4-4" /> <path d="M21 13v1a4 4 0 0 1-4 4H3" /></symbol>
   <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18" /> <path d="m19 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1" /> <path d="m5 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M7 21h10" /></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /> <circle cx="12" cy="12" r="3" /></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
   <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /></symbol>
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></symbol>
   <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2" /> <line x1="12" x2="15" y1="14" y2="11" /> <circle cx="12" cy="14" r="8" /></symbol>
@@ -523,7 +533,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-06.7';
+const APP_BUILD='2026-10-06.8';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -790,6 +800,7 @@ function render(){
   $('#navHome').classList.toggle('on',tab==='home');$('#navSet').classList.toggle('on',tab==='more');
   if(detail)rDetail(m);
   else({home:rHome,workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore,report:rReport})[tab](m);
+  if(tab==='more'&&!detail)mediaStatus();
   m.firstElementChild&&m.firstElementChild.classList.add('view');
   tickClock();
 }
@@ -931,10 +942,31 @@ function rWorkout(m){
 function setupVideo(){
   const v=$('#exVid');if(!v)return;
   const msg=t=>{if(!v.isConnected||!$('#vMsg'))return;$('#vMsgTxt').textContent=t;$('#vMsg').hidden=false;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'};
-  v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video needs an internet connection'));
+  v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video not saved yet. Open the app once with internet.'));
   v.addEventListener('playing',()=>{if(!v.isConnected)return;$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
-  if(!navigator.onLine)msg('Video needs an internet connection');
+  
   const p=v.play();if(p&&p.catch)p.catch(()=>{if(!v.isConnected||!$('#demoIco'))return;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
+  formCoach(v);
+}
+/* Settings line: how many exercise videos are saved on the phone for offline use */
+const MEDIA_CACHE='ironlog-media-3';
+async function mediaStatus(){
+  const el=$('#mediaInfo');if(!el)return;
+  try{const c=await caches.open(MEDIA_CACHE),n=(await c.keys()).filter(r=>r.url.endsWith('.mp4')).length,all=Object.keys(VIDEOS).length;
+    if(el.isConnected)el.innerHTML=n>=all?`${ico('video')} All ${all} exercise videos are saved on this phone and play without internet.`:`${ico('video')} ${n} of ${all} exercise videos saved for offline use. Open the app once with internet to finish saving the rest.`}
+  catch(e){if(el.isConnected)el.textContent='Exercise videos need an internet connection on this device.'}
+}
+/* Form coach: the clip is real footage, so the how-to steps and the tip are shown over it one at a time (tap for the next) */
+function formCoach(v){
+  const how=HOWTO[curEx]||[],cue=$('#cue');if(!cue||!how.length)return;
+  const list=[...how.slice(0,3).map((t,i)=>[String(i+1),t]),...(how[3]?[['tip',how[3]]]:[])];
+  let i=0;
+  const show=k=>{if(!cue.isConnected)return;i=(k+list.length)%list.length;const [n,t]=list[i];
+    $('#cueN').innerHTML=n==='tip'?ico('sparkles'):n;$('#cueT').textContent=t;
+    $('#cueD').innerHTML=list.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('');cue.hidden=false};
+  show(0);
+  cue.addEventListener('click',()=>show(i+1));
+  const tm=setInterval(()=>{if(!cue.isConnected){clearInterval(tm);return}if(!v.paused)show(i+1)},5000);
 }
 
 /* ---------- Exercise detail (log sets) ---------- */
@@ -952,9 +984,10 @@ function rDetail(m){
   m.innerHTML=`<section>
     <div class="stage">
       <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
-      <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video needs an internet connection</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
+      <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video could not load</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
       <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>
+      <button class="cue" id="cue" aria-live="polite" aria-label="Form tip, tap for the next one" hidden><span class="num" id="cueN"></span><span class="ctx"><span id="cueT"></span><span class="cdots" id="cueD"></span></span></button>
       <div class="ov bl">
         <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Pause</span></button>
         <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
@@ -1278,6 +1311,7 @@ function rMore(m){
     <p class="fhelp" style="margin:0 0 2px" id="storeInfo">Every change is saved instantly${window.AndroidApp&&AndroidApp.saveData?', with backup copies in the browser database and the Android app':' with a backup copy in the browser database'}. Export a backup every week or two so nothing is lost if you delete the app.</p>
     <div class="btn2"><button class="soft" id="exp">${ico('download')}Export backup</button><button class="soft" id="imp">${ico('upload')}Import backup</button></div>
     <input type="file" id="impFile" accept="application/json,.json" hidden>
+    <p class="fhelp" style="margin:8px 0 2px" id="mediaInfo">${ico('video')} Checking saved videos…</p>
     <button class="danger" id="reset">${ico('trash-2')}Erase all data</button>
   </div>
   </section>`;
@@ -1377,7 +1411,7 @@ restoreIfNeeded();
 (()=>{const [t,ex]=location.hash.slice(1).split('/');if(TABS.includes(t)){tab=t;curEx=ex?decodeURIComponent(ex):null}
   try{history.replaceState({tab,ex:curEx,i:0,max:0},'',navHash(tab,curEx))}catch(e){}})();
 render();
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(r=>{if(navigator.onLine&&r.active)r.active.postMessage('save-media')}).catch(()=>{}));
 </script>
 </body>
 </html>

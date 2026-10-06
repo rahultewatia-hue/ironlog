@@ -281,6 +281,44 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 .mbtns{display:flex;gap:10px}
 .mbtns button{flex:1;justify-content:center;padding:14px}
 .mbtns .gold.red{background:var(--red);color:#fff;box-shadow:0 10px 24px -10px rgba(255,107,91,.6)}
+/* personal records */
+.gold.sm{padding:10px 14px;font-size:13.5px;gap:6px;flex:none}
+.gold.sm .ic{width:16px;height:16px;stroke-width:2.6}
+.prcard{padding:14px 16px;margin-bottom:14px;border-color:rgba(198,244,50,.28)!important;background:radial-gradient(120% 140% at 0% 0%,rgba(198,244,50,.1),rgba(24,29,33,.7) 60%)}
+.prtop{display:flex;align-items:center;gap:12px}
+.prtop .medal{grid-row:auto}
+.prinfo{flex:1;min-width:0}
+.prinfo small{display:block;font-size:11.5px;font-weight:700;color:var(--lime);letter-spacing:.01em}
+.prinfo b{display:block;font-family:var(--display);font-size:26px;line-height:1.1;font-weight:700}
+.prinfo b span{font-family:var(--font);font-size:13px;color:var(--muted);font-weight:600}
+.prinfo b.none{font-size:18px}
+.prinfo em{display:block;font-style:normal;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.prlist{margin-top:8px;border-top:1px solid var(--line)}
+.prlist .li{padding:9px 0}
+.prlist .li b{font-size:14px}
+.prcard.pop,.big3.pop{animation:prpop 1.4s ease-out}
+@keyframes prpop{0%{box-shadow:0 0 0 0 rgba(198,244,50,.7)}40%{box-shadow:0 0 0 14px rgba(198,244,50,.12),0 0 40px rgba(198,244,50,.45)}100%{box-shadow:0 0 0 0 rgba(198,244,50,0)}}
+.big3{padding:14px 14px 6px;border-color:rgba(198,244,50,.25)!important}
+.b3head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.b3tot{text-align:right}.b3tot b{display:block;font-family:var(--display);font-size:26px;color:var(--lime);line-height:1}.b3tot small{font-size:11.5px;color:var(--muted);font-weight:600}
+.b3row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.b3row .medal{grid-row:auto}
+.b3n b{display:block;font-size:15px}.b3n small{font-size:12px;color:var(--muted);font-weight:600}
+.b3v{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.b3v b{font-family:var(--display);font-size:18px}
+.prbtn{flex:none;padding:7px 11px;font-size:12.5px}
+.prbtn .ic{width:14px!important;height:14px!important}
+#prModal .sheet{padding-bottom:16px}
+.prhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.prhead .medal{grid-row:auto}
+.prhead b{display:block;font-family:var(--display);font-size:19px}
+.prhead small{color:var(--muted);font-size:13px;font-weight:600}
+.sheet .prhint{margin:6px 0 14px;font-size:13px;color:var(--muted);font-weight:600}
+.prfields{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
+.sheet label{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.sheet label input{margin:6px 0 12px;font-size:22px}
+.sheet .prdate input{font-size:16px;font-family:var(--font);font-weight:600;min-height:50px}
+.sheet .prerr{margin:-2px 0 10px;min-height:18px;font-size:13px;font-weight:700;color:var(--red)}
 /* reports */
 .rgo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .rcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;text-align:left;color:var(--text);border:1px solid rgba(255,255,255,.07)}
@@ -453,6 +491,14 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <main id="main"></main>
 <div class="rest glass" id="rest" role="status"><svg class="ic" aria-hidden="true"><use href="#i-timer"/></svg><b class="rt">0:00</b><span class="rl">Rest</span><button data-rest="30">+30s</button><button data-rest="skip">Skip</button><i class="rbar"></i></div>
 <div class="toast glass" id="toast" role="status"></div>
+<div class="modal" id="prModal" hidden><div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="prTitle">
+  <div class="prhead"><span class="medal"><svg class="ic"><use href="#i-trophy"/></svg></span><div><b id="prTitle">New personal record</b><small id="prEx"></small></div></div>
+  <p class="prhint" id="prHint"></p>
+  <div class="prfields"><label>Weight (kg)<input id="prW" inputmode="decimal" placeholder="140" autocomplete="off"></label><label>Reps<input id="prR" inputmode="numeric" placeholder="1" autocomplete="off"></label></div>
+  <label class="prdate">Date<input id="prD" type="date"></label>
+  <p class="prerr" id="prErr" role="alert"></p>
+  <div class="mbtns"><button class="soft" id="prNo">Cancel</button><button class="gold" id="prYes">Save record</button></div>
+</div></div>
 <div class="modal" id="modal" hidden><div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="mMsg">
   <p id="mMsg"></p><input id="mIn" inputmode="decimal" hidden aria-label="Value">
   <div class="mbtns"><button class="soft" id="mNo">Cancel</button><button class="gold" id="mYes">OK</button></div>
@@ -468,7 +514,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-05.6';
+const APP_BUILD='2026-10-06.1';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -551,8 +597,8 @@ const PLATE_COLOR={15:'#f2c45f',10:'#7cc9a2',5:'#ffffff',3:'#8db1ff',2.5:'#f08f8
 
 /* ---------- Storage ---------- */
 const KEY='ironlog-v1';
-function blank(){return {sessions:[],weights:[],active:null,settings:{restC:150,restI:90,bar:20,ez:10}}}
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sessions)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];return d}}catch(e){}return blank()}
+function blank(){return {sessions:[],weights:[],active:null,prs:[],settings:{restC:150,restI:90,bar:20,ez:10}}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sessions)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];d.prs=d.prs||[];return d}}catch(e){}return blank()}
 function save(){
   const json=JSON.stringify(db);
   try{localStorage.setItem(KEY,json)}catch(e){toast('Could not save — storage is full or blocked')}
@@ -561,7 +607,7 @@ function save(){
 let db=load();
 /* Second and third copies of the data so it survives storage being cleared:
    IndexedDB in every browser, plus a private file inside the Android app. Restored automatically if the main copy is empty. */
-const isBlank=d=>!d||(!(d.sessions||[]).length&&!(d.weights||[]).length&&!d.active);
+const isBlank=d=>!d||(!(d.sessions||[]).length&&!(d.weights||[]).length&&!(d.prs||[]).length&&!d.active);
 function idb(){return new Promise((res,rej)=>{try{const r=indexedDB.open('aesthetic-body',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
 let backupT;
 function backupSave(json){
@@ -575,7 +621,7 @@ async function backupLoad(){
 async function restoreIfNeeded(){
   if(!isBlank(db)){backupSave(JSON.stringify(db));return}
   const t=await backupLoad();if(!t)return;
-  try{const d=JSON.parse(t);if(Array.isArray(d.sessions)&&!isBlank(d)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;
+  try{const d=JSON.parse(t);if(Array.isArray(d.sessions)&&!isBlank(d)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];d.prs=d.prs||[];db=d;
     try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}render();toast('Your data was restored from the backup copy')}}catch(e){}
 }
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
@@ -909,6 +955,7 @@ function rDetail(m){
     <div class="eyebrow">${esc(PROGRAM[a.day].name)}</div>
     <h1>${esc(name)}</h1>
     <div class="mchips">${info.p.map(x=>`<span class="mchip p">${esc(cap(MNAME[x]))}</span>`).join('')}${info.s.map(x=>`<span class="mchip">${esc(cap(MNAME[x]))}</span>`).join('')}<span class="mchip">${info.sets} sets · 6–8 reps</span></div>
+    ${PR_LIFTS.includes(name)?prCard(name):''}
     ${how.length?`<div class="howto glass"><div class="label" style="margin:0">How to do it</div><ol>${how.slice(0,3).map((h,i)=>`<li><span class="num">${i+1}</span><span>${esc(h)}</span></li>`).join('')}</ol>${how[3]?`<div class="tipbox">${ico('sparkles')}<span>${esc(how[3])}</span></div>`:''}</div>`:''}
     <div class="log glass" data-ex="${esc(name)}">
       <div class="loghead"><div class="label" style="margin:0">Today's sets</div><span class="muted" style="font-size:12px;font-weight:600">${unit}</span></div>
@@ -1001,6 +1048,50 @@ function rWeight(m){
   const ma=pts.map(p=>{const from=toDate(p.date);from.setDate(from.getDate()-6);const f=dstr(from);return avg(pts.filter(x=>x.date>=f&&x.date<=p.date))});
   smoothChart($('#wChart'),pts.map(p=>p.kg),pts.map(p=>shortDate(p.date)),{overlay:ma,empty:'Log at least 2 days to see your trend.'});
 }
+
+/* ---------- Personal records (Big 3 only: bench press, deadlift, squat) ---------- */
+const PR_LIFTS=['Barbell bench press','Conventional deadlift','Barbell back squat'];
+const PR_SHORT={'Barbell bench press':'Bench press','Conventional deadlift':'Deadlift','Barbell back squat':'Squat'};
+const prOf=ex=>(db.prs||[]).filter(p=>p.ex===ex).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:b.id-a.id);
+const prBest=ex=>{let b=null;for(const p of prOf(ex)){const v=e1rm(p.w,p.r);if(!b||v>b.v)b={...p,v}}return b};
+function prCard(ex){
+  const b=prBest(ex),list=prOf(ex);
+  return `<div class="glass prcard"><div class="prtop"><span class="medal">${ico('trophy')}</span>
+    <div class="prinfo"><small>Personal record</small>${b?`<b>${fmt(b.w)} <span>kg × ${b.r}</span></b><em>${shortDate(b.date)} · est. 1RM ${Math.round(b.v)} kg</em>`:`<b class="none">No record yet</b><em>Hit a new max? Log it here.</em>`}</div>
+    <button class="gold sm" data-pr="${esc(ex)}">${ico('plus')}Log PR</button></div>
+    ${list.length?`<div class="prlist">${list.slice(0,4).map(p=>`<div class="li"><span>${shortDate(p.date)}</span><b>${fmt(p.w)} kg × ${p.r}</b>${b&&p.id===b.id?`<span class="prb">${ico('trophy')}Best</span>`:''}<button class="x" data-delpr="${p.id}" aria-label="Delete record">${ico('x')}</button></div>`).join('')}</div>`:''}</div>`;
+}
+function big3Card(){
+  const bs=PR_LIFTS.map(ex=>[ex,prBest(ex)]),all=bs.every(x=>x[1]),tot=bs.reduce((a,x)=>a+(x[1]?x[1].w:0),0);
+  return `<div class="glass listcard big3"><div class="b3head"><div><div class="label" style="margin:0">Big 3 records</div><small class="muted">Bench press · Deadlift · Squat</small></div>${all?`<div class="b3tot"><b>${fmt(tot)}</b><small>kg total</small></div>`:''}</div>
+    ${bs.map(([ex,b])=>`<div class="b3row"><span class="medal">${ico('trophy')}</span><div class="b3n"><b>${esc(PR_SHORT[ex])}</b><small>${b?`${shortDate(b.date)} · est. 1RM ${Math.round(b.v)} kg`:'No record yet'}</small></div>
+      <div class="b3v"><b>${b?`${fmt(b.w)} × ${b.r}`:'—'}</b><button class="soft prbtn" data-pr="${esc(ex)}">${ico('plus')}Log PR</button></div></div>`).join('')}</div>`;
+}
+let prEx=null;
+function openPR(ex){
+  prEx=ex;const b=prBest(ex);
+  $('#prEx').textContent=ex;
+  $('#prHint').textContent=b?`Current record: ${fmt(b.w)} kg × ${b.r} on ${shortDate(b.date)}`:'This will be your first record for this lift.';
+  $('#prW').value='';$('#prR').value='1';$('#prD').value=dstr();$('#prD').max=dstr();$('#prErr').textContent='';
+  $('#prModal').hidden=false;setTimeout(()=>$('#prW').focus(),60);
+}
+function closePR(){$('#prModal').hidden=true;prEx=null}
+function savePR(){
+  const err=t=>{$('#prErr').textContent=t};
+  const w=parseNum($('#prW').value),r=Math.round(parseNum($('#prR').value)||0),d=$('#prD').value;
+  if(!w||w<=0||w>700)return err('Enter the weight in kg, like 140');
+  if(!r||r<1||r>30)return err('Reps must be between 1 and 30');
+  if(!d||d>dstr())return err('Pick today or an earlier date');
+  const ex=prEx,prev=prBest(ex),v=e1rm(w,r);
+  db.prs=db.prs||[];db.prs.push({id:Date.now(),ex,w,r,date:d});save();closePR();render();
+  const isNew=!prev||v>prev.v+1e-9;
+  if(isNew){const c=document.querySelector('.prcard,.big3');c&&c.classList.add('pop');toast(`New personal record! ${PR_SHORT[ex]} ${fmt(w)} kg × ${r}`)}
+  else toast(`Saved. Your ${PR_SHORT[ex].toLowerCase()} record is still ${fmt(prev.w)} kg × ${prev.r}`);
+}
+$('#prYes').addEventListener('click',savePR);
+$('#prNo').addEventListener('click',closePR);
+$('#prModal').addEventListener('click',e=>{if(e.target.id==='prModal')closePR()});
+$('#prModal').addEventListener('keydown',e=>{if(e.key==='Enter')savePR()});
 
 /* ---------- Reports (daily and weekly) ---------- */
 let repMode='d',repOff=0;
@@ -1117,6 +1208,7 @@ function rProgress(m){
     <button class="glass rcard" data-report="w">${ico('chart-column')}<b>Weekly report</b><small>Any week</small></button>
   </div>
   <div class="tiles">${tileH(db.sessions.length,'workouts logged','','dumbbell')}${tileH(total.toLocaleString(),'kcal burned in total','','flame')}${tileH(prs.length,'exercises tracked','','trophy')}</div>
+  ${big3Card()}
   <div class="perspective"><div class="mapcard glass tilt">
     <div class="figs">${pair([...hard],[...light],60)}</div>
     <div class="legend"><div class="ctitle" style="margin:0 0 8px">Muscles this week</div>
@@ -1216,6 +1308,8 @@ main.addEventListener('click',e=>{
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){go('workout',t.dataset.open);return}
   if(t.dataset.go){go(t.dataset.go);return}
+  if(t.dataset.pr){openPR(t.dataset.pr);return}
+  if(t.dataset.delpr){const id=+t.dataset.delpr;ask('Delete this personal record?',{ok:'Delete',danger:true}).then(y=>{if(y){db.prs=(db.prs||[]).filter(p=>p.id!==id);save();render()}});return}
   if(t.dataset.report){repMode=t.dataset.report;repOff=0;go('report');return}
   if(t.dataset.repmode){repMode=t.dataset.repmode;repOff=0;render();return}
   if(t.dataset.repnav){repOff=Math.min(0,repOff+(+t.dataset.repnav));render();return}
@@ -1250,9 +1344,9 @@ main.addEventListener('change',e=>{
   if(i.id==='fin'){db.active.finisher=i.checked;save()}
   if(i.id==='exSel'){progEx=i.value;render()}
   if(i.dataset.setting){const k=i.dataset.setting,v=parseNum(i.value);if(v!=null&&v>=0){db.settings[k]=v;save();toast('Saved')}else i.value=db.settings[k]}
-  if(i.id==='impFile'&&i.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions))throw 0;ask(`Replace current data with this backup (${d.sessions.length} workouts)?`,{ok:'Restore'}).then(y=>{if(y){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];db=d;save();render();toast('Backup restored')}})}catch(err){toast('That file is not an Aesthetic Body backup')}};r.readAsText(i.files[0])}
+  if(i.id==='impFile'&&i.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions))throw 0;ask(`Replace current data with this backup (${d.sessions.length} workouts)?`,{ok:'Restore'}).then(y=>{if(y){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];d.prs=d.prs||[];db=d;save();render();toast('Backup restored')}})}catch(err){toast('That file is not an Aesthetic Body backup')}};r.readAsText(i.files[0])}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden)$('#mNo').click()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#prModal').hidden)closePR();else if(!$('#modal').hidden)$('#mNo').click()}});
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='wIn')$('#wSave').click()});
 
 /* ---------- Auto-update: reload when a newer build is live ---------- */

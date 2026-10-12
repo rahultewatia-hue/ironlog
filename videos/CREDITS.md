@@ -29,5 +29,6 @@ Clips were trimmed to 10 s, muted and re-encoded to 800x700 H.264 with a blurred
 | overhead-tricep-extension.mp4 | Seated overhead dumbbell triceps extension (one arm) | https://www.pexels.com/video/6293120/ |
 | incline-db-curl.mp4 | Seated dumbbell curl (upright bench; no stock clip of an incline-bench curl exists) | https://www.pexels.com/video/4921648/ |
 | front-raise.mp4 | Single-arm dumbbell front raise | https://www.pexels.com/video/7801965/ |
+| tricep-kickback.mp4 | Single-arm dumbbell triceps kickback, coached | https://www.pexels.com/video/4866845/ |
 
 Closest available matches (no exact stock footage exists): hip thrust (glute bridge), barbell row (dumbbell row with coach), rear-delt fly (band pull-apart), shrug (dumbbell shrug / upright row), incline dumbbell curl (seated curl on an upright bench), front raise and overhead extension (single-arm versions).

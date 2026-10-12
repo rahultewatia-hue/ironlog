@@ -154,7 +154,9 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 .cmpt.up,.cmpt.up small{color:var(--lime)}.cmpt.down,.cmpt.down small{color:var(--red)}
 .cmptip{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;font-weight:600;line-height:1.4;color:var(--sage)}
 .cmptip .ic{width:16px;height:16px;margin-top:1px;flex:none}
-.ex.pv{cursor:default}.ex.pv:active{transform:none}
+.cmpgrid.one{grid-template-columns:22px 1fr}
+.startbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding:30px 18px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--bg) 55%,rgba(11,14,16,0))}
+.startbar .gold{max-width:524px;margin:0 auto}
 .lasttime{font-size:12.5px;color:var(--muted);font-weight:600;margin:4px 0 2px}
 .tip{font-size:12.5px;font-weight:700;color:var(--sage);margin:2px 0}
 .sgrid{display:grid;grid-template-columns:24px 1fr 1fr 52px;gap:8px;align-items:center}
@@ -554,13 +556,13 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-12.1';
+const APP_BUILD='2026-10-12.2';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
   chest:{name:'Chest + Triceps', wd:1, fin:'6 min: alternate 30s push-ups and 30s burpees', ex:[
     ['Barbell bench press',3,'c','bb'],['Incline barbell press',3,'c','bb'],['Decline dumbbell press',2,'c','db'],
-    ['Overhead dumbbell triceps extension',3,'i','db'],['EZ-bar skull crusher',2,'i','ez']]},
+    ['Overhead dumbbell triceps extension',3,'i','db'],['EZ-bar skull crusher',2,'i','ez'],['Dumbbell triceps kickback',2,'i','db']]},
   legs:{name:'Legs', wd:2, fin:'6 rounds: 20s jump squats, 40s rest', ex:[
     ['Barbell back squat',3,'c','bb'],['Romanian deadlift',3,'c','bb'],['Bulgarian split squat',2,'c','db'],
     ['Barbell hip thrust',2,'c','bb']]},
@@ -593,6 +595,7 @@ const MUSCLES = {
   'Rear-delt fly':[['rdelts'],['traps']],
   'Barbell shrug':[['traps'],['fore']],
   'Overhead dumbbell triceps extension':[['triceps'],[]],
+  'Dumbbell triceps kickback':[['triceps'],['rdelts']],
   'Incline dumbbell curl':[['biceps'],['fore']],
   'Dumbbell front raise':[['delts'],[]]
 };
@@ -618,6 +621,7 @@ const HOWTO = {
   'Rear-delt fly':['Hinge forward until your chest is nearly parallel to the floor, dumbbells hanging.','With soft elbows, raise the dumbbells out to the sides, squeezing your rear shoulders.','Lower slowly back to the start.','Go light. Shrugging means the weight is too heavy.'],
   'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.'],
   'Overhead dumbbell triceps extension':['Sit on a bench with back support and hold one dumbbell over your head with straight arms (two hands, or one arm at a time).','Keep your elbows pointing forward and close to your head, then lower the dumbbell behind your head until you feel a deep stretch in the triceps.','Squeeze your triceps to press the dumbbell back up until your arms are straight.','Only your forearms move. Keep your ribs down and your upper arms still.'],
+  'Dumbbell triceps kickback':['Hold a dumbbell in one hand, put your other hand and knee on a bench, and hinge until your back is flat and parallel to the floor.','Pin your upper arm to your side so it is level with your back, elbow bent to 90°.','Straighten your arm backward until it is fully locked out, squeeze the triceps for a second, then lower slowly.','Go light. Only the forearm moves. Swinging the weight takes the work away from the triceps.'],
   'Incline dumbbell curl':['Sit back on a bench set to about 45°, a dumbbell in each hand, arms hanging straight down.','Keep your upper arms still and curl the dumbbells up, turning your palms toward your shoulders.','Lower slowly over 2 to 3 seconds until your arms are fully straight again.','Go lighter than a standing curl. The stretch at the bottom is what makes this work.'],
   'Dumbbell front raise':['Stand tall with a dumbbell in each hand in front of your thighs, soft bend in the elbows.','Raise the dumbbells straight in front of you to shoulder height, no higher.','Pause for a second, then lower slowly back to your thighs.','Keep it light and strict. Do not lean back or swing the weights up.']
 };
@@ -630,7 +634,7 @@ const VIDEOS = {
   'Conventional deadlift':'deadlift','Barbell bent-over row':'barbell-row','Single-arm dumbbell row':'db-row',
   'EZ-bar curl':'ez-curl','Dumbbell hammer curl':'hammer-curl','Standing overhead press':'overhead-press',
   'Seated dumbbell press':'seated-db-press','Dumbbell lateral raise':'lateral-raise','Rear-delt fly':'rear-delt-fly','Barbell shrug':'shrug',
-  'Overhead dumbbell triceps extension':'overhead-tricep-extension','Incline dumbbell curl':'incline-db-curl','Dumbbell front raise':'front-raise'
+  'Overhead dumbbell triceps extension':'overhead-tricep-extension','Dumbbell triceps kickback':'tricep-kickback','Incline dumbbell curl':'incline-db-curl','Dumbbell front raise':'front-raise'
 };
 const MNAME={chest:'chest',delts:'shoulders',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
 const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
@@ -828,12 +832,13 @@ $('#navSet').addEventListener('click',()=>go('more'));
 const TITLES={home:'Aesthetic Body',workout:'Workout',weight:'Body weight',progress:'Progress',history:'History',more:'Settings',report:'Reports'};
 function render(){
   document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
-  document.body.classList.toggle('focus',!!detail);
-  $('#tbTitle').textContent=detail?curEx:(tab==='workout'&&!db.active&&previewKey()?PROGRAM[previewKey()].name:TITLES[tab]);
+  const m=$('#main'),pvx=tab==='workout'&&!db.active?previewEx():null,detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
+  document.body.classList.toggle('focus',!!detail||!!pvx);
+  $('#tbTitle').textContent=detail?curEx:pvx?pvx.n:(tab==='workout'&&!db.active&&previewKey()?PROGRAM[previewKey()].name:TITLES[tab]);
   $('#navBack').disabled=navIdx<=0;$('#navFwd').disabled=navIdx>=navMax;
   $('#navHome').classList.toggle('on',tab==='home');$('#navSet').classList.toggle('on',tab==='more');
   if(detail)rDetail(m);
+  else if(pvx)rDetail(m,pvx);
   else({home:rHome,workout:rWorkout,weight:rWeight,progress:rProgress,history:rHistory,more:rMore,report:rReport})[tab](m);
   if(tab==='more'&&!detail)mediaStatus();
   m.firstElementChild&&m.firstElementChild.classList.add('view');
@@ -925,7 +930,12 @@ function rHome(m){
 /* ---------- Workout ---------- */
 function weekStats(){const ws=weekStart().getTime();const s=db.sessions.filter(x=>x.start>=ws);return {n:s.length,kcal:s.reduce((a,b)=>a+b.kcal,0)}}
 /* Look at a day's exercises (with last session's numbers) before starting; nothing starts until Start workout is tapped */
-const previewKey=()=>curEx&&curEx[0]==='@'&&PROGRAM[curEx.slice(1)]?curEx.slice(1):null;
+const pvParse=()=>{if(!curEx||curEx[0]!=='@')return null;const [k,n]=curEx.slice(1).split('|');return PROGRAM[k]?{k,n:n&&EX[n]?n:null}:null};
+const previewKey=()=>{const q=pvParse();return q&&!q.n?q.k:null};
+const previewEx=()=>{const q=pvParse();return q&&q.n?q:null};
+const exName=()=>{const q=previewEx();return q?q.n:curEx};
+// tappable exercise rows for a day: tap one to see its video, how-to and last session's numbers (nothing starts)
+const pvRows=k=>PROGRAM[k].ex.map(e=>{const n=e[0],l=lastSets(n);return `<button class="ex glass" data-pvx="${esc(k+'|'+n)}">${photo(n)}<div class="txt"><div class="name">${esc(n)}</div><div class="meta">${e[1]} sets · ${l?'last: '+l.map(q=>`${fmt(q.w)}×${q.r}`).join(', ')+' kg':'first time'}</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('');
 function rPreview(m,k){
   const p=PROGRAM[k];
   m.innerHTML=`<section>
@@ -933,9 +943,9 @@ function rPreview(m,k){
     <h1>${esc(p.name)}</h1>
     <div class="chips"><span class="chip glass">${ico('dumbbell')}${p.ex.length} exercises</span><span class="chip glass">${ico('repeat')}6–8 reps</span><span class="chip glass">${ico('flame')}6-min finisher</span></div>
     <button class="gold block" data-start="${k}" style="margin:0 0 16px">Start workout<span class="arr">${ico('play')}</span></button>
-    <div class="label">Exercises<small>Last session's sets</small></div>
-    ${p.ex.map(e=>{const n=e[0],l=lastSets(n);return `<div class="ex glass pv">${photo(n)}<div class="txt"><div class="name">${esc(n)}</div><div class="meta">${e[1]} sets · ${l?'last: '+l.map(q=>`${fmt(q.w)}×${q.r}`).join(', ')+' kg':'first time'}</div></div></div>`}).join('')}
-    <div class="note" style="text-align:center;margin:12px 0 0">Nothing starts until you tap Start workout.</div>
+    <div class="label">Exercises<small>Tap to preview</small></div>
+    ${pvRows(k)}
+    <div class="note" style="text-align:center;margin:12px 0 0">Tap an exercise to preview it. Nothing starts until you tap Start workout.</div>
   </section>`;
 }
 function rWorkout(m){
@@ -955,6 +965,7 @@ function rWorkout(m){
     <h1>${sug?esc(sug[1].name):'Rest day'}</h1>
     ${sug?`<div class="chips"><span class="chip glass">${ico('dumbbell')}${sug[1].ex.length} exercises</span><span class="chip glass">${ico('repeat')}6–8 reps</span><span class="chip glass">${ico('flame')}6-min finisher</span></div>`:''}
     ${hero}
+    ${sug?`<div class="label">Today's exercises<small>Tap to preview</small></div>${pvRows(sug[0])}`:''}
     <div class="tiles">${tileH(ws.n,'workouts this week','','dumbbell')}${tileH(ws.kcal,'kcal burned this week','','flame')}${tileH(lw?fmt(lw.kg):'—',lw?'kg body weight':'log your weight','','scale')}</div>
     <div class="label">Your split</div>
     ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-day="${k}">${photo(p.ex[0][0])}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
@@ -1008,7 +1019,7 @@ async function mediaStatus(){
 }
 /* Form coach: the clip is real footage, so the how-to steps and the tip are shown over it one at a time (tap for the next) */
 function formCoach(v){
-  const how=HOWTO[curEx]||[],cue=$('#cue');if(!cue||!how.length)return;
+  const how=HOWTO[exName()]||[],cue=$('#cue');if(!cue||!how.length)return;
   const list=[...how.slice(0,3).map((t,i)=>[String(i+1),t]),...(how[3]?[['tip',how[3]]]:[])];
   let i=0;
   const show=k=>{if(!cue.isConnected)return;i=(k+list.length)%list.length;const [n,t]=list[i];
@@ -1023,15 +1034,15 @@ function formCoach(v){
 function exHistory(name){return db.sessions.filter(s=>s.sets[name]&&s.sets[name].length)}
 /* "Last session" card: last time's sets next to today's, filled in live as you log (progressive overload) */
 function cmpCard(name,last,hist){
-  const sets=db.active.sets[name],info=EX[name];
-  if(!last)return `<div class="glass cmp"><div class="cmphead"><div class="label" style="margin:0">Last session</div></div><div class="cmptip" style="border:0;margin:0;padding:0">First time on this exercise. Log your sets today and they become the numbers to beat next time.</div></div>`;
+  const sets=db.active&&db.active.sets[name],info=EX[name];
+  if(!last)return `<div class="glass cmp"><div class="cmphead"><div class="label" style="margin:0">Last session</div></div><div class="cmptip" style="border:0;margin:0;padding:0">First time on this exercise. ${sets?'Log your sets today and they become the numbers to beat next time.':'Start the workout and log your sets. They become the numbers to beat next time.'}</div></div>`;
   const ls=hist[hist.length-1],d=toDate(ls.date),ago=Math.round((toDate(dstr())-d)/864e5);
   const topW=Math.max(...last.map(x=>x.w)),allHit=last.length>=info.sets&&last.every(x=>x.r>=8),inc=info.eq==='db'?2:2.5;
   const tip=allHit?`You hit 8 reps on every set. Go up: try ${fmt(topW+inc)} kg for 6–8 reps.`:`Beat it: keep ${fmt(topW)} kg and add a rep on each set (aim for 8 on every set), then go up.`;
-  const n=Math.max(last.length,sets.length);
+  const n=sets?Math.max(last.length,sets.length):last.length;
   return `<div class="glass cmp" id="cmp"><div class="cmphead"><div class="label" style="margin:0">Last session</div><span class="muted">${d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})} · ${ago===0?'today':ago===1?'yesterday':ago+' days ago'}</span></div>
-    <div class="cmpgrid"><span></span><span class="h">Last time</span><span class="h">Today</span>
-    ${Array.from({length:n},(_,j)=>`<span class="n">${j+1}</span><b>${last[j]?`${fmt(last[j].w)} kg × ${last[j].r}`:'—'}</b><b class="cmpt" data-cj="${j}">—</b>`).join('')}</div>
+    <div class="cmpgrid${sets?'':' one'}"><span></span><span class="h">Last time</span>${sets?'<span class="h">Today</span>':''}
+    ${Array.from({length:n},(_,j)=>`<span class="n">${j+1}</span><b>${last[j]?`${fmt(last[j].w)} kg × ${last[j].r}`:'—'}</b>${sets?`<b class="cmpt" data-cj="${j}">—</b>`:''}`).join('')}</div>
     <div class="cmptip">${ico('trending-up')}<span>${tip}</span></div></div>`;
 }
 function updateCmp(name){
@@ -1048,8 +1059,8 @@ function updateCmp(name){
     el.className='cmpt '+cls;el.innerHTML=`${fmt(s.w)} kg × ${s.r}<small>${dl}</small>`;
   });
 }
-function rDetail(m){
-  const a=db.active,name=curEx,info=EX[name],sets=a.sets[name],last=lastSets(name),hist=exHistory(name);
+function rDetail(m,pv){
+  const a=db.active,name=pv?pv.n:curEx,info=EX[name],sets=pv?[]:a.sets[name],last=lastSets(name),hist=exHistory(name);
   const hit=last&&last.length>=info.sets&&last.every(s=>s.r>=8);
   const unit=info.eq==='db'?'kg per dumbbell':info.eq==='ez'?'kg incl. EZ bar':'kg incl. bar';
   const curW=[...sets].reverse().find(s=>s.w!=null);
@@ -1063,20 +1074,20 @@ function rDetail(m){
       <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
       <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video could not load</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
-      <div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>
+      ${pv?'':`<div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>`}
       <button class="cue" id="cue" aria-live="polite" aria-label="Form tip, tap for the next one" hidden><span class="num" id="cueN"></span><span class="ctx"><span id="cueT"></span><span class="cdots" id="cueD"></span></span></button>
       <div class="ov bl">
         <button class="pill glass" id="demoToggle" aria-label="Pause or play"><span id="demoIco">${ico('pause')}</span><span id="demoLbl">Pause</span></button>
         <a class="pill lime" href="${yt}" target="_blank" rel="noopener">${ico('circle-play')}Full tutorial</a>
       </div>
     </div>
-    <div class="eyebrow">${esc(PROGRAM[a.day].name)}</div>
+    <div class="eyebrow">${esc(PROGRAM[pv?pv.k:a.day].name)}</div>
     <h1>${esc(name)}</h1>
     <div class="mchips">${info.p.map(x=>`<span class="mchip p">${esc(cap(MNAME[x]))}</span>`).join('')}${info.s.map(x=>`<span class="mchip">${esc(cap(MNAME[x]))}</span>`).join('')}<span class="mchip">${info.sets} sets · 6–8 reps</span></div>
     ${PR_LIFTS.includes(name)?prCard(name):''}
     ${cmpCard(name,last,hist)}
     ${how.length?`<div class="howto glass"><div class="label" style="margin:0">How to do it</div><ol>${how.slice(0,3).map((h,i)=>`<li><span class="num">${i+1}</span><span>${esc(h)}</span></li>`).join('')}</ol>${how[3]?`<div class="tipbox">${ico('sparkles')}<span>${esc(how[3])}</span></div>`:''}</div>`:''}
-    <div class="log glass" data-ex="${esc(name)}">
+    ${pv?'':`    <div class="log glass" data-ex="${esc(name)}">
       <div class="loghead"><div class="label" style="margin:0">Today's sets</div><span class="muted" style="font-size:12px;font-weight:600">${unit}</span></div>
       <div class="lasttime">${last?'Last time: '+last.map(s=>`${fmt(s.w)} × ${s.r}`).join(', '):'First time. Pick a weight you can lift 6–8 times.'}</div>
       ${hit?'<div class="tip">You hit 8 reps on every set. Add 2–4 kg today.</div>':''}
@@ -1088,7 +1099,7 @@ function rDetail(m){
         <button class="tick" data-tick aria-label="Mark set ${j+1} done">${ico('check')}</button></div>`).join('')}
       <button class="addset" data-add>${ico('plus')}Add set</button>
       <div class="plates">${platesHTML(name,curW?curW.w:(last&&last[0]?last[0].w:null))}</div>
-    </div>
+    </div>`}
     <div class="perspective"><div class="mapcard glass">
       <div class="figs">${pair(info.p,info.s,56)}</div>
       <div class="legend">
@@ -1104,13 +1115,14 @@ function rDetail(m){
       return `<div class="sess glass"><div class="date"><b>${d.getDate()}</b>${d.toLocaleDateString(undefined,{month:'short'})}</div>
       <div class="tbl" style="grid-template-columns:36px repeat(${x.length},minmax(40px,1fr))"><span>kg</span>${x.map(q=>`<b class="${best&&q.w===best.w&&q.r===best.r?'pr':''}">${fmt(q.w)}</b>`).join('')}<span>reps</span>${x.map(q=>`<b>${q.r}</b>`).join('')}</div></div>`}).join(''):'<p class="empty">Your sessions for this exercise will show here.</p>'}
   </section>`;
+  if(pv)m.insertAdjacentHTML('beforeend',`<div class="startbar"><button class="gold block" data-start="${pv.k}" data-then="${esc(name)}">Start workout<span class="arr">${ico('play')}</span></button></div>`);
   updateCmp(name);
   drawExChart();
   setupVideo();
 }
 function drawExChart(){
-  const hist=exHistory(curEx);
-  const vals=hist.map(s=>{const x=s.sets[curEx];return exMode==='w'?Math.max(...x.map(q=>q.w)):exMode==='r'?x.reduce((a,q)=>a+q.r,0):Math.round(Math.max(...x.map(q=>e1rm(q.w,q.r)))*10)/10});
+  const ex=exName(),hist=exHistory(ex);
+  const vals=hist.map(s=>{const x=s.sets[ex];return exMode==='w'?Math.max(...x.map(q=>q.w)):exMode==='r'?x.reduce((a,q)=>a+q.r,0):Math.round(Math.max(...x.map(q=>e1rm(q.w,q.r)))*10)/10});
   smoothChart($('#exChart'),vals,hist.map(s=>shortDate(s.date)),{empty:'Log this exercise twice to see the line.'});
 }
 function startSession(k){
@@ -1429,7 +1441,8 @@ main.addEventListener('click',e=>{
   unlockAudio();
   const t=e.target.closest('button');if(!t)return;
   if(t.dataset.day){go('workout','@'+t.dataset.day);return}
-  if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
+  if(t.dataset.pvx){go('workout','@'+t.dataset.pvx);return}
+  if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);if(t.dataset.then)go('workout',t.dataset.then);return}
   if(t.dataset.open){go('workout',t.dataset.open);return}
   if(t.dataset.go){go(t.dataset.go);return}
   if(t.dataset.pr){openPR(t.dataset.pr);return}

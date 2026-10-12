@@ -556,7 +556,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-12.2';
+const APP_BUILD='2026-10-12.3';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -1396,6 +1396,12 @@ function rMore(m){
     <p>Moderate counts as 2.5 kcal per kg per hour, Hard as 4, All-out as 5, and the 6-minute finisher as 7. These are active calories on top of what you'd burn sitting, roughly comparable to Apple Watch active calories.</p>
     <p>Treat it as a good estimate, not an exact figure.</p>
   </div>
+  <div class="label">App</div>
+  <div class="glass listcard">
+    <div class="field" style="border-bottom:0"><span>Version</span><span class="muted" style="font-weight:700">${APP_BUILD}</span></div>
+    <p class="fhelp" style="margin:0 0 2px">The app updates itself when you open it with internet. If it ever looks out of date, check here.</p>
+    <div class="btn2"><button class="soft" id="updNow">${ico('repeat')}Check for updates</button></div>
+  </div>
   <div class="label">Your data</div>
   <div class="glass listcard">
     <div class="field" style="border-bottom:0;padding-top:12px"><span style="display:flex;gap:8px;align-items:center">${ico('check')}Saved automatically on this phone</span></div>
@@ -1440,6 +1446,7 @@ const main=$('#main');
 main.addEventListener('click',e=>{
   unlockAudio();
   const t=e.target.closest('button');if(!t)return;
+  if(t.id==='updNow'){forceUpdate();return}
   if(t.dataset.day){go('workout','@'+t.dataset.day);return}
   if(t.dataset.pvx){go('workout','@'+t.dataset.pvx);return}
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);if(t.dataset.then)go('workout',t.dataset.then);return}
@@ -1499,7 +1506,21 @@ async function checkForUpdate(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkForUpdate()});
 window.addEventListener('online',checkForUpdate);
-setTimeout(checkForUpdate,3000);
+window.addEventListener('pageshow',checkForUpdate);
+window.addEventListener('focus',checkForUpdate);
+setInterval(()=>{if(document.visibilityState==='visible')checkForUpdate()},5*60000);
+setTimeout(checkForUpdate,1500);
+/* Settings → Check for updates: compares with the live page right now and reloads if it is newer */
+async function forceUpdate(){
+  if(!navigator.onLine){toast('Connect to the internet to check for updates');return}
+  toast('Checking for updates…');
+  try{
+    const t=await (await fetch('index.html?b='+Date.now(),{cache:'no-store'})).text();
+    const m=t.match(/const APP_BUILD='([^']+)'/);
+    if(m&&m[1]!==APP_BUILD){toast('Updating…');setTimeout(()=>location.reload(),400)}
+    else toast('You have the latest version');
+  }catch(e){toast('Could not check for updates. Try again.')}
+}
 
 restoreIfNeeded();
 (()=>{const [t,ex]=location.hash.slice(1).split('/');if(TABS.includes(t)){tab=t;curEx=ex?decodeURIComponent(ex):null}

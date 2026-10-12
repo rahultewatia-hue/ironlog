@@ -1,10 +1,10 @@
 // Aesthetic Body (IronLog) offline cache. Bump VERSION when you upload new files.
-const VERSION = 'ironlog-v11';
+const VERSION = 'ironlog-v12';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './fonts/plus-jakarta-sans.woff2', './fonts/outfit.woff2'];
 // Exercise videos are saved on the phone so they play offline. Bump MEDIA (and VID_V in index.html) when the clips change.
 // Keep SLUGS in sync with the VIDEOS map in index.html.
 const MEDIA = 'ironlog-media-3';
-const SLUGS = ['bench-press', 'incline-press', 'decline-db-press', 'close-grip-bench', 'skull-crusher', 'back-squat', 'romanian-deadlift', 'bulgarian-split-squat', 'hip-thrust', 'deadlift', 'barbell-row', 'db-row', 'ez-curl', 'hammer-curl', 'overhead-press', 'seated-db-press', 'lateral-raise', 'rear-delt-fly', 'shrug'];
+const SLUGS = ['bench-press', 'incline-press', 'decline-db-press', 'close-grip-bench', 'skull-crusher', 'back-squat', 'romanian-deadlift', 'bulgarian-split-squat', 'hip-thrust', 'deadlift', 'barbell-row', 'db-row', 'ez-curl', 'hammer-curl', 'overhead-press', 'seated-db-press', 'lateral-raise', 'rear-delt-fly', 'shrug', 'overhead-tricep-extension', 'incline-db-curl', 'front-raise'];
 const MEDIA_FILES = SLUGS.flatMap(s => [`./videos/${s}.mp4`, `./videos/${s}.jpg`, `./videos/thumbs/${s}.jpg`]);
 
 async function saveMedia() {

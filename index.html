@@ -142,6 +142,19 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 /* exercise detail */
 .log{padding:14px 14px 12px;margin:4px 0 14px}
 .loghead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cmp{padding:14px 16px;margin-bottom:14px}
+.cmphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.cmphead .muted{font-size:12.5px;font-weight:600}
+.cmpgrid{display:grid;grid-template-columns:22px 1fr 1fr;gap:8px 10px;align-items:center;font-size:14px}
+.cmpgrid .h{font-size:11.5px;font-weight:700;color:var(--muted)}
+.cmpgrid .n{color:var(--muted);font-weight:700;font-size:13px}
+.cmpgrid b{font-variant-numeric:tabular-nums;font-weight:700}
+.cmpt{color:var(--dim)}
+.cmpt small{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}
+.cmpt.up,.cmpt.up small{color:var(--lime)}.cmpt.down,.cmpt.down small{color:var(--red)}
+.cmptip{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;font-weight:600;line-height:1.4;color:var(--sage)}
+.cmptip .ic{width:16px;height:16px;margin-top:1px;flex:none}
+.ex.pv{cursor:default}.ex.pv:active{transform:none}
 .lasttime{font-size:12.5px;color:var(--muted);font-weight:600;margin:4px 0 2px}
 .tip{font-size:12.5px;font-weight:700;color:var(--sage);margin:2px 0}
 .sgrid{display:grid;grid-template-columns:24px 1fr 1fr 52px;gap:8px;align-items:center}
@@ -541,22 +554,22 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-06.9';
+const APP_BUILD='2026-10-12.1';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
   chest:{name:'Chest + Triceps', wd:1, fin:'6 min: alternate 30s push-ups and 30s burpees', ex:[
     ['Barbell bench press',3,'c','bb'],['Incline barbell press',3,'c','bb'],['Decline dumbbell press',2,'c','db'],
-    ['Close-grip bench press',3,'c','bb'],['EZ-bar skull crusher',2,'i','ez']]},
+    ['Overhead dumbbell triceps extension',3,'i','db'],['EZ-bar skull crusher',2,'i','ez']]},
   legs:{name:'Legs', wd:2, fin:'6 rounds: 20s jump squats, 40s rest', ex:[
     ['Barbell back squat',3,'c','bb'],['Romanian deadlift',3,'c','bb'],['Bulgarian split squat',2,'c','db'],
     ['Barbell hip thrust',2,'c','bb']]},
   back:{name:'Back + Biceps', wd:4, fin:'6 min: alternate 30s renegade rows and 30s mountain climbers', ex:[
     ['Conventional deadlift',3,'c','bb'],['Barbell bent-over row',3,'c','bb'],['Single-arm dumbbell row',2,'c','db'],
-    ['EZ-bar curl',3,'i','ez'],['Dumbbell hammer curl',2,'i','db']]},
+    ['Barbell shrug',2,'i','bb'],['EZ-bar curl',3,'i','ez'],['Incline dumbbell curl',3,'i','db'],['Dumbbell hammer curl',2,'i','db']]},
   shoulders:{name:'Shoulders', wd:5, fin:'6 rounds: 20s light dumbbell thrusters, 40s rest', ex:[
     ['Standing overhead press',3,'c','bb'],['Seated dumbbell press',3,'c','db'],['Dumbbell lateral raise',3,'i','db'],
-    ['Rear-delt fly',2,'i','db'],['Barbell shrug',2,'i','bb']]}
+    ['Dumbbell front raise',2,'i','db'],['Rear-delt fly',2,'i','db'],['Barbell shrug',2,'i','bb']]}
 };
 // Muscles each exercise works: [primary, secondary]
 const MUSCLES = {
@@ -578,7 +591,10 @@ const MUSCLES = {
   'Seated dumbbell press':[['delts'],['triceps']],
   'Dumbbell lateral raise':[['delts'],['traps']],
   'Rear-delt fly':[['rdelts'],['traps']],
-  'Barbell shrug':[['traps'],['fore']]
+  'Barbell shrug':[['traps'],['fore']],
+  'Overhead dumbbell triceps extension':[['triceps'],[]],
+  'Incline dumbbell curl':[['biceps'],['fore']],
+  'Dumbbell front raise':[['delts'],[]]
 };
 // How to do each exercise: three steps and a tip
 const HOWTO = {
@@ -600,21 +616,27 @@ const HOWTO = {
   'Seated dumbbell press':['Sit on an upright bench with the dumbbells at shoulder height, palms forward.','Press them up until your arms are straight and the dumbbells nearly touch.','Lower back to shoulder height under control.','Keep your back against the pad and don\'t let your elbows drift behind you.'],
   'Dumbbell lateral raise':['Stand holding light dumbbells at your sides, a slight bend in the elbows.','Raise them out to the sides until your arms are level with your shoulders.','Lower slowly. Don\'t let the dumbbells rest at the bottom.','Lead with your elbows and pour the dumbbells slightly forward, like emptying a jug.'],
   'Rear-delt fly':['Hinge forward until your chest is nearly parallel to the floor, dumbbells hanging.','With soft elbows, raise the dumbbells out to the sides, squeezing your rear shoulders.','Lower slowly back to the start.','Go light. Shrugging means the weight is too heavy.'],
-  'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.']
+  'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.'],
+  'Overhead dumbbell triceps extension':['Sit on a bench with back support and hold one dumbbell over your head with straight arms (two hands, or one arm at a time).','Keep your elbows pointing forward and close to your head, then lower the dumbbell behind your head until you feel a deep stretch in the triceps.','Squeeze your triceps to press the dumbbell back up until your arms are straight.','Only your forearms move. Keep your ribs down and your upper arms still.'],
+  'Incline dumbbell curl':['Sit back on a bench set to about 45°, a dumbbell in each hand, arms hanging straight down.','Keep your upper arms still and curl the dumbbells up, turning your palms toward your shoulders.','Lower slowly over 2 to 3 seconds until your arms are fully straight again.','Go lighter than a standing curl. The stretch at the bottom is what makes this work.'],
+  'Dumbbell front raise':['Stand tall with a dumbbell in each hand in front of your thighs, soft bend in the elbows.','Raise the dumbbells straight in front of you to shoulder height, no higher.','Pause for a second, then lower slowly back to your thighs.','Keep it light and strict. Do not lean back or swing the weights up.']
 };
 // Stock demo clips in videos/ (Pexels free licence, re-encoded to 720×405; sources in videos/CREDITS.md)
-const VID_V='3';// bump when the clips change so phones refetch them
+const VID_V='4';// bump when the clips change so phones refetch them
 const VIDEOS = {
   'Barbell bench press':'bench-press','Incline barbell press':'incline-press','Decline dumbbell press':'decline-db-press',
   'Close-grip bench press':'close-grip-bench','EZ-bar skull crusher':'skull-crusher','Barbell back squat':'back-squat',
   'Romanian deadlift':'romanian-deadlift','Bulgarian split squat':'bulgarian-split-squat','Barbell hip thrust':'hip-thrust',
   'Conventional deadlift':'deadlift','Barbell bent-over row':'barbell-row','Single-arm dumbbell row':'db-row',
   'EZ-bar curl':'ez-curl','Dumbbell hammer curl':'hammer-curl','Standing overhead press':'overhead-press',
-  'Seated dumbbell press':'seated-db-press','Dumbbell lateral raise':'lateral-raise','Rear-delt fly':'rear-delt-fly','Barbell shrug':'shrug'
+  'Seated dumbbell press':'seated-db-press','Dumbbell lateral raise':'lateral-raise','Rear-delt fly':'rear-delt-fly','Barbell shrug':'shrug',
+  'Overhead dumbbell triceps extension':'overhead-tricep-extension','Incline dumbbell curl':'incline-db-curl','Dumbbell front raise':'front-raise'
 };
 const MNAME={chest:'chest',delts:'shoulders',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
 const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
 const EX = {}; for(const p of Object.values(PROGRAM)) for(const e of p.ex){const m=MUSCLES[e[0]]||[[],[]];EX[e[0]]={sets:e[1],type:e[2],eq:e[3],p:m[0],s:m[1]}}
+// exercises dropped from the program (e.g. Close-grip bench press) stay known so old history, bests and photos still show
+for(const n of Object.keys(MUSCLES)) if(!EX[n]) EX[n]={sets:3,type:'c',eq:'bb',p:MUSCLES[n][0],s:MUSCLES[n][1]};
 const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 // Net MET (MET − 1) so the number is calories burned by training, not resting metabolism
 const EFFORT=[{k:'mod',label:'Moderate',met:3.5},{k:'hard',label:'Hard',met:5},{k:'max',label:'All-out',met:6}];
@@ -632,7 +654,10 @@ function save(){
   try{localStorage.setItem(KEY,json)}catch(e){toast('Could not save — storage is full or blocked')}
   backupSave(json);
 }
-let db=load();
+// a workout started before the program changed gets empty sets for any exercise added since
+function migrateActive(d){const a=d&&d.active,p=a&&PROGRAM[a.day];if(!p||!a.sets)return d;
+  for(const e of p.ex)if(!a.sets[e[0]])a.sets[e[0]]=Array.from({length:e[1]},()=>({w:null,r:null,done:false}));return d}
+let db=migrateActive(load());
 /* Second and third copies of the data so it survives storage being cleared:
    IndexedDB in every browser, plus a private file inside the Android app. Restored automatically if the main copy is empty. */
 const isBlank=d=>!d||(!(d.sessions||[]).length&&!(d.weights||[]).length&&!(d.prs||[]).length&&!d.active);
@@ -649,7 +674,7 @@ async function backupLoad(){
 async function restoreIfNeeded(){
   if(!isBlank(db)){backupSave(JSON.stringify(db));return}
   const t=await backupLoad();if(!t)return;
-  try{const d=JSON.parse(t);if(Array.isArray(d.sessions)&&!isBlank(d)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];d.prs=d.prs||[];db=d;
+  try{const d=JSON.parse(t);if(Array.isArray(d.sessions)&&!isBlank(d)){d.settings=Object.assign(blank().settings,d.settings||{});d.weights=d.weights||[];d.prs=d.prs||[];db=migrateActive(d);
     try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}render();toast('Your data was restored from the backup copy')}}catch(e){}
 }
 if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
@@ -805,7 +830,7 @@ function render(){
   document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   const m=$('#main'),detail=tab==='workout'&&curEx&&db.active&&db.active.sets[curEx];
   document.body.classList.toggle('focus',!!detail);
-  $('#tbTitle').textContent=detail?curEx:TITLES[tab];
+  $('#tbTitle').textContent=detail?curEx:(tab==='workout'&&!db.active&&previewKey()?PROGRAM[previewKey()].name:TITLES[tab]);
   $('#navBack').disabled=navIdx<=0;$('#navFwd').disabled=navIdx>=navMax;
   $('#navHome').classList.toggle('on',tab==='home');$('#navSet').classList.toggle('on',tab==='more');
   if(detail)rDetail(m);
@@ -892,14 +917,29 @@ function rHome(m){
       <button class="glass rcard" data-report="w">${ico('chart-column')}<b>Weekly report</b><small>This week vs last</small></button>
     </div>
     <div class="label">Quick workouts<small>${mins} min this week</small></div>
-    <div class="qw">${Object.entries(PROGRAM).map(([k,p])=>`<button class="qcard" data-start="${k}"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="tag">${DAYS[p.wd].slice(0,3)}</span><div class="qt"><b>${esc(p.name)}</b><small>${p.ex.length} exercises · ~50 min</small></div><span class="go">${ico('arrow-right')}</span></button>`).join('')}</div>
+    <div class="qw">${Object.entries(PROGRAM).map(([k,p])=>`<button class="qcard" data-day="${k}"><div class="bg" style="background-image:url('${poster(k)}')"></div><span class="tag">${DAYS[p.wd].slice(0,3)}</span><div class="qt"><b>${esc(p.name)}</b><small>${p.ex.length} exercises · ~50 min</small></div><span class="go">${ico('arrow-right')}</span></button>`).join('')}</div>
     ${lastH}
   </section>`;
 }
 
 /* ---------- Workout ---------- */
 function weekStats(){const ws=weekStart().getTime();const s=db.sessions.filter(x=>x.start>=ws);return {n:s.length,kcal:s.reduce((a,b)=>a+b.kcal,0)}}
+/* Look at a day's exercises (with last session's numbers) before starting; nothing starts until Start workout is tapped */
+const previewKey=()=>curEx&&curEx[0]==='@'&&PROGRAM[curEx.slice(1)]?curEx.slice(1):null;
+function rPreview(m,k){
+  const p=PROGRAM[k];
+  m.innerHTML=`<section>
+    <div class="eyebrow">${DAYS[p.wd]}</div>
+    <h1>${esc(p.name)}</h1>
+    <div class="chips"><span class="chip glass">${ico('dumbbell')}${p.ex.length} exercises</span><span class="chip glass">${ico('repeat')}6–8 reps</span><span class="chip glass">${ico('flame')}6-min finisher</span></div>
+    <button class="gold block" data-start="${k}" style="margin:0 0 16px">Start workout<span class="arr">${ico('play')}</span></button>
+    <div class="label">Exercises<small>Last session's sets</small></div>
+    ${p.ex.map(e=>{const n=e[0],l=lastSets(n);return `<div class="ex glass pv">${photo(n)}<div class="txt"><div class="name">${esc(n)}</div><div class="meta">${e[1]} sets · ${l?'last: '+l.map(q=>`${fmt(q.w)}×${q.r}`).join(', ')+' kg':'first time'}</div></div></div>`}).join('')}
+    <div class="note" style="text-align:center;margin:12px 0 0">Nothing starts until you tap Start workout.</div>
+  </section>`;
+}
 function rWorkout(m){
+  if(!db.active&&previewKey())return rPreview(m,previewKey());
   if(!db.active){
     const wd=new Date().getDay();
     const sug=Object.entries(PROGRAM).find(([,p])=>p.wd===wd);
@@ -917,7 +957,7 @@ function rWorkout(m){
     ${hero}
     <div class="tiles">${tileH(ws.n,'workouts this week','','dumbbell')}${tileH(ws.kcal,'kcal burned this week','','flame')}${tileH(lw?fmt(lw.kg):'—',lw?'kg body weight':'log your weight','','scale')}</div>
     <div class="label">Your split</div>
-    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-start="${k}">${photo(p.ex[0][0])}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
+    ${Object.entries(PROGRAM).map(([k,p])=>{const dm=dayMuscles(k);return `<button class="ex glass" data-day="${k}">${photo(p.ex[0][0])}<div class="txt"><div class="daytag">${DAYS[p.wd]}</div><div class="name">${esc(p.name)}</div><div class="meta">${p.ex.length} exercises</div></div><span class="chev">${ico('chevron-right')}</span></button>`}).join('')}
     </section>`;
     return;
   }
@@ -981,6 +1021,33 @@ function formCoach(v){
 
 /* ---------- Exercise detail (log sets) ---------- */
 function exHistory(name){return db.sessions.filter(s=>s.sets[name]&&s.sets[name].length)}
+/* "Last session" card: last time's sets next to today's, filled in live as you log (progressive overload) */
+function cmpCard(name,last,hist){
+  const sets=db.active.sets[name],info=EX[name];
+  if(!last)return `<div class="glass cmp"><div class="cmphead"><div class="label" style="margin:0">Last session</div></div><div class="cmptip" style="border:0;margin:0;padding:0">First time on this exercise. Log your sets today and they become the numbers to beat next time.</div></div>`;
+  const ls=hist[hist.length-1],d=toDate(ls.date),ago=Math.round((toDate(dstr())-d)/864e5);
+  const topW=Math.max(...last.map(x=>x.w)),allHit=last.length>=info.sets&&last.every(x=>x.r>=8),inc=info.eq==='db'?2:2.5;
+  const tip=allHit?`You hit 8 reps on every set. Go up: try ${fmt(topW+inc)} kg for 6–8 reps.`:`Beat it: keep ${fmt(topW)} kg and add a rep on each set (aim for 8 on every set), then go up.`;
+  const n=Math.max(last.length,sets.length);
+  return `<div class="glass cmp" id="cmp"><div class="cmphead"><div class="label" style="margin:0">Last session</div><span class="muted">${d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})} · ${ago===0?'today':ago===1?'yesterday':ago+' days ago'}</span></div>
+    <div class="cmpgrid"><span></span><span class="h">Last time</span><span class="h">Today</span>
+    ${Array.from({length:n},(_,j)=>`<span class="n">${j+1}</span><b>${last[j]?`${fmt(last[j].w)} kg × ${last[j].r}`:'—'}</b><b class="cmpt" data-cj="${j}">—</b>`).join('')}</div>
+    <div class="cmptip">${ico('trending-up')}<span>${tip}</span></div></div>`;
+}
+function updateCmp(name){
+  const box=$('#cmp');if(!box||!db.active)return;
+  const last=lastSets(name),sets=db.active.sets[name];
+  box.querySelectorAll('[data-cj]').forEach(el=>{
+    const j=+el.dataset.cj,s=sets[j],l=last&&last[j];
+    if(!s||s.w==null||s.r==null){el.className='cmpt';el.textContent='—';return}
+    let cls='',dl='';
+    if(l){const dw=s.w-l.w,dr=s.r-l.r;
+      if(dw>0||(dw===0&&dr>0)){cls='up';dl=dw>0?`+${fmt(dw)} kg`:`+${dr} rep${dr===1?'':'s'}`}
+      else if(dw<0||(dw===0&&dr<0)){cls='down';dl=dw<0?`${fmt(dw)} kg`:`${dr} rep${dr===-1?'':'s'}`}
+      else dl='same as last time'}
+    el.className='cmpt '+cls;el.innerHTML=`${fmt(s.w)} kg × ${s.r}<small>${dl}</small>`;
+  });
+}
 function rDetail(m){
   const a=db.active,name=curEx,info=EX[name],sets=a.sets[name],last=lastSets(name),hist=exHistory(name);
   const hit=last&&last.length>=info.sets&&last.every(s=>s.r>=8);
@@ -1007,6 +1074,7 @@ function rDetail(m){
     <h1>${esc(name)}</h1>
     <div class="mchips">${info.p.map(x=>`<span class="mchip p">${esc(cap(MNAME[x]))}</span>`).join('')}${info.s.map(x=>`<span class="mchip">${esc(cap(MNAME[x]))}</span>`).join('')}<span class="mchip">${info.sets} sets · 6–8 reps</span></div>
     ${PR_LIFTS.includes(name)?prCard(name):''}
+    ${cmpCard(name,last,hist)}
     ${how.length?`<div class="howto glass"><div class="label" style="margin:0">How to do it</div><ol>${how.slice(0,3).map((h,i)=>`<li><span class="num">${i+1}</span><span>${esc(h)}</span></li>`).join('')}</ol>${how[3]?`<div class="tipbox">${ico('sparkles')}<span>${esc(how[3])}</span></div>`:''}</div>`:''}
     <div class="log glass" data-ex="${esc(name)}">
       <div class="loghead"><div class="label" style="margin:0">Today's sets</div><span class="muted" style="font-size:12px;font-weight:600">${unit}</span></div>
@@ -1036,6 +1104,7 @@ function rDetail(m){
       return `<div class="sess glass"><div class="date"><b>${d.getDate()}</b>${d.toLocaleDateString(undefined,{month:'short'})}</div>
       <div class="tbl" style="grid-template-columns:36px repeat(${x.length},minmax(40px,1fr))"><span>kg</span>${x.map(q=>`<b class="${best&&q.w===best.w&&q.r===best.r?'pr':''}">${fmt(q.w)}</b>`).join('')}<span>reps</span>${x.map(q=>`<b>${q.r}</b>`).join('')}</div></div>`}).join(''):'<p class="empty">Your sessions for this exercise will show here.</p>'}
   </section>`;
+  updateCmp(name);
   drawExChart();
   setupVideo();
 }
@@ -1047,7 +1116,7 @@ function drawExChart(){
 function startSession(k){
   const p=PROGRAM[k];
   db.active={day:k,start:Date.now(),finisher:false,effort:'hard',sets:Object.fromEntries(p.ex.map(e=>[e[0],Array.from({length:e[1]},()=>({w:null,r:null,done:false}))]))};
-  save();curEx=null;if(tab!=='workout')go('workout');else{render();window.scrollTo(0,0)}
+  save();curEx=null;if(tab!=='workout')go('workout');else go('workout',null,true)
 }
 function tickSet(btn){
   const row=btn.closest('.srow'),card=btn.closest('[data-ex]'),name=card.dataset.ex,j=+row.dataset.set;
@@ -1359,6 +1428,7 @@ const main=$('#main');
 main.addEventListener('click',e=>{
   unlockAudio();
   const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.day){go('workout','@'+t.dataset.day);return}
   if(t.dataset.start){if(db.active){toast('Finish or discard the current workout first');return}startSession(t.dataset.start);return}
   if(t.dataset.open){go('workout',t.dataset.open);return}
   if(t.dataset.go){go(t.dataset.go);return}
@@ -1393,6 +1463,7 @@ main.addEventListener('input',e=>{
     s[i.dataset.f]=i.dataset.f==='r'?(parseNum(i.value)==null?null:Math.round(parseNum(i.value))):parseNum(i.value);
     save();
     if(i.dataset.f==='w')card.querySelector('.plates').innerHTML=platesHTML(name,s.w);
+    updateCmp(name);
   }
 });
 main.addEventListener('change',e=>{

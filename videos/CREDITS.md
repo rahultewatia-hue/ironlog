@@ -26,5 +26,8 @@ Clips were trimmed to 10 s, muted and re-encoded to 800x700 H.264 with a blurred
 | lateral-raise.mp4 | Dumbbell lateral raise | https://www.pexels.com/video/5319101/ |
 | rear-delt-fly.mp4 | Band pull-apart (rear delts) | https://www.pexels.com/video/5726678/ |
 | shrug.mp4 | Dumbbell shrug / upright row | https://mixkit.co/free-stock-video/11829/ |
+| overhead-tricep-extension.mp4 | Seated overhead dumbbell triceps extension (one arm) | https://www.pexels.com/video/6293120/ |
+| incline-db-curl.mp4 | Seated dumbbell curl (upright bench; no stock clip of an incline-bench curl exists) | https://www.pexels.com/video/4921648/ |
+| front-raise.mp4 | Single-arm dumbbell front raise | https://www.pexels.com/video/7801965/ |
 
-Closest available matches (no exact stock footage exists): hip thrust (glute bridge), barbell row (dumbbell row with coach), rear-delt fly (band pull-apart), shrug (dumbbell shrug / upright row).
+Closest available matches (no exact stock footage exists): hip thrust (glute bridge), barbell row (dumbbell row with coach), rear-delt fly (band pull-apart), shrug (dumbbell shrug / upright row), incline dumbbell curl (seated curl on an upright bench), front raise and overhead extension (single-arm versions).

@@ -145,7 +145,7 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 .cmp{padding:14px 16px;margin-bottom:14px}
 .cmphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
 .cmphead .muted{font-size:12.5px;font-weight:600}
-.cmpgrid{display:grid;grid-template-columns:22px 1fr 1fr;gap:8px 10px;align-items:center;font-size:14px}
+.cmpgrid{display:grid;grid-template-columns:22px 1fr 1fr;grid-auto-rows:minmax(38px,auto);gap:4px 10px;align-items:center;font-size:14px}
 .cmpgrid .h{font-size:11.5px;font-weight:700;color:var(--muted)}
 .cmpgrid .n{color:var(--muted);font-weight:700;font-size:13px}
 .cmpgrid b{font-variant-numeric:tabular-nums;font-weight:700}
@@ -175,6 +175,7 @@ button.ex{border:1px solid rgba(255,255,255,.07)}
 .addset{display:inline-flex;align-items:center;gap:6px;border:0;background:none;font-weight:700;color:var(--lime);padding:4px 0}
 .addset .ic{width:16px;height:16px}
 .plates{display:flex;gap:5px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;min-height:24px}
+.plates.tall{min-height:56px;align-content:flex-start}
 .pl{min-width:28px;height:22px;padding:0 6px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#15191c;
   box-shadow:inset 0 1px 1px rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.2),0 2px 6px -2px rgba(0,0,0,.6)}
 .mapcard{padding:16px;display:flex;gap:10px;align-items:center;margin-bottom:14px}
@@ -556,7 +557,7 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-10-12.3';
+const APP_BUILD='2026-11-02.1';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
@@ -1005,6 +1006,8 @@ function setupVideo(){
   const msg=t=>{if(!v.isConnected||!$('#vMsg'))return;$('#vMsgTxt').textContent=t;$('#vMsg').hidden=false;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'};
   v.addEventListener('error',()=>msg(navigator.onLine?'Video could not load':'Video not saved yet. Open the app once with internet.'));
   v.addEventListener('playing',()=>{if(!v.isConnected)return;$('#vMsg').hidden=true;$('#demoIco').innerHTML=ico('pause');$('#demoLbl').textContent='Pause'});
+  // plays once and stops on the last frame; the pill becomes Replay
+  v.addEventListener('ended',()=>{if(!v.isConnected||!$('#demoIco'))return;$('#demoIco').innerHTML=ico('repeat');$('#demoLbl').textContent='Replay'});
   
   const p=v.play();if(p&&p.catch)p.catch(()=>{if(!v.isConnected||!$('#demoIco'))return;$('#demoIco').innerHTML=ico('play');$('#demoLbl').textContent='Play'});
   formCoach(v);
@@ -1071,7 +1074,7 @@ function rDetail(m,pv){
   const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' proper form');
   m.innerHTML=`<section>
     <div class="stage">
-      <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted loop playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
+      <video id="exVid" src="videos/${VIDEOS[name]}.mp4?v=${VID_V}" poster="videos/${VIDEOS[name]}.jpg?v=${VID_V}" autoplay muted playsinline preload="auto" aria-label="Stock video of ${esc(name)}"></video>
       <div class="vmsg glass" id="vMsg" hidden><span id="vMsgTxt">Video could not load</span><button class="pill lime" id="vRetry">${ico('repeat')}Retry</button></div>
       <div class="shade"></div>
       ${pv?'':`<div class="ov tl"><div class="clock glass">${ico('timer')}<span id="clock">0:00</span></div><div class="wacts">${workBtns()}</div></div>`}
@@ -1098,7 +1101,7 @@ function rDetail(m,pv){
         <input inputmode="numeric" data-f="r" aria-label="Set ${j+1} reps" value="${s.r??''}" placeholder="${last&&last[j]?last[j].r:'6–8'}">
         <button class="tick" data-tick aria-label="Mark set ${j+1} done">${ico('check')}</button></div>`).join('')}
       <button class="addset" data-add>${ico('plus')}Add set</button>
-      <div class="plates">${platesHTML(name,curW?curW.w:(last&&last[0]?last[0].w:null))}</div>
+      <div class="plates${info.eq==='db'?'':' tall'}">${platesHTML(name,curW?curW.w:(last&&last[0]?last[0].w:null))}</div>
     </div>`}
     <div class="perspective"><div class="mapcard glass">
       <div class="figs">${pair(info.p,info.s,56)}</div>
@@ -1130,7 +1133,19 @@ function startSession(k){
   db.active={day:k,start:Date.now(),finisher:false,effort:'hard',sets:Object.fromEntries(p.ex.map(e=>[e[0],Array.from({length:e[1]},()=>({w:null,r:null,done:false}))]))};
   save();curEx=null;if(tab!=='workout')go('workout');else go('workout',null,true)
 }
-function tickSet(btn){
+/* Keep the page where it is while something changes under the user's thumb (the keyboard closing and the plate/last-session
+   boxes resizing made iPhones jump to the bottom after a tick). Restores the scroll position a few times while it settles. */
+function keepScroll(fn){
+  const y=window.scrollY,back=()=>{if(Math.abs(window.scrollY-y)>2)window.scrollTo(0,y)};
+  const vv=window.visualViewport;vv&&vv.addEventListener('resize',back);
+  try{fn()}finally{
+    back();requestAnimationFrame(back);
+    [60,150,300,500,800,1200].forEach(t=>setTimeout(back,t));
+    setTimeout(()=>vv&&vv.removeEventListener('resize',back),1300);
+  }
+}
+function tickSet(btn){keepScroll(()=>tickSetNow(btn))}
+function tickSetNow(btn){
   const row=btn.closest('.srow'),card=btn.closest('[data-ex]'),name=card.dataset.ex,j=+row.dataset.set;
   const s=db.active.sets[name][j];
   if(s.done){s.done=false;row.classList.remove('ok');save();return}
@@ -1139,6 +1154,7 @@ function tickSet(btn){
   if(s.r==null&&/^\d+$/.test(ri.placeholder)){s.r=+ri.placeholder;ri.value=s.r}
   if(s.w==null||s.r==null){toast('Enter the weight and reps first');(s.w==null?wi:ri).focus();return}
   s.done=true;row.classList.add('ok');save();
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
   card.querySelector('.plates').innerHTML=platesHTML(name,s.w);
   startRest(EX[name].type==='c'?db.settings.restC:db.settings.restI);
   if(db.active.sets[name].every(x=>x.done))toast('Exercise done. Nice work.');
@@ -1458,7 +1474,7 @@ main.addEventListener('click',e=>{
   if(t.dataset.repmode){repMode=t.dataset.repmode;repOff=0;render();return}
   if(t.dataset.repnav){repOff=Math.min(0,repOff+(+t.dataset.repnav));render();return}
   if(t.id==='shareRep')return shareReport(t.dataset.text);
-  if(t.id==='demoToggle'){const v=$('#exVid');if(!v)return;if(v.paused)v.play().catch(()=>{});else v.pause();
+  if(t.id==='demoToggle'){const v=$('#exVid');if(!v)return;if(v.paused){if(v.ended)v.currentTime=0;v.play().catch(()=>{})}else v.pause();
     $('#demoIco').innerHTML=ico(v.paused?'play':'pause');$('#demoLbl').textContent=v.paused?'Play':'Pause';return}
   if(t.id==='vRetry'){const v=$('#exVid');$('#vMsg').hidden=true;v.load();v.play().catch(()=>{});return}
   if(t.hasAttribute('data-tick'))return tickSet(t);
@@ -1502,7 +1518,7 @@ let updChecked=0;
 async function checkForUpdate(){
   if(!navigator.onLine||Date.now()-updChecked<60000)return;updChecked=Date.now();
   try{const t=await (await fetch('index.html?b='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_BUILD='([^']+)'/);
-    if(m&&m[1]!==APP_BUILD){const busy=document.activeElement&&document.activeElement.tagName==='INPUT';if(!busy)location.reload();else updChecked=0}}catch(e){}
+    if(m&&m[1]!==APP_BUILD){const busy=(document.activeElement&&document.activeElement.tagName==='INPUT')||document.body.classList.contains('focus');if(!busy)location.reload();else updChecked=0}}catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkForUpdate()});
 window.addEventListener('online',checkForUpdate);

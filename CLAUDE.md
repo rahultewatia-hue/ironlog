@@ -50,7 +50,7 @@ internal/project name: keep the repo name, the URL, the `ironlog-v1` storage key
 
 ## Training program (the `PROGRAM` object)
 Goal: fat loss. 6–8 reps, low volume, high intensity, sets taken 1–2 reps short of failure.
-- **Mon — Chest + Triceps:** barbell bench press 3, incline barbell press 3, decline dumbbell press 2, overhead dumbbell triceps extension 3, EZ-bar skull crusher 2, dumbbell triceps kickback 2. (Close-grip bench press was dropped on 2026-10-12; it stays in `MUSCLES`/`VIDEOS` so old history still shows.) Finisher: 6 min alternating 30 s push-ups / 30 s burpees.
+- **Mon — Chest + Triceps:** barbell bench press 3, incline dumbbell press 3, dumbbell fly 2, overhead dumbbell triceps extension 3, EZ-bar skull crusher 2, dumbbell triceps kickback 2. (Close-grip bench press, incline barbell press and decline dumbbell press were dropped and stay in `MUSCLES`/`VIDEOS` so old history still shows. Incline dumbbell press and dumbbell fly currently reuse the `incline-press` and `decline-db-press` clips; replace them with real footage when ffmpeg is available, using new slugs.) Finisher: 6 min alternating 30 s push-ups / 30 s burpees.
 - **Tue — Legs:** barbell back squat 3, Romanian deadlift 3, Bulgarian split squat 2, barbell hip thrust 2. Finisher: 6 × (20 s jump squats, 40 s rest).
 - **Wed — rest** (walk).
 - **Thu — Back + Biceps:** conventional deadlift 3, barbell bent-over row 3, single-arm dumbbell row 2, barbell shrug 2, EZ-bar curl 3, incline dumbbell curl 3, dumbbell hammer curl 2. Finisher: 6 min alternating 30 s renegade rows / 30 s mountain climbers.

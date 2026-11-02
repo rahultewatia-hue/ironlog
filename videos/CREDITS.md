@@ -32,3 +32,5 @@ Clips were trimmed to 10 s, muted and re-encoded to 800x700 H.264 with a blurred
 | tricep-kickback.mp4 | Single-arm dumbbell triceps kickback, coached | https://www.pexels.com/video/4866845/ |
 
 Closest available matches (no exact stock footage exists): hip thrust (glute bridge), barbell row (dumbbell row with coach), rear-delt fly (band pull-apart), shrug (dumbbell shrug / upright row), incline dumbbell curl (seated curl on an upright bench), front raise and overhead extension (single-arm versions).
+
+Temporary reuse (no matching footage cut yet): Incline dumbbell press uses incline-press.mp4 (barbell incline press) and Dumbbell fly uses decline-db-press.mp4 (decline dumbbell press).

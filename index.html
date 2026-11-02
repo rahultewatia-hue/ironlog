@@ -557,12 +557,12 @@ body.focus main{padding-top:calc(58px + env(safe-area-inset-top))}
 <script>
 "use strict";
 // Bump on every change to this file so open apps reload themselves (see checkForUpdate)
-const APP_BUILD='2026-11-02.1';
+const APP_BUILD='2026-11-02.2';
 /* ---------- Program (Rahul's split) ---------- */
 // [name, sets, c=compound|i=isolation, bb=barbell|ez=EZ bar|db=dumbbell]
 const PROGRAM = {
   chest:{name:'Chest + Triceps', wd:1, fin:'6 min: alternate 30s push-ups and 30s burpees', ex:[
-    ['Barbell bench press',3,'c','bb'],['Incline barbell press',3,'c','bb'],['Decline dumbbell press',2,'c','db'],
+    ['Barbell bench press',3,'c','bb'],['Incline dumbbell press',3,'c','db'],['Dumbbell fly',2,'i','db'],
     ['Overhead dumbbell triceps extension',3,'i','db'],['EZ-bar skull crusher',2,'i','ez'],['Dumbbell triceps kickback',2,'i','db']]},
   legs:{name:'Legs', wd:2, fin:'6 rounds: 20s jump squats, 40s rest', ex:[
     ['Barbell back squat',3,'c','bb'],['Romanian deadlift',3,'c','bb'],['Bulgarian split squat',2,'c','db'],
@@ -578,6 +578,8 @@ const PROGRAM = {
 const MUSCLES = {
   'Barbell bench press':[['chest'],['delts','triceps']],
   'Incline barbell press':[['chest','delts'],['triceps']],
+  'Incline dumbbell press':[['chest','delts'],['triceps']],
+  'Dumbbell fly':[['chest'],['delts']],
   'Decline dumbbell press':[['chest'],['triceps']],
   'Close-grip bench press':[['triceps'],['chest','delts']],
   'EZ-bar skull crusher':[['triceps'],[]],
@@ -621,6 +623,8 @@ const HOWTO = {
   'Dumbbell lateral raise':['Stand holding light dumbbells at your sides, a slight bend in the elbows.','Raise them out to the sides until your arms are level with your shoulders.','Lower slowly. Don\'t let the dumbbells rest at the bottom.','Lead with your elbows and pour the dumbbells slightly forward, like emptying a jug.'],
   'Rear-delt fly':['Hinge forward until your chest is nearly parallel to the floor, dumbbells hanging.','With soft elbows, raise the dumbbells out to the sides, squeezing your rear shoulders.','Lower slowly back to the start.','Go light. Shrugging means the weight is too heavy.'],
   'Barbell shrug':['Stand tall holding the bar in front of your thighs, arms straight.','Lift your shoulders straight up toward your ears as high as you can.','Pause for a second, then lower slowly.','Don\'t roll your shoulders. Straight up and down is safer and works better.'],
+  'Incline dumbbell press':['Set the bench to about 30°, sit back with the dumbbells on your thighs and kick them up to shoulder height.','Lower the dumbbells to the sides of your upper chest, elbows about 45° from your body.','Press them up and slightly together until your arms are straight, without clanging the weights.','A low incline (about 30°) hits the upper chest. Steeper angles shift the work to the shoulders.'],
+  'Dumbbell fly':['Lie on a flat bench with a dumbbell in each hand over your chest, palms facing each other, elbows slightly bent.','Open your arms out to the sides in a wide arc until you feel a stretch across your chest, keeping the same elbow bend.','Squeeze your chest to bring the dumbbells back together over your chest.','Go lighter than you press. Keep the elbow bend fixed so it does not turn into a press, and do not let the elbows drop far below the bench.'],
   'Overhead dumbbell triceps extension':['Sit on a bench with back support and hold one dumbbell over your head with straight arms (two hands, or one arm at a time).','Keep your elbows pointing forward and close to your head, then lower the dumbbell behind your head until you feel a deep stretch in the triceps.','Squeeze your triceps to press the dumbbell back up until your arms are straight.','Only your forearms move. Keep your ribs down and your upper arms still.'],
   'Dumbbell triceps kickback':['Hold a dumbbell in one hand, put your other hand and knee on a bench, and hinge until your back is flat and parallel to the floor.','Pin your upper arm to your side so it is level with your back, elbow bent to 90°.','Straighten your arm backward until it is fully locked out, squeeze the triceps for a second, then lower slowly.','Go light. Only the forearm moves. Swinging the weight takes the work away from the triceps.'],
   'Incline dumbbell curl':['Sit back on a bench set to about 45°, a dumbbell in each hand, arms hanging straight down.','Keep your upper arms still and curl the dumbbells up, turning your palms toward your shoulders.','Lower slowly over 2 to 3 seconds until your arms are fully straight again.','Go lighter than a standing curl. The stretch at the bottom is what makes this work.'],
@@ -635,7 +639,7 @@ const VIDEOS = {
   'Conventional deadlift':'deadlift','Barbell bent-over row':'barbell-row','Single-arm dumbbell row':'db-row',
   'EZ-bar curl':'ez-curl','Dumbbell hammer curl':'hammer-curl','Standing overhead press':'overhead-press',
   'Seated dumbbell press':'seated-db-press','Dumbbell lateral raise':'lateral-raise','Rear-delt fly':'rear-delt-fly','Barbell shrug':'shrug',
-  'Overhead dumbbell triceps extension':'overhead-tricep-extension','Dumbbell triceps kickback':'tricep-kickback','Incline dumbbell curl':'incline-db-curl','Dumbbell front raise':'front-raise'
+  'Overhead dumbbell triceps extension':'overhead-tricep-extension','Dumbbell triceps kickback':'tricep-kickback','Incline dumbbell press':'incline-press','Dumbbell fly':'decline-db-press','Incline dumbbell curl':'incline-db-curl','Dumbbell front raise':'front-raise'
 };
 const MNAME={chest:'chest',delts:'shoulders',triceps:'triceps',biceps:'biceps',lats:'lats',traps:'traps',rdelts:'rear delts',quads:'quads',hams:'hamstrings',glutes:'glutes',abs:'abs',fore:'forearms',lowback:'lower back',calves:'calves'};
 const BACK=['triceps','lats','traps','rdelts','glutes','hams','lowback'];
